@@ -1,64 +1,7 @@
-package to.sparks.dto;
+package to.sparks.mtgox.dto;
 
-//{
 import org.codehaus.jackson.annotate.JsonProperty;
 
-//    "result":"success",
-//    "return":{
-//        "order_id":"4b897241-1cf3-458d-a9e3-a52e7d32742f",
-//        "trades":[{
-//            "trade_id":"1348808659835758",
-//            "primary":"Y",
-//            "currency":"AUD",
-//            "type":"bid",
-//            "properties":"market,mixed_currency",
-//            "item":"BTC",
-//            "amount":{
-//                "value":"0.10000000",
-//                "value_int":"10000000",
-//                "display":"0.10000000\u00a0BTC",
-//                "display_short":"0.10\u00a0BTC",
-//                "currency":"BTC"
-//            },
-//            "price":{
-//                "value":"12.12777",
-//                "value_int":"1212777",
-//                "display":"AU$12.12777",
-//                "display_short":"AU$12.13",
-//                "currency":"AUD"
-//            },
-//            "spent":{
-//                "value":"1.21278",
-//                "value_int":"121278",
-//                "display":"AU$1.21278",
-//                "display_short":"AU$1.21",
-//                "currency":"AUD"
-//            },
-//            "date":"2012-09-28 05:04:19"
-//        }],
-//        "total_amount":{
-//            "value":"0.10000000",
-//            "value_int":"10000000",
-//            "display":"0.10000000\u00a0BTC",
-//            "display_short":"0.10\u00a0BTC",
-//            "currency":"BTC"
-//        },
-//        "total_spent":{
-//            "value":"1.21278",
-//            "value_int":"121278",
-//            "display":"AU$1.21278",
-//            "display_short":"AU$1.21",
-//            "currency":"AUD"
-//        },
-//        "avg_cost":{
-//            "value":"12.12777",
-//            "value_int":"1212777",
-//            "display":"AU$12.12777",
-//            "display_short":"AU$12.13",
-//            "currency":"AUD"
-//        }
-//    }
-//}
 /**
  *
  * @author SparksG

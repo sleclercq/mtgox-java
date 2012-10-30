@@ -17,9 +17,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import to.sparks.dto.Order;
-import to.sparks.dto.OrderResult;
-import to.sparks.dto.Result;
+import to.sparks.mtgox.dto.Order;
+import to.sparks.mtgox.dto.OrderResult;
+import to.sparks.mtgox.dto.Result;
 import to.sparks.mtgox.util.JSONSource;
 
 /**
@@ -28,11 +28,16 @@ import to.sparks.mtgox.util.JSONSource;
  */
 public class MTGOXAPI {
 
-//  public static final String AUDIT_DIR="audit/";
-    protected String apiKey;
-    protected String secret;
-    protected Logger log;
-    
+    public static double AUD_INT_MULTIPLIER = 100000.0D;
+    public static double BTC_VOL_INT_MULTIPLIER = 100000000.0D;
+
+    public enum OrderType {
+
+        bid, ask
+    }
+    private String apiKey;
+    private String secret;
+    private Logger log;
     private JSONSource<Result<Order[]>> openOrdersJSON;
     private JSONSource<Result<String>> stringJSON;
     private JSONSource<Result<OrderResult>> orderResultJSON;
@@ -69,24 +74,18 @@ public class MTGOXAPI {
             log.log(Level.SEVERE, null, e);
         }
 
-
         openOrdersJSON = new JSONSource<>();
         stringJSON = new JSONSource<>();
         orderResultJSON = new JSONSource<>();
     }
 
-    public enum OrderType {
-
-        bid, ask
-    }
-
     public static int convertVolumeBTCtoInt(double d) {
-        double total = d * 100000000.0D;
+        double total = d * BTC_VOL_INT_MULTIPLIER;
         return (int) total;
     }
 
     public static int convertPriceAUDtoInt(double d) {
-        double total = d * 100000.0D;
+        double total = d * AUD_INT_MULTIPLIER;
         return (int) total;
     }
 
@@ -135,18 +134,18 @@ public class MTGOXAPI {
         return openOrders.getReturn();
     }
 
-    protected InputStream query(String path) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    private InputStream query(String path) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         return query(path, new HashMap<String, String>());
     }
 
-    protected InputStream query(String path, HashMap<String, String> args) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    private InputStream query(String path, HashMap<String, String> args) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         HttpURLConnection connection;
 
         // add nonce and build arg list
         args.put("nonce", String.valueOf(System.currentTimeMillis()));
         String post_data = this.buildQueryString(args);
 
-//            // args signature
+        // args signature
         Mac mac = Mac.getInstance("HmacSHA512");
         SecretKeySpec secret_spec = new SecretKeySpec(Base64Coder.decode(this.secret), "HmacSHA512");
         mac.init(secret_spec);
@@ -171,7 +170,7 @@ public class MTGOXAPI {
         return connection.getInputStream();
     }
 
-    protected String buildQueryString(HashMap<String, String> args) {
+    private String buildQueryString(HashMap<String, String> args) {
         String result = new String();
         for (String hashkey : args.keySet()) {
             if (result.length() > 0) {

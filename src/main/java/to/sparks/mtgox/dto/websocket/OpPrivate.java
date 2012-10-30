@@ -1,4 +1,4 @@
-package to.sparks.dto.websocket;
+package to.sparks.mtgox.dto.websocket;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -34,5 +34,12 @@ public abstract class OpPrivate<T> extends Operation {
      */
     public String getMessageType() {
         return messageType;
+    }
+
+    /**
+     * @return the origin
+     */
+    public String getOrigin() {
+        return origin;
     }
 }

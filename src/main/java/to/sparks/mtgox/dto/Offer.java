@@ -1,38 +1,31 @@
-package to.sparks.dto;
+package to.sparks.mtgox.dto;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
- * {
- *  "price":12.06422, 
- *  "amount":0.2,
- *  "price_int": "1206422",
- *  "amount_int":"20000000", 
- *  "stamp":"1348182250883337" 
- * }
  *
  * @author SparksG
  */
 public class Offer {
+
     private double price;
     private double amount;
     private long price_int;
     private long amount_int;
     private long stamp;
 
-    public Offer(@JsonProperty("price")  double price,
+    public Offer(@JsonProperty("price") double price,
             @JsonProperty("amount") double amount,
             @JsonProperty("price_int") long price_int,
             @JsonProperty("amount_int") long amount_int,
-            @JsonProperty("stamp") long stamp )
-    {
-     this.price = price;
-     this.amount=amount;
-     this.price_int=price_int;
-     this.amount_int=amount_int;
-     this.stamp=stamp;
+            @JsonProperty("stamp") long stamp) {
+        this.price = price;
+        this.amount = amount;
+        this.price_int = price_int;
+        this.amount_int = amount_int;
+        this.stamp = stamp;
     }
-    
+
     /**
      * @return the price
      */
@@ -102,5 +95,4 @@ public class Offer {
     public void setStamp(long stamp) {
         this.stamp = stamp;
     }
-    
 }
