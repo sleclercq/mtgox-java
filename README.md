@@ -1,4 +1,4 @@
 mtgox-java
 ==========
 
-A Java API for the MtGox bitcoin currency exchange
+A Java API for the MtGox bitcoin currency exchange.
