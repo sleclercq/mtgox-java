@@ -1,4 +1,4 @@
-package to.sparks.mtgox.dto.websocket;
+package to.sparks.mtgox.dto;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import to.sparks.mtgox.dto.Offer;

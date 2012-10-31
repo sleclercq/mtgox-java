@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package to.sparks.mtgox.dto;
 
 import java.util.HashMap;
@@ -11,7 +7,8 @@ import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.codehaus.jackson.annotate.JsonCreator;
 
 /**
- *
+ * This bean can be used as a dynamic proxy for *any* JSON object
+ * 
  * @author SparksG
  */
 public class DynaBean {
@@ -26,7 +23,7 @@ public class DynaBean {
         return other.get(name);
     }
 
-    // "any getter" needed for serialization    
+    // "any getter" needed for serialization
     @JsonAnyGetter
     public Map<String, Object> any() {
         return other;
