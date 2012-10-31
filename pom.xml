@@ -73,6 +73,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jwebsocket</groupId>
+            <artifactId>jWebSocketJavaSEClient</artifactId>
+            <version>0.11</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
