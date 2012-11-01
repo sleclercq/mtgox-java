@@ -26,23 +26,9 @@ public class FullDepth {
     }
 
     /**
-     * @param aAsks the asks to set
-     */
-    public void setAsks(Offer[] aAsks) {
-        asks = aAsks;
-    }
-
-    /**
      * @return the bids
      */
     public Offer[] getBids() {
         return bids;
-    }
-
-    /**
-     * @param aBids the bids to set
-     */
-    public void setBids(Offer[] aBids) {
-        bids = aBids;
     }
 }

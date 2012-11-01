@@ -34,24 +34,10 @@ public class Offer {
     }
 
     /**
-     * @param price the price to set
-     */
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    /**
      * @return the amount
      */
     public double getAmount() {
         return amount;
-    }
-
-    /**
-     * @param amount the amount to set
-     */
-    public void setAmount(double amount) {
-        this.amount = amount;
     }
 
     /**
@@ -62,13 +48,6 @@ public class Offer {
     }
 
     /**
-     * @param price_int the price_int to set
-     */
-    public void setPrice_int(long price_int) {
-        this.price_int = price_int;
-    }
-
-    /**
      * @return the amount_int
      */
     public long getAmount_int() {
@@ -76,23 +55,9 @@ public class Offer {
     }
 
     /**
-     * @param amount_int the amount_int to set
-     */
-    public void setAmount_int(long amount_int) {
-        this.amount_int = amount_int;
-    }
-
-    /**
      * @return the stamp
      */
     public long getStamp() {
         return stamp;
-    }
-
-    /**
-     * @param stamp the stamp to set
-     */
-    public void setStamp(long stamp) {
-        this.stamp = stamp;
     }
 }
