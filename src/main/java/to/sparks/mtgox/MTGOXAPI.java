@@ -23,6 +23,8 @@ import to.sparks.mtgox.dto.Result;
 import to.sparks.mtgox.util.JSONSource;
 
 /**
+ * All MtGox API interactions (both HTTP and Websocket) are handled by this
+ * class.
  *
  * @author SparksG
  */
@@ -49,20 +51,22 @@ public class MTGOXAPI {
         TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {
 
+                @Override
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                     return null;
                 }
 
+                @Override
                 public void checkClientTrusted(
                         java.security.cert.X509Certificate[] certs, String authType) {
                 }
 
+                @Override
                 public void checkServerTrusted(
                         java.security.cert.X509Certificate[] certs, String authType) {
                 }
             }
         };
-
 
         try {
 
@@ -159,8 +163,9 @@ public class MTGOXAPI {
         // create connection
         connection = (HttpURLConnection) queryUrl.openConnection();
         connection.setDoOutput(true);
+
         // set signature
-        connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; Java Test client)");
+        connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; mtgox-java client)");
         connection.setRequestProperty("Rest-Key", apiKey);
         connection.setRequestProperty("Rest-Sign", signature.replaceAll("\n", ""));
 

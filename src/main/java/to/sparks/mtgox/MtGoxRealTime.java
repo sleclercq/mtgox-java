@@ -8,26 +8,27 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.jwebsocket.api.WebSocketClientEvent;
-import org.jwebsocket.api.WebSocketClientListener;
-import org.jwebsocket.api.WebSocketPacket;
 import org.jwebsocket.client.java.BaseWebSocket;
-import org.jwebsocket.kit.RawPacket;
 import org.jwebsocket.kit.WebSocketException;
 import to.sparks.mtgox.dto.*;
 import to.sparks.mtgox.util.JSONSource;
+import to.sparks.mtgox.util.MtGoxListener;
+import to.sparks.mtgox.util.MtGoxSocket;
 
-public class MtGoxRealTime implements WebSocketClientListener {
+/**
+ * This class maintains a realtime state constantly updated by a websocket
+ * connection to the MtGox exchange.
+ *
+ * @author SparksG
+ */
+public class MtGoxRealTime implements MtGoxListener {
 
     private static final Logger logger = Logger.getLogger(MtGoxRealTime.class.getName());
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
 
     public MtGoxRealTime() throws WebSocketException {
         final BaseWebSocket websocket = new BaseWebSocket();
-        websocket.addListener(this);
+        websocket.addListener(new MtGoxSocket(this, logger));
         websocket.open("ws://websocket.mtgox.com/mtgox");
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -59,64 +60,6 @@ public class MtGoxRealTime implements WebSocketClientListener {
             }
         }
         return result;
-    }
-
-    @Override
-    public void processOpened(WebSocketClientEvent aEvent) {
-        // The websocket has been opened
-    }
-
-    @Override
-    public void processPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
-        if (aEvent != null) {
-            if (aPacket != null && aPacket.getFrameType() == RawPacket.FRAMETYPE_UTF8) {
-                try {
-                    // System.out.println(aPacket.getUTF8());
-
-                    JsonFactory factory = new JsonFactory();
-                    ObjectMapper mapper = new ObjectMapper();
-
-                    JsonParser jp = factory.createJsonParser(aPacket.getUTF8());
-                    DynaBean op = mapper.readValue(jp, DynaBean.class);
-
-                    if (op.get("op") != null && op.get("op").equals("private")) {
-                        String messageType = op.get("private").toString();
-                        if (messageType.equalsIgnoreCase("ticker")) {
-                            OpPrivateTicker opPrivateTicker = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTicker.class);
-                            Ticker ticker = opPrivateTicker.getTicker();
-                            //  logger.log(Level.INFO, "Ticker: currency: {0}", new Object[]{ticker.getAvg().getCurrency()});
-                        } else if (messageType.equalsIgnoreCase("depth")) {
-                            OpPrivateDepth opPrivateDepth = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateDepth.class);
-                            Depth depth = opPrivateDepth.getDepth();
-                            depthHistory.add(depth);
-                            //    logger.log(Level.INFO, "Depth currency: {0}", new Object[]{depth.getCurrency()});
-                        } else {
-                            logger.log(Level.INFO, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
-                        }
-
-                        // logger.log(Level.INFO, "messageType: {0}, payload: {1}", new Object[]{messageType, dataPayload});
-                    } else {
-                        logger.log(Level.INFO, "Unknown operation: {0}, payload: {1}", new Object[]{op.get("op")});
-                        // TODO:  Process the following types
-                        // subscribe
-                        // unsubscribe
-                        // remark
-                        // result
-                    }
-                } catch (IOException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            } else {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        } else {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
-
-    @Override
-    public void processClosed(WebSocketClientEvent aEvent) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public static void main(String[] args) throws WebSocketException, IOException, InterruptedException {
@@ -160,30 +103,34 @@ public class MtGoxRealTime implements WebSocketClientListener {
         }
 
     }
+    
+    @Override
+    public void tickerEvent(Ticker ticker) {
+    }
 
+    @Override
+    public void depthEvent(Depth depth) {
+        depthHistory.add(depth);
+    }
+    
     private static void updateDepth(Depth update, List<Offer> depth) {
-        boolean found = false;
 
         List<Offer> emptyOffers = new ArrayList<>();
         for (Offer offer : depth) {
-
+            if (offer.getAmount_int() == 0) {
+                emptyOffers.add(offer);
+            }
             if (offer.getPrice_int() == update.getPrice_int()) {
                 double dAmount = ((double) update.getTotal_volume_int()) / 100000000.0D; // TODO:  This value is currency dependent.  JPY is different from USD for example.
                 logger.log(Level.INFO, "Update at price {0}   Old volume: {1}  New volume: {2}", new Object[]{offer.getPrice(), offer.getAmount(), dAmount});
                 offer.setAmount_int(update.getTotal_volume_int());
                 offer.setAmount(dAmount);
                 offer.setStamp(update.getStamp());
-                found = true;
-            }
-            if (offer.getAmount_int() == 0) {
-                emptyOffers.add(offer);
-            }
-            if (found) {
                 break;
             }
         }
 
-        if (!found && update.getAmount_int() > 0) {
+        if (update.getAmount_int() > 0) {
             logger.log(Level.INFO, "New offer at price {0}   volume: {1}  (total {2})", new Object[]{update.getPrice(), update.getAmount(), update.getTotal_volume_int()});
 
             // There is nothing at this price point, add it to the collection.
