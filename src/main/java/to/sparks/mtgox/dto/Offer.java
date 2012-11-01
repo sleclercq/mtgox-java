@@ -60,4 +60,25 @@ public class Offer {
     public long getStamp() {
         return stamp;
     }
+
+    /**
+     * @param amount the amount to set
+     */
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * @param amount_int the amount_int to set
+     */
+    public void setAmount_int(long amount_int) {
+        this.amount_int = amount_int;
+    }
+
+    /**
+     * @param stamp the stamp to set
+     */
+    public void setStamp(long stamp) {
+        this.stamp = stamp;
+    }
 }
