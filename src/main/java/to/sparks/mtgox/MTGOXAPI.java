@@ -3,6 +3,7 @@ package to.sparks.mtgox;
 import biz.source_code.base64Coder.Base64Coder;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -30,6 +31,8 @@ import to.sparks.mtgox.util.JSONSource;
  */
 public class MTGOXAPI {
 
+    // TODO:  This value is currency dependent.  JPY is different from USD for example.
+    public static double USD_INT_MULTIPLIER = 100000000.0D;
     public static double AUD_INT_MULTIPLIER = 100000.0D;
     public static double BTC_VOL_INT_MULTIPLIER = 100000000.0D;
 
@@ -37,6 +40,14 @@ public class MTGOXAPI {
 
         bid, ask
     }
+    
+    public enum Currency{
+        USD, AUD
+    }
+    private static String MTGOX_HTTP_API_URL = "https://mtgox.com/api/";
+    private static String ORDER_ADD_URL = "1/BTCUSD/private/order/add";
+    private static String ORDER_RESULT_URL = "1/generic/private/order/result";
+    private static String PRIVATE_ORDERS_URL = "1/generic/private/orders";
     private String apiKey;
     private String secret;
     private Logger log;
@@ -105,7 +116,7 @@ public class MTGOXAPI {
         }
         params.put("amount_int", String.valueOf(convertVolumeBTCtoInt(volume)));
 
-        Result<String> result = stringJSON.getResultFromStream(query("1/BTCAUD/private/order/add", params), String.class);
+        Result<String> result = stringJSON.getResultFromStream(getMtGoxHTTPInputStream(ORDER_ADD_URL, params), String.class);
         if (result.getError() != null) {
             throw new RuntimeException(result.getToken() + ": " + result.getError());
         }
@@ -125,7 +136,7 @@ public class MTGOXAPI {
         }
         params.put("order", orderRef);
 
-        Result<OrderResult> result = orderResultJSON.getResultFromStream(query("1/generic/private/order/result", params), OrderResult.class);
+        Result<OrderResult> result = orderResultJSON.getResultFromStream(getMtGoxHTTPInputStream(ORDER_RESULT_URL, params), OrderResult.class);
         if (result.getError() != null) {
             throw new RuntimeException(result.getToken() + ": " + result.getError());
         }
@@ -134,59 +145,47 @@ public class MTGOXAPI {
 
     public Order[] getOpenOrders() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
 
-        Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(query("1/generic/private/orders"), Order[].class);
+        Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(PRIVATE_ORDERS_URL), Order[].class);
         return openOrders.getReturn();
     }
 
-    private InputStream query(String path) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-        return query(path, new HashMap<String, String>());
+    private InputStream getMtGoxHTTPInputStream(String path) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+        return getMtGoxHTTPInputStream(path, new HashMap<String, String>());
     }
 
-    private InputStream query(String path, HashMap<String, String> args) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    private InputStream getMtGoxHTTPInputStream(String path, HashMap<String, String> args) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         HttpURLConnection connection;
 
-        // add nonce and build arg list
         args.put("nonce", String.valueOf(System.currentTimeMillis()));
-        String post_data = this.buildQueryString(args);
+        String post_data = buildQueryString(args);
 
         // args signature
         Mac mac = Mac.getInstance("HmacSHA512");
         SecretKeySpec secret_spec = new SecretKeySpec(Base64Coder.decode(this.secret), "HmacSHA512");
         mac.init(secret_spec);
-        String signature = new String(Base64Coder.encode(mac.doFinal(post_data.getBytes())));
+        String signature = new String(Base64Coder.encode(mac.doFinal(post_data.getBytes()))).replaceAll("\n", "");
 
         System.setProperty("jsse.enableSNIExtension", "false");
 
-        // build URL
-        URL queryUrl = new URL("https://mtgox.com/api/" + path);
-
-        // create connection
+        URL queryUrl = new URL(MTGOX_HTTP_API_URL + path);
         connection = (HttpURLConnection) queryUrl.openConnection();
         connection.setDoOutput(true);
-
-        // set signature
         connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; mtgox-java client)");
         connection.setRequestProperty("Rest-Key", apiKey);
-        connection.setRequestProperty("Rest-Sign", signature.replaceAll("\n", ""));
-
-        // write post
+        connection.setRequestProperty("Rest-Sign", signature);
         connection.getOutputStream().write(post_data.getBytes());
-
         return connection.getInputStream();
     }
 
-    private String buildQueryString(HashMap<String, String> args) {
+    private static String buildQueryString(HashMap<String, String> args) throws UnsupportedEncodingException {
         String result = new String();
         for (String hashkey : args.keySet()) {
             if (result.length() > 0) {
                 result += '&';
             }
-            try {
-                result += URLEncoder.encode(hashkey, "UTF-8") + "="
-                        + URLEncoder.encode(args.get(hashkey), "UTF-8");
-            } catch (Exception ex) {
-                log.log(Level.SEVERE, null, ex);
-            }
+            result += URLEncoder.encode(hashkey, "UTF-8") + "="
+                    + URLEncoder.encode(args.get(hashkey), "UTF-8");
+
         }
         return result;
     }

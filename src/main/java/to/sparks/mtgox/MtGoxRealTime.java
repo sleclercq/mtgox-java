@@ -25,6 +25,7 @@ public class MtGoxRealTime implements MtGoxListener {
 
     private static final Logger logger = Logger.getLogger(MtGoxRealTime.class.getName());
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
+    private List<Ticker> tickerHistory = new CopyOnWriteArrayList<>();
 
     public MtGoxRealTime() throws WebSocketException {
         final BaseWebSocket websocket = new BaseWebSocket();
@@ -73,26 +74,24 @@ public class MtGoxRealTime implements MtGoxListener {
         List<Offer> asksUSD = new ArrayList<>(Arrays.asList(fullDepthUSD.getAsks()));
         List<Offer> bidsUSD = new ArrayList<>(Arrays.asList(fullDepthUSD.getBids()));
 
-        //       System.out.println("Start Depth size asks: " + asksUSD.size() + " bids: " + bidsUSD.size());
         long mostRecentAskTimestamp = getMostRecentTimestamp(asksUSD);
         long mostRecentBidTimestamp = getMostRecentTimestamp(bidsUSD);
-
         long mostRecentTimestamp = mostRecentAskTimestamp < mostRecentBidTimestamp ? mostRecentBidTimestamp : mostRecentAskTimestamp;
 
         while (true) {
-            Thread.sleep(1000);  // TODO: We only really need to do processing when updates acutally arrive, rather than every X seconds.
+            Thread.sleep(1000);  // TODO: We only really need to do processing when updates acutally arrive, rather than every X seconds like this.
             List<Depth> updates = mtGoxSocket.getAllDepthSince(mostRecentTimestamp);
 //            System.out.println(updates.size() + " updates found.");
             for (Depth update : updates) {
                 if (update.getStamp() < mostRecentTimestamp) {
-                    System.out.println("Warning:  Younger timestamp.");
+                    logger.log(Level.WARNING, "Warning:  Out of order timestamp found. {0} < {1}", new Object[]{update.getStamp(), mostRecentTimestamp});
                 } else {
                     mostRecentTimestamp = update.getStamp();
                     if (update.getCurrency().equalsIgnoreCase("USD")) {
                         if (update.getType_str().equalsIgnoreCase("ASK")) {
-                            updateDepth(update, asksUSD);
+                            updateDepth(update, asksUSD, MTGOXAPI.USD_INT_MULTIPLIER);
                         } else {
-                            updateDepth(update, bidsUSD);
+                            updateDepth(update, bidsUSD, MTGOXAPI.USD_INT_MULTIPLIER);
                         }
                     } else {
                         // Some other currency
@@ -103,17 +102,18 @@ public class MtGoxRealTime implements MtGoxListener {
         }
 
     }
-    
+
     @Override
     public void tickerEvent(Ticker ticker) {
+        tickerHistory.add(ticker);
     }
 
     @Override
     public void depthEvent(Depth depth) {
         depthHistory.add(depth);
     }
-    
-    private static void updateDepth(Depth update, List<Offer> depth) {
+
+    private static void updateDepth(Depth update, List<Offer> depth, double covertToIntFactor) {
 
         List<Offer> emptyOffers = new ArrayList<>();
         for (Offer offer : depth) {
@@ -121,7 +121,7 @@ public class MtGoxRealTime implements MtGoxListener {
                 emptyOffers.add(offer);
             }
             if (offer.getPrice_int() == update.getPrice_int()) {
-                double dAmount = ((double) update.getTotal_volume_int()) / 100000000.0D; // TODO:  This value is currency dependent.  JPY is different from USD for example.
+                double dAmount = ((double) update.getTotal_volume_int()) / covertToIntFactor;
                 logger.log(Level.INFO, "Update at price {0}   Old volume: {1}  New volume: {2}", new Object[]{offer.getPrice(), offer.getAmount(), dAmount});
                 offer.setAmount_int(update.getTotal_volume_int());
                 offer.setAmount(dAmount);
