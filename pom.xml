@@ -4,7 +4,7 @@
 
     <groupId>to.sparks</groupId>
     <artifactId>mtgox</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>MtGox Java API</name>
@@ -28,7 +28,8 @@
         <connection>scm:git:git@github.com:GrantSparks/mtgox-java.git</connection>
         <url>https://github.com/GrantSparks/mtgox-java</url>
         <developerConnection>scm:git:git@github.com:GrantSparks/mtgox-java.git</developerConnection>
-    </scm>
+      <tag>mtgox-0.0.1</tag>
+  </scm>
 
     <developers>
         <developer>
