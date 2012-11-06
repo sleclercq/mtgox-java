@@ -1,3 +1,0 @@
-[submodule "src\\main\\java\\com\\mtgox\\api"]
-	path = src\\main\\java\\com\\mtgox\\api
-	url = git://gist.github.com/3758773.git
