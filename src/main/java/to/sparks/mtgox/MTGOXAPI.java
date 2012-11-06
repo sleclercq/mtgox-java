@@ -153,6 +153,10 @@ public class MTGOXAPI {
         return getMtGoxHTTPInputStream(path, new HashMap<String, String>());
     }
 
+    /* 
+     * This is based on an original idea by github user christopherobin
+     * See https://gist.github.com/2396722
+     */
     private InputStream getMtGoxHTTPInputStream(String path, HashMap<String, String> args) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         HttpURLConnection connection;
 
