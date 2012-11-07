@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.Mac;
@@ -18,10 +19,10 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import to.sparks.mtgox.dto.Order;
-import to.sparks.mtgox.dto.OrderResult;
-import to.sparks.mtgox.dto.Result;
+import org.jwebsocket.kit.WebSocketException;
+import to.sparks.mtgox.dto.*;
 import to.sparks.mtgox.util.JSONSource;
+import to.sparks.mtgox.util.MtGoxRealTime;
 
 /**
  * All MtGox API interactions (both HTTP and Websocket) are handled by this
@@ -40,23 +41,27 @@ public class MTGOXAPI {
 
         bid, ask
     }
-    
-    public enum Currency{
+
+    public enum Currency {
+
         USD, AUD
     }
     private static String MTGOX_HTTP_API_URL = "https://mtgox.com/api/";
     private static String ORDER_ADD_URL = "1/BTCUSD/private/order/add";
     private static String ORDER_RESULT_URL = "1/generic/private/order/result";
     private static String PRIVATE_ORDERS_URL = "1/generic/private/orders";
+    private static String BTC_USD_FULL_DEPTH = "https://mtgox.com/api/1/BTCUSD/fulldepth";
     private String apiKey;
     private String secret;
-    private Logger log;
+    private Logger logger;
     private JSONSource<Result<Order[]>> openOrdersJSON;
     private JSONSource<Result<String>> stringJSON;
     private JSONSource<Result<OrderResult>> orderResultJSON;
+    private JSONSource<Result<FullDepth>> fullDepthJSON;
+    private static MtGoxRealTime mtGoxRealTime;
 
-    public MTGOXAPI(Logger log, String apiKey, String secret) {
-        this.log = log;
+    public MTGOXAPI(final Logger logger, String apiKey, String secret) {
+        this.logger = logger;
         this.apiKey = apiKey;
         this.secret = secret;
         TrustManager[] trustAllCerts = new TrustManager[]{
@@ -86,12 +91,38 @@ public class MTGOXAPI {
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {
 
-            log.log(Level.SEVERE, null, e);
+            logger.log(Level.SEVERE, null, e);
         }
 
         openOrdersJSON = new JSONSource<>();
         stringJSON = new JSONSource<>();
         orderResultJSON = new JSONSource<>();
+        fullDepthJSON = new JSONSource<>();
+
+        Thread t = new Thread() {
+
+            public void run() {
+                try {
+                    mtGoxRealTime = new MtGoxRealTime(getFullDepth());
+                } catch (WebSocketException | IOException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        t.start();
+
+    }
+
+    public List<Offer> getRealtimeAsks() {
+        return mtGoxRealTime != null ? mtGoxRealTime.getAsks() : null;
+    }
+
+    public List<Offer> getRealtimeBids() {
+        return mtGoxRealTime != null ? mtGoxRealTime.getBids() : null;
+    }
+
+    public FullDepth getFullDepth() throws IOException {
+        return fullDepthJSON.getResultFromStream(new URL(BTC_USD_FULL_DEPTH).openStream(), FullDepth.class).getReturn();
     }
 
     public static int convertVolumeBTCtoInt(double d) {
@@ -153,9 +184,9 @@ public class MTGOXAPI {
         return getMtGoxHTTPInputStream(path, new HashMap<String, String>());
     }
 
-    /* 
-     * This is based on an original idea by github user christopherobin
-     * See https://gist.github.com/2396722
+    /*
+     * This is based on an original idea by github user christopherobin See
+     * https://gist.github.com/2396722
      */
     private InputStream getMtGoxHTTPInputStream(String path, HashMap<String, String> args) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         HttpURLConnection connection;

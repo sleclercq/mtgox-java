@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package to.sparks.mtgox.util;
 
 import to.sparks.mtgox.dto.Depth;
@@ -16,5 +12,4 @@ public interface MtGoxListener {
     void depthEvent(Depth depth);
 
     void tickerEvent(Ticker ticker);
-    
 }

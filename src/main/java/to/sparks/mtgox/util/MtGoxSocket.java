@@ -10,7 +10,6 @@ import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
 import org.jwebsocket.kit.RawPacket;
-import to.sparks.mtgox.MtGoxRealTime;
 import to.sparks.mtgox.dto.Depth;
 import to.sparks.mtgox.dto.DynaBean;
 import to.sparks.mtgox.dto.OpPrivateDepth;

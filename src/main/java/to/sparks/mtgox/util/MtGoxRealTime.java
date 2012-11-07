@@ -1,7 +1,6 @@
-package to.sparks.mtgox;
+package to.sparks.mtgox.util;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,10 +9,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jwebsocket.client.java.BaseWebSocket;
 import org.jwebsocket.kit.WebSocketException;
-import to.sparks.mtgox.dto.*;
-import to.sparks.mtgox.util.JSONSource;
-import to.sparks.mtgox.util.MtGoxListener;
-import to.sparks.mtgox.util.MtGoxSocket;
+import to.sparks.mtgox.MTGOXAPI;
+import to.sparks.mtgox.dto.Depth;
+import to.sparks.mtgox.dto.FullDepth;
+import to.sparks.mtgox.dto.Offer;
+import to.sparks.mtgox.dto.Ticker;
 
 /**
  * This class maintains a realtime state constantly updated by a websocket
@@ -26,9 +26,15 @@ public class MtGoxRealTime implements MtGoxListener {
     private static final Logger logger = Logger.getLogger(MtGoxRealTime.class.getName());
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
     private List<Ticker> tickerHistory = new CopyOnWriteArrayList<>();
+    private List<Offer> asks;
+    private List<Offer> bids;
+    private long mostRecentAskTimestamp;
+    private long mostRecentBidTimestamp;
+    private long mostRecentTimestamp;
+    final BaseWebSocket websocket = new BaseWebSocket();
 
-    public MtGoxRealTime() throws WebSocketException {
-        final BaseWebSocket websocket = new BaseWebSocket();
+    public MtGoxRealTime(FullDepth fullDepth) throws WebSocketException, IOException {
+
         websocket.addListener(new MtGoxSocket(this, logger));
         websocket.open("ws://websocket.mtgox.com/mtgox");
 
@@ -45,6 +51,13 @@ public class MtGoxRealTime implements MtGoxListener {
                 }
             }
         });
+
+        asks = new ArrayList<>(Arrays.asList(fullDepth.getAsks()));
+        bids = new ArrayList<>(Arrays.asList(fullDepth.getBids()));
+
+        mostRecentAskTimestamp = getMostRecentTimestamp(asks);
+        mostRecentBidTimestamp = getMostRecentTimestamp(bids);
+        mostRecentTimestamp = mostRecentAskTimestamp < mostRecentBidTimestamp ? mostRecentBidTimestamp : mostRecentAskTimestamp;
     }
 
     /*
@@ -63,46 +76,6 @@ public class MtGoxRealTime implements MtGoxListener {
         return result;
     }
 
-    public static void main(String[] args) throws WebSocketException, IOException, InterruptedException {
-
-        MtGoxRealTime mtGoxSocket = new MtGoxRealTime();
-
-        JSONSource<Result<FullDepth>> fullDepthJSON = new JSONSource<>();
-
-        FullDepth fullDepthUSD = fullDepthJSON.getResultFromStream(new URL("https://mtgox.com/api/1/BTCUSD/fulldepth").openStream(), FullDepth.class).getReturn();
-
-        List<Offer> asksUSD = new ArrayList<>(Arrays.asList(fullDepthUSD.getAsks()));
-        List<Offer> bidsUSD = new ArrayList<>(Arrays.asList(fullDepthUSD.getBids()));
-
-        long mostRecentAskTimestamp = getMostRecentTimestamp(asksUSD);
-        long mostRecentBidTimestamp = getMostRecentTimestamp(bidsUSD);
-        long mostRecentTimestamp = mostRecentAskTimestamp < mostRecentBidTimestamp ? mostRecentBidTimestamp : mostRecentAskTimestamp;
-
-        while (true) {
-            Thread.sleep(1000);  // TODO: We only really need to do processing when updates acutally arrive, rather than every X seconds like this.
-            List<Depth> updates = mtGoxSocket.getAllDepthSince(mostRecentTimestamp);
-//            System.out.println(updates.size() + " updates found.");
-            for (Depth update : updates) {
-                if (update.getStamp() < mostRecentTimestamp) {
-                    logger.log(Level.WARNING, "Warning:  Out of order timestamp found. {0} < {1}", new Object[]{update.getStamp(), mostRecentTimestamp});
-                } else {
-                    mostRecentTimestamp = update.getStamp();
-                    if (update.getCurrency().equalsIgnoreCase("USD")) {
-                        if (update.getType_str().equalsIgnoreCase("ASK")) {
-                            updateDepth(update, asksUSD, MTGOXAPI.USD_INT_MULTIPLIER);
-                        } else {
-                            updateDepth(update, bidsUSD, MTGOXAPI.USD_INT_MULTIPLIER);
-                        }
-                    } else {
-                        // Some other currency
-                    }
-                }
-            }
-            logger.log(Level.INFO, "Asks: {0}  Bids: {1}", new Object[]{asksUSD.size(), bidsUSD.size()});
-        }
-
-    }
-
     @Override
     public void tickerEvent(Ticker ticker) {
         tickerHistory.add(ticker);
@@ -111,6 +84,26 @@ public class MtGoxRealTime implements MtGoxListener {
     @Override
     public void depthEvent(Depth depth) {
         depthHistory.add(depth);
+
+        List<Depth> updates = getAllDepthSince(mostRecentTimestamp);
+//            System.out.println(updates.size() + " updates found.");
+        for (Depth update : updates) {
+            if (update.getStamp() < mostRecentTimestamp) {
+                logger.log(Level.WARNING, "Warning:  Out of order timestamp found. {0} < {1}", new Object[]{update.getStamp(), mostRecentTimestamp});
+            } else {
+                mostRecentTimestamp = update.getStamp();
+                if (update.getCurrency().equalsIgnoreCase("USD")) {
+                    if (update.getType_str().equalsIgnoreCase("ASK")) {
+                        updateDepth(update, asks, MTGOXAPI.USD_INT_MULTIPLIER);
+                    } else {
+                        updateDepth(update, bids, MTGOXAPI.USD_INT_MULTIPLIER);
+                    }
+                } else {
+                    // Some other currency
+                }
+            }
+        }
+        logger.log(Level.INFO, "Asks: {0}  Bids: {1}", new Object[]{asks.size(), bids.size()});
     }
 
     private static void updateDepth(Depth update, List<Offer> depth, double covertToIntFactor) {
@@ -153,5 +146,21 @@ public class MtGoxRealTime implements MtGoxListener {
             }
         }
         return mostRecentTimestamp;
+    }
+
+    public List<Depth> getDepthHistory() {
+        return depthHistory;
+    }
+
+    public List<Ticker> getTickerHistory() {
+        return tickerHistory;
+    }
+
+    public List<Offer> getAsks() {
+        return asks;
+    }
+
+    public List<Offer> getBids() {
+        return bids;
     }
 }
