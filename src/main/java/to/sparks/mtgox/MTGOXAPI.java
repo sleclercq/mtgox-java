@@ -42,6 +42,7 @@ public class MTGOXAPI {
         bid, ask
     }
 
+    // TODO:  Make this API currency aware.
     public enum Currency {
 
         USD, AUD
@@ -51,13 +52,15 @@ public class MTGOXAPI {
     private static String ORDER_RESULT_URL = "1/generic/private/order/result";
     private static String PRIVATE_ORDERS_URL = "1/generic/private/orders";
     private static String BTC_USD_FULL_DEPTH = "https://mtgox.com/api/1/BTCUSD/fulldepth";
+    private static String BTC_USD_TICKER = "https://mtgox.com/api/1/BTCUSD/ticker";
     private String apiKey;
     private String secret;
-    private Logger logger;
+    private static Logger logger;
     private JSONSource<Result<Order[]>> openOrdersJSON;
     private JSONSource<Result<String>> stringJSON;
     private JSONSource<Result<OrderResult>> orderResultJSON;
     private JSONSource<Result<FullDepth>> fullDepthJSON;
+    private JSONSource<Result<Ticker>> tickerJSON;
     private static MtGoxRealTime mtGoxRealTime;
 
     public MTGOXAPI(final Logger logger, String apiKey, String secret) {
@@ -98,6 +101,7 @@ public class MTGOXAPI {
         stringJSON = new JSONSource<>();
         orderResultJSON = new JSONSource<>();
         fullDepthJSON = new JSONSource<>();
+        tickerJSON = new JSONSource<>();
 
         Thread t = new Thread() {
 
@@ -178,6 +182,11 @@ public class MTGOXAPI {
 
         Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(PRIVATE_ORDERS_URL), Order[].class);
         return openOrders.getReturn();
+    }
+
+    public Ticker getTicker() throws IOException {
+        Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(new URL(BTC_USD_TICKER).openStream(), Ticker.class);
+        return tickerUSD.getReturn();
     }
 
     private InputStream getMtGoxHTTPInputStream(String path) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
