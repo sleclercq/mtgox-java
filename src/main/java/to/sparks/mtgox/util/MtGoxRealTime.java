@@ -9,11 +9,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jwebsocket.client.java.BaseWebSocket;
 import org.jwebsocket.kit.WebSocketException;
-import to.sparks.mtgox.MTGOXAPI;
 import to.sparks.mtgox.dto.Depth;
 import to.sparks.mtgox.dto.FullDepth;
 import to.sparks.mtgox.dto.Offer;
 import to.sparks.mtgox.dto.Ticker;
+import to.sparks.mtgox.impl.MtGoxApiImpl;
 
 /**
  * This class maintains a realtime state constantly updated by a websocket
@@ -86,21 +86,30 @@ public class MtGoxRealTime implements MtGoxListener {
         depthHistory.add(depth);
 
         List<Depth> updates = getAllDepthSince(mostRecentTimestamp);
-//            System.out.println(updates.size() + " updates found.");
         for (Depth update : updates) {
             if (update.getStamp() < mostRecentTimestamp) {
                 logger.log(Level.WARNING, "Warning:  Out of order timestamp found. {0} < {1}", new Object[]{update.getStamp(), mostRecentTimestamp});
             } else {
-                mostRecentTimestamp = update.getStamp();
-                if (update.getCurrency().equalsIgnoreCase("USD")) {
-                    if (update.getType_str().equalsIgnoreCase("ASK")) {
-                        updateDepth(update, asks, MTGOXAPI.USD_INT_MULTIPLIER);
-                    } else {
-                        updateDepth(update, bids, MTGOXAPI.USD_INT_MULTIPLIER);
-                    }
+                List<Offer> offers;
+                if (update.getType_str().equalsIgnoreCase("ASK")) {
+                    offers = asks;
                 } else {
-                    // Some other currency
+                    offers = bids;
                 }
+
+                mostRecentTimestamp = update.getStamp();
+
+                double multiplier;
+                // TODO: Verify multiplier values for all currencies
+                switch (update.getCurrency().toLowerCase()) {
+                    case "aud":
+                        multiplier = MtGoxApiImpl.AUD_INT_MULTIPLIER;
+                        break;
+                    default:
+                        multiplier = MtGoxApiImpl.USD_INT_MULTIPLIER;
+                        break;
+                }
+                updateDepth(update, offers, multiplier);
             }
         }
         logger.log(Level.INFO, "Asks: {0}  Bids: {1}", new Object[]{asks.size(), bids.size()});

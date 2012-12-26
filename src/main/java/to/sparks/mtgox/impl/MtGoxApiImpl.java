@@ -1,4 +1,4 @@
-package to.sparks.mtgox;
+package to.sparks.mtgox.impl;
 
 import biz.source_code.base64Coder.Base64Coder;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,9 +21,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.jwebsocket.kit.WebSocketException;
+import to.sparks.mtgox.MtGoxAPI;
 import to.sparks.mtgox.dto.*;
 import to.sparks.mtgox.util.JSONSource;
 import to.sparks.mtgox.util.MtGoxRealTime;
+import to.sparks.mtgox.util.MtGoxUrlFactory;
 
 /**
  * All MtGox API interactions (both HTTP and Websocket) are handled by this
@@ -30,29 +33,12 @@ import to.sparks.mtgox.util.MtGoxRealTime;
  *
  * @author SparksG
  */
-public class MTGOXAPI {
+public class MtGoxApiImpl implements MtGoxAPI {
 
     // TODO:  This value is currency dependent.  JPY is different from USD for example.
     public static double USD_INT_MULTIPLIER = 100000000.0D;
     public static double AUD_INT_MULTIPLIER = 100000.0D;
     public static double BTC_VOL_INT_MULTIPLIER = 100000000.0D;
-
-    public enum OrderType {
-
-        bid, ask
-    }
-
-    // TODO:  Make this API currency aware.
-    public enum Currency {
-
-        USD, AUD
-    }
-    private static String MTGOX_HTTP_API_URL = "https://mtgox.com/api/";
-    private static String ORDER_ADD_URL = "1/BTCUSD/private/order/add";
-    private static String ORDER_RESULT_URL = "1/generic/private/order/result";
-    private static String PRIVATE_ORDERS_URL = "1/generic/private/orders";
-    private static String BTC_USD_FULL_DEPTH = "https://mtgox.com/api/1/BTCUSD/fulldepth";
-    private static String BTC_USD_TICKER = "https://mtgox.com/api/1/BTCUSD/ticker";
     private String apiKey;
     private String secret;
     private static Logger logger;
@@ -62,11 +48,13 @@ public class MTGOXAPI {
     private JSONSource<Result<FullDepth>> fullDepthJSON;
     private JSONSource<Result<Ticker>> tickerJSON;
     private static MtGoxRealTime mtGoxRealTime;
+    private Currency currency;
 
-    public MTGOXAPI(final Logger logger, String apiKey, String secret) {
+    public MtGoxApiImpl(final Logger logger, Currency currency, String apiKey, String secret) {
         this.logger = logger;
         this.apiKey = apiKey;
         this.secret = secret;
+        this.currency = currency;
         TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {
 
@@ -103,12 +91,15 @@ public class MTGOXAPI {
         fullDepthJSON = new JSONSource<>();
         tickerJSON = new JSONSource<>();
 
+
         Thread t = new Thread() {
 
             public void run() {
                 try {
                     mtGoxRealTime = new MtGoxRealTime(getFullDepth());
                 } catch (WebSocketException | IOException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
                     logger.log(Level.SEVERE, null, ex);
                 }
             }
@@ -117,75 +108,93 @@ public class MTGOXAPI {
 
     }
 
+    @Override
     public List<Offer> getRealtimeAsks() {
         return mtGoxRealTime != null ? mtGoxRealTime.getAsks() : null;
     }
 
+    @Override
     public List<Offer> getRealtimeBids() {
         return mtGoxRealTime != null ? mtGoxRealTime.getBids() : null;
     }
 
-    public FullDepth getFullDepth() throws IOException {
-        return fullDepthJSON.getResultFromStream(new URL(BTC_USD_FULL_DEPTH).openStream(), FullDepth.class).getReturn();
+    @Override
+    public FullDepth getFullDepth() throws IOException, Exception {
+        return fullDepthJSON.getResultFromStream(new URL(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.FullDepth)).openStream(), FullDepth.class).getReturn();
     }
 
-    public static int convertVolumeBTCtoInt(double d) {
+    private static int convertVolumeBTCtoInt(double d) {
         double total = d * BTC_VOL_INT_MULTIPLIER;
         return (int) total;
     }
 
-    public static int convertPriceAUDtoInt(double d) {
-        double total = d * AUD_INT_MULTIPLIER;
+    private static int convertPricetoInt(String currencyCode, double d) {
+        double multiplier;
+        // TODO:  Verify what the correct multiplier is for each currency
+        switch (currencyCode.toLowerCase()) {
+            case "aud":
+                multiplier = AUD_INT_MULTIPLIER;
+                break;
+            default:
+                multiplier = USD_INT_MULTIPLIER;
+                break;
+        }
+        double total = d * multiplier;
         return (int) total;
     }
 
-    public String placeOrder(OrderType orderType, Double price, double volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    @Override
+    public String placeOrder(OrderType orderType, Double price, double volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
         HashMap<String, String> params = new HashMap<>();
-        if (orderType == OrderType.bid) {
+        if (orderType == OrderType.Bid) {
             params.put("type", "bid");
         } else {
             params.put("type", "ask");
         }
         if (price != null) {
-            params.put("price_int", String.valueOf(convertPriceAUDtoInt(price)));
+            params.put("price_int", String.valueOf(convertPricetoInt(currency.getCurrencyCode(), price)));
         }
         params.put("amount_int", String.valueOf(convertVolumeBTCtoInt(volume)));
 
-        Result<String> result = stringJSON.getResultFromStream(getMtGoxHTTPInputStream(ORDER_ADD_URL, params), String.class);
+        Result<String> result = stringJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.PrivateOrderAdd), params), String.class);
         if (result.getError() != null) {
             throw new RuntimeException(result.getToken() + ": " + result.getError());
         }
         return result.getReturn();
     }
 
-    public String placeMarketOrder(OrderType orderType, double volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    @Override
+    public String placeMarketOrder(OrderType orderType, double volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
         return placeOrder(orderType, null, volume);
     }
 
-    public OrderResult getOrderResult(OrderType orderType, String orderRef) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    @Override
+    public OrderResult getOrderResult(OrderType orderType, String orderRef) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
         HashMap<String, String> params = new HashMap<>();
-        if (orderType == OrderType.bid) {
+        if (orderType == OrderType.Bid) {
             params.put("type", "bid");
         } else {
             params.put("type", "ask");
         }
         params.put("order", orderRef);
 
-        Result<OrderResult> result = orderResultJSON.getResultFromStream(getMtGoxHTTPInputStream(ORDER_RESULT_URL, params), OrderResult.class);
+        Result<OrderResult> result = orderResultJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(null, MtGoxUrlFactory.RestCommand.PrivateOrderResult), params), OrderResult.class);
         if (result.getError() != null) {
             throw new RuntimeException(result.getToken() + ": " + result.getError());
         }
         return result.getReturn();
     }
 
-    public Order[] getOpenOrders() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    @Override
+    public Order[] getOpenOrders() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
-        Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(PRIVATE_ORDERS_URL), Order[].class);
+        Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(null, MtGoxUrlFactory.RestCommand.PrivateOrders)), Order[].class);
         return openOrders.getReturn();
     }
 
-    public Ticker getTicker() throws IOException {
-        Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(new URL(BTC_USD_TICKER).openStream(), Ticker.class);
+    @Override
+    public Ticker getTicker() throws IOException, Exception {
+        Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(new URL(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.Ticker)).openStream(), Ticker.class);
         return tickerUSD.getReturn();
     }
 
@@ -211,7 +220,7 @@ public class MTGOXAPI {
 
         System.setProperty("jsse.enableSNIExtension", "false");
 
-        URL queryUrl = new URL(MTGOX_HTTP_API_URL + path);
+        URL queryUrl = new URL(path);
         connection = (HttpURLConnection) queryUrl.openConnection();
         connection.setDoOutput(true);
         connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; mtgox-java client)");
