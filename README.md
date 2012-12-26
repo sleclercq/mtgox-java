@@ -24,7 +24,7 @@ Release versions are available from Maven Central, but you can get developer sna
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
