@@ -11,7 +11,7 @@ import org.codehaus.jackson.annotate.JsonCreator;
  * 
  * @author SparksG
  */
-public class DynaBean {
+public class DynaBean extends DtoBase {
 
     protected Map<String, Object> other = new HashMap<String, Object>();
 

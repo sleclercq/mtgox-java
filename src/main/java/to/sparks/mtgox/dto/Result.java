@@ -1,5 +1,6 @@
 package to.sparks.mtgox.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -7,7 +8,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
  *
  * @author SparksG
  */
-public class Result<T> {
+@JsonAutoDetect
+public class Result<T> extends DtoBase {
 
     private String result;
     private T ret;

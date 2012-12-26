@@ -1,12 +1,14 @@
 package to.sparks.mtgox.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  * @author SparksG
  */
-public class TickerPrice {
+@JsonAutoDetect
+public class TickerPrice extends DtoBase {
 
     private double value;
     private long value_int;

@@ -1,12 +1,14 @@
 package to.sparks.mtgox.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  * @author SparksG
  */
-public class Order {
+@JsonAutoDetect
+public class Order extends DtoBase {
 
     private String oid;
     private String currency;

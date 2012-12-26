@@ -1,11 +1,13 @@
 package to.sparks.mtgox.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  * @author SparksG
  */
+@JsonAutoDetect
 public abstract class OpPrivate<T> extends Operation {
 
     private String channel;

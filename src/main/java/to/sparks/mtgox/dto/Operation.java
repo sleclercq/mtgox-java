@@ -1,12 +1,14 @@
 package to.sparks.mtgox.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  * @author SparksG
  */
-public abstract class Operation {
+@JsonAutoDetect
+public abstract class Operation extends DtoBase {
 
     private String op;
 

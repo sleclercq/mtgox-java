@@ -1,12 +1,14 @@
 package to.sparks.mtgox.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * @author SparksG
  */
-public class FullDepth {
+@JsonAutoDetect
+public class FullDepth extends DtoBase {
 
     private Offer[] asks;
     private Offer[] bids;

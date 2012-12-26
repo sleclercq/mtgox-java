@@ -7,13 +7,14 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.JavaType;
+import to.sparks.mtgox.dto.DtoBase;
 import to.sparks.mtgox.dto.Result;
 
 /**
  *
  * @author SparksG
  */
-public class JSONSource<T> {
+public class JSONSource<T extends DtoBase> {
 
     private JsonFactory factory = new JsonFactory();
     private ObjectMapper mapper = new ObjectMapper();
@@ -30,5 +31,9 @@ public class JSONSource<T> {
 
     public T getResultFromFile(String filename, Class clazz) throws IOException {
         return getResultFromStream(new FileInputStream(filename), clazz);
+    }
+
+    public String getDTOasJSON(DtoBase dto) throws IOException {
+        return mapper.writeValueAsString(dto);
     }
 }

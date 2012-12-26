@@ -1,5 +1,6 @@
 package to.sparks.mtgox.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import to.sparks.mtgox.dto.Ticker;
 
@@ -7,6 +8,7 @@ import to.sparks.mtgox.dto.Ticker;
  *
  * @author SparksG
  */
+@JsonAutoDetect
 public class OpPrivateTicker extends OpPrivate<Ticker> {
 
     private Ticker ticker;

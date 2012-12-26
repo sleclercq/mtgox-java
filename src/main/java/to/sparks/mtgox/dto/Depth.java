@@ -1,11 +1,13 @@
 package to.sparks.mtgox.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  * @author SparksG
  */
+@JsonAutoDetect
 public class Depth extends Offer {
 
     private String currency;
