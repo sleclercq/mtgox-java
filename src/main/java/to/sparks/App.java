@@ -1,8 +1,9 @@
 package to.sparks;
 
-import java.util.Currency;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import to.sparks.mtgox.MtGoxAPI;
 import to.sparks.mtgox.dto.Ticker;
 import to.sparks.mtgox.impl.MtGoxApiImpl;
@@ -17,12 +18,15 @@ public class App {
 
     public static void main(String[] args) throws Exception {
 
+        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
+        MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
+
         // Create a $USD instance of the API
-        MtGoxAPI mtgoxUSD = new MtGoxApiImpl(Logger.getGlobal(), Currency.getInstance("USD"), args[0], args[1]);
+   //     MtGoxAPI mtgoxUSD = new MtGoxApiImpl(Logger.getGlobal(), Currency.getInstance("USD"), args[0], args[1]);
 
         // Example of parsing mtgox public JSON sources, such as the ticker price
         Ticker ticker = mtgoxUSD.getTicker();
-        logger.log(Level.INFO, "Last price: {0}", ticker.getLast());
+        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getValue());
 
         // Example of performing a private API function.
         double orderPrice = 1.00D; // $1.00

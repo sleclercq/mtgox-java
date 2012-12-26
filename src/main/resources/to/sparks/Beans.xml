@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="logger" class="java.util.logging.Logger"
+          scope="prototype" factory-method="getGlobal" >
+    </bean>
+
+    <bean id="usdCurrency" class="java.util.Currency"
+          scope="prototype" factory-method="getInstance" >
+        <constructor-arg index="0" value="USD" />
+    </bean>
+
+    <bean id="mtgoxUSD" class="to.sparks.mtgox.impl.MtGoxApiImpl">
+        <constructor-arg index="0">
+            <ref bean="logger"/>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <ref bean="usdCurrency"/>
+        </constructor-arg>
+        <constructor-arg index="2" value="YOUR_apikey" />
+        <constructor-arg index="3" value="YOUR_secret" />
+    </bean>
+
+</beans>
