@@ -52,4 +52,4 @@ Private API functions need a MtGox.Com API key & secret passed as JVM system pro
         
         java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.MtGoxExample
 
-Contact the author to reports and bugs or questions.
+Contact the author to reports and bugs or questions.  Follow the mtgox-java project on GitHub so that I know who you are.
