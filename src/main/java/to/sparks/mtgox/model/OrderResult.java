@@ -11,13 +11,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class OrderResult extends DtoBase {
 
     private String order_id;
-    private Trade[] trades;
+    private TradeResult[] trades;
     private TickerPrice total_amount;
     private TickerPrice total_spent;
     private TickerPrice avg_cost;
 
     public OrderResult(@JsonProperty("order_id") String order_id,
-            @JsonProperty("trades") Trade[] trades,
+            @JsonProperty("trades") TradeResult[] trades,
             @JsonProperty("total_amount") TickerPrice total_amount,
             @JsonProperty("total_spent") TickerPrice total_spent,
             @JsonProperty("avg_cost") TickerPrice avg_cost) {
@@ -40,7 +40,7 @@ public class OrderResult extends DtoBase {
     /**
      * @return the trades
      */
-    public Trade[] getTrades() {
+    public TradeResult[] getTrades() {
         return trades;
     }
 

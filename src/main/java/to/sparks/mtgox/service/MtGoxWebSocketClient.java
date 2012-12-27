@@ -9,9 +9,8 @@ import org.jwebsocket.client.java.BaseWebSocket;
 import org.springframework.core.task.TaskExecutor;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.Ticker;
+import to.sparks.mtgox.model.Trade;
 import to.sparks.mtgox.net.MtGoxListener;
-import to.sparks.mtgox.net.MtGoxListener;
-import to.sparks.mtgox.net.MtGoxSocketListener;
 import to.sparks.mtgox.net.MtGoxSocketListener;
 
 /**
@@ -23,6 +22,7 @@ public class MtGoxWebSocketClient implements MtGoxListener, Runnable {
     private Logger logger;
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
     private List<Ticker> tickerHistory = new CopyOnWriteArrayList<>();
+    private List<Trade> tradeHistory = new CopyOnWriteArrayList<>();
     final BaseWebSocket websocket = new BaseWebSocket();
     private TaskExecutor taskExecutor;
 
@@ -58,7 +58,12 @@ public class MtGoxWebSocketClient implements MtGoxListener, Runnable {
         }
         return result;
     }
-
+    
+    @Override
+    public void tradeEvent(Trade trade) {
+        tradeHistory.add(trade);
+    }
+    
     @Override
     public void tickerEvent(Ticker ticker) {
         tickerHistory.add(ticker);

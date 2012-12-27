@@ -1,6 +1,5 @@
 package to.sparks.mtgox.net;
 
-import to.sparks.mtgox.service.MtGoxWebSocketClient;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,10 +10,8 @@ import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
 import org.jwebsocket.kit.RawPacket;
-import to.sparks.mtgox.model.Depth;
-import to.sparks.mtgox.model.DynaBean;
-import to.sparks.mtgox.model.OpPrivateDepth;
-import to.sparks.mtgox.model.OpPrivateTicker;
+import to.sparks.mtgox.model.*;
+import to.sparks.mtgox.service.MtGoxWebSocketClient;
 
 /**
  *
@@ -40,7 +37,7 @@ public class MtGoxSocketListener implements WebSocketClientListener {
         if (aEvent != null) {
             if (aPacket != null && aPacket.getFrameType() == RawPacket.FRAMETYPE_UTF8) {
                 try {
-                    // System.out.println(aPacket.getUTF8());
+                    // logger.fine(aPacket.getUTF8());
 
                     JsonFactory factory = new JsonFactory();
                     ObjectMapper mapper = new ObjectMapper();
@@ -52,13 +49,19 @@ public class MtGoxSocketListener implements WebSocketClientListener {
                         String messageType = op.get("private").toString();
                         if (messageType.equalsIgnoreCase("ticker")) {
                             OpPrivateTicker opPrivateTicker = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTicker.class);
-                            apiClient.tickerEvent(opPrivateTicker.getTicker());
-                            //  logger.log(Level.INFO, "Ticker: currency: {0}", new Object[]{ticker.getAvg().getCurrency()});
+                            Ticker ticker = opPrivateTicker.getTicker();
+                            apiClient.tickerEvent(ticker);
+                            logger.log(Level.FINE, "Ticker: currency: {0}", new Object[]{ticker.getAvg().getCurrency()});
                         } else if (messageType.equalsIgnoreCase("depth")) {
                             OpPrivateDepth opPrivateDepth = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateDepth.class);
                             Depth depth = opPrivateDepth.getDepth();
                             apiClient.depthEvent(depth);
-                            //    logger.log(Level.INFO, "Depth currency: {0}", new Object[]{depth.getCurrency()});
+                            logger.log(Level.FINE, "Depth currency: {0}", new Object[]{depth.getCurrency()});
+                        } else if (messageType.equalsIgnoreCase("trade")) {
+                            OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTrade.class);
+                            Trade trade = opPrivateTrade.getTrade();
+                            apiClient.tradeEvent(trade);
+                            logger.log(Level.FINE, "Trade price: {0}", new Object[]{trade.getPrice()});
                         } else {
                             logger.log(Level.INFO, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
                         }

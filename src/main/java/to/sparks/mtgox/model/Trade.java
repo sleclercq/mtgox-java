@@ -8,46 +8,53 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Trade extends DtoBase{
+public class Trade extends DtoBase {
 
-    private String trade_id;
-    private String primary;
-    private String currency;
-    private String type;
-    private String properties;
-    private String item;
-    private TickerPrice amount;
-    private TickerPrice price;
-    private TickerPrice spent;
-    private String date;
+    private long amount_int; // "amount_int":"1000000",
+    private long price_int; //    "price_int":"1336001",
+    private double amount; // "amount" :0.01,
+    private String date; // "date":1356641315,
+    private String item; // "item":"BTC",
+    private String type; // "type":"trade"
+    private double price; // "price":13.36001,
+    private String primary; // "primary":"Y",
+    private String properties; // "properties":"limit",
+    private String price_currency; // "price_currency":"USD",
+    private String tid; // "tid":"1356641315101735",
+    private String trade_type; // "trade_type":"ask",
 
-    public Trade(@JsonProperty("trade_id") String trade_id,
+    public Trade(@JsonProperty("tid") String tid,
             @JsonProperty("primary") String primary,
-            @JsonProperty("currency") String currency,
+            @JsonProperty("price_currency") String price_currency,
             @JsonProperty("type") String type,
             @JsonProperty("properties") String properties,
             @JsonProperty("item") String item,
-            @JsonProperty("amount") TickerPrice amount,
-            @JsonProperty("price") TickerPrice price,
-            @JsonProperty("spent") TickerPrice spent,
-            @JsonProperty("date") String date) {
-        this.trade_id = trade_id;
+            @JsonProperty("amount") double amount,
+            @JsonProperty("price") double price,
+            @JsonProperty("trade_type") String trade_type,
+            @JsonProperty("date") String date,
+            @JsonProperty("amount_int") long amount_int,
+            @JsonProperty("price_int") long price_int) {
+        this.tid = tid;
         this.primary = primary;
-        this.currency = currency;
+        this.price_currency = price_currency;
         this.type = type;
         this.properties = properties;
         this.item = item;
         this.amount = amount;
         this.price = price;
-        this.spent = spent;
+        this.trade_type = trade_type;
         this.date = date;
+        this.amount_int = amount_int;
+        this.price_int = price_int;
+
     }
 
     /**
      * @return the trade_id
      */
     public String getTradeId() {
-        return trade_id;
+        return tid;
     }
 
     /**
@@ -60,8 +67,8 @@ public class Trade extends DtoBase{
     /**
      * @return the currency
      */
-    public String getCurrency() {
-        return currency;
+    public String getPrice_currency() {
+        return price_currency;
     }
 
     /**
@@ -88,22 +95,22 @@ public class Trade extends DtoBase{
     /**
      * @return the amount
      */
-    public TickerPrice getAmount() {
+    public double getAmount() {
         return amount;
     }
 
     /**
      * @return the price
      */
-    public TickerPrice getPrice() {
+    public double getPrice() {
         return price;
     }
 
     /**
-     * @return the spent
+     * @return the trade type
      */
-    public TickerPrice getSpent() {
-        return spent;
+    public String getTrade_type() {
+        return trade_type;
     }
 
     /**
@@ -111,5 +118,13 @@ public class Trade extends DtoBase{
      */
     public String getDate() {
         return date;
+    }
+
+    public long getAmount_int() {
+        return amount_int;
+    }
+
+    public long getPrice_int() {
+        return price_int;
     }
 }

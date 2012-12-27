@@ -8,23 +8,23 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class OpPrivateTicker extends OpPrivate<Ticker> {
+public class OpPrivateTrade extends OpPrivate<Trade> {
 
-    private Ticker ticker;
+    private Trade trade;
 
-    public OpPrivateTicker(@JsonProperty("op") String op,
+    public OpPrivateTrade(@JsonProperty("op") String op,
             @JsonProperty("channel") String channel,
             @JsonProperty("private") String messageType,
-            @JsonProperty("ticker") Ticker ticker,
+            @JsonProperty("trade") Trade trade,
             @JsonProperty("origin") String origin) {
         super(op, channel, messageType, origin);
-        this.ticker = ticker;
+        this.trade = trade;
     }
 
     /**
-     * @return the ticker
+     * @return the trade
      */
-    public Ticker getTicker() {
-        return ticker;
+    public Trade getTrade() {
+        return trade;
     }
 }
