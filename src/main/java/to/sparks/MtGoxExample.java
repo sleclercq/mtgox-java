@@ -19,7 +19,7 @@ import to.sparks.mtgox.service.MtGoxWebSocketClient;
 
 /*
  * Specify your MtGox API key & secret as JVM system properties, e.g.,
- * <code>java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.App</code>
+ * <code>java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.MtGoxExample</code>
  */
 public class MtGoxExample {
 

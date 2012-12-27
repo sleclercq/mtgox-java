@@ -1,7 +1,7 @@
 mtgox-java
 ==========
 
-A Java API for the MtGox bitcoin currency exchange based on Spring & Maven.  
+A Java API for the MtGox bitcoin currency exchange based on Spring & Maven.
 
 Warning:  Testing has not yet been done for each currency to ensure that mtgox's various 'magic' mutlipliers work.  Use at own risk and double-check order sizes, prices and volumes are working for your currency before doing any large trades or using in a production environment.
 
@@ -39,4 +39,9 @@ Below is an example of how to use the mtgox java API.
         // Example of getting the current ticker price
         Ticker ticker = mtgoxUSD.getTicker();
         logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getValue());
-         
+        
+Private API functions need a MtGox.Com API key & secret passed as JVM system properties as shown below.
+        
+        java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.MtGoxExample
+
+Contact the author to reports and bugs or questions.
