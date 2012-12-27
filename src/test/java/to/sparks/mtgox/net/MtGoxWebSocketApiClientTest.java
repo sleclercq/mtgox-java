@@ -1,7 +1,5 @@
 package to.sparks.mtgox.net;
 
-import to.sparks.mtgox.service.MtGoxHTTPClient;
-import to.sparks.mtgox.service.MtGoxWebSocketClient;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -10,6 +8,8 @@ import junit.framework.TestCase;
 import org.springframework.core.task.TaskExecutor;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.Ticker;
+import to.sparks.mtgox.service.MtGoxHTTPClient;
+import to.sparks.mtgox.service.MtGoxWebSocketClient;
 
 /**
  *
@@ -37,13 +37,16 @@ public class MtGoxWebSocketApiClientTest extends TestCase {
     public void testGetAllDepthSince() {
         System.out.println("getAllDepthSince");
 
-        long timestamp = 0L;
         TestHarness th = new TestHarness();
         MtGoxWebSocketClient instance = new MtGoxWebSocketClient(th.getLogger(), th.getTaskExecutor());
-        List<Depth> expResult = new ArrayList<>();
-        List<Depth> result = instance.getAllDepthSince(timestamp);
-        assertEquals(expResult, result);
-
+        assertEquals(0, instance.getAllDepthSince(0L).size());
+        Depth depth1 = new Depth("", "", 0L, "", 0, 0L, 0L, 0L, 0L, 1L);
+        instance.depthEvent(depth1);
+        Depth depth2 = new Depth("", "", 0L, "", 0, 0L, 0L, 0L, 0L, 2L);
+        instance.depthEvent(depth2);
+        assertEquals(0, instance.getAllDepthSince(2L).size());
+        assertEquals(1, instance.getAllDepthSince(1L).size());
+        assertEquals(2, instance.getAllDepthSince(0L).size());
     }
 
     /**

@@ -49,17 +49,17 @@ public class MtGoxWebSocketClient implements MtGoxListener, Runnable {
      */
     public List<Depth> getAllDepthSince(long timestamp) {
         int eventIndex = getEventIndex(depthHistory, timestamp);
-        return eventIndex < depthHistory.size() - 1 ? depthHistory.subList(eventIndex, depthHistory.size() - 1) : new ArrayList<Depth>();
+        return eventIndex <= depthHistory.size() - 1 ? depthHistory.subList(eventIndex, depthHistory.size()) : new ArrayList<Depth>();
     }
 
     public List<Trade> getAllTradesSince(long timestamp) {
         int eventIndex = getEventIndex(tradeHistory, timestamp);
-        return eventIndex < tradeHistory.size() - 1 ? tradeHistory.subList(eventIndex, tradeHistory.size() - 1) : new ArrayList<Trade>();
+        return eventIndex <= tradeHistory.size() - 1 ? tradeHistory.subList(eventIndex, tradeHistory.size()) : new ArrayList<Trade>();
     }
 
     private int getEventIndex(List list, long timestamp) {
         int length = list.size();
-        int result = length - 1;
+        int result = length;
         for (int i = 0; i < length; i++) {
             IEventTime eventTime = (IEventTime) list.get(i);
             if (eventTime != null && eventTime.getEventTime() > timestamp) {
