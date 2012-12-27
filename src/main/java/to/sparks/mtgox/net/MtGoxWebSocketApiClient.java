@@ -1,4 +1,4 @@
-package to.sparks.mtgox.util;
+package to.sparks.mtgox.net;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +63,7 @@ public class MtGoxWebSocketApiClient implements MtGoxListener, Runnable {
         int length = depthHistory.size();
         for (int i = 0; i < length; i++) {
             Depth depth = depthHistory.get(i);
-            if (depth.getStamp() > timestamp) {
+            if (depth != null && depth.getStamp() > timestamp) {
                 result = depthHistory.subList(i, length - 1);
                 break;
             }
@@ -107,7 +107,7 @@ public class MtGoxWebSocketApiClient implements MtGoxListener, Runnable {
                 updateDepth(update, offers, multiplier);
             }
         }
-        logger.log(Level.INFO, "Asks: {0}  Bids: {1}", new Object[]{asks.size(), bids.size()});
+        logger.log(Level.INFO, "Asks: {0}  Bids: {1}", new Object[]{asks != null ? asks.size() : "null", bids != null ? bids.size() : "null"});
     }
 
     private static void updateDepth(Depth update, List<Offer> depth, double covertToIntFactor) {

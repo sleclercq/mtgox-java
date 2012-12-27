@@ -1,4 +1,4 @@
-package to.sparks.mtgox.util;
+package to.sparks.mtgox.net;
 
 import java.util.ArrayList;
 import java.util.Currency;

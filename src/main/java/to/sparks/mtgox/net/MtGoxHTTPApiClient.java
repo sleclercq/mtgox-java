@@ -1,4 +1,4 @@
-package to.sparks.mtgox.util;
+package to.sparks.mtgox.net;
 
 import biz.source_code.base64Coder.Base64Coder;
 import java.io.IOException;
@@ -20,6 +20,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import to.sparks.mtgox.dto.*;
+import to.sparks.mtgox.util.JSONSource;
 
 /**
  *

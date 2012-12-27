@@ -1,4 +1,4 @@
-package to.sparks.mtgox.util;
+package to.sparks.mtgox.net;
 
 import java.io.IOException;
 import java.util.logging.Level;

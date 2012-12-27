@@ -11,9 +11,9 @@ import to.sparks.mtgox.dto.Ticker;
  * Specify your API key & secret as JVM system properties, e.g,
  * java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.App
  */
-public class App {
+public class MtGoxExample {
 
-    private static final Logger logger = Logger.getLogger(App.class.getName());
+    private static final Logger logger = Logger.getLogger(MtGoxExample.class.getName());
 
     public static void main(String[] args) throws Exception {
 

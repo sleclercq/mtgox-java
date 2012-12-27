@@ -1,4 +1,4 @@
-package to.sparks.mtgox.util;
+package to.sparks.mtgox.net;
 
 import to.sparks.mtgox.dto.Depth;
 import to.sparks.mtgox.dto.Ticker;

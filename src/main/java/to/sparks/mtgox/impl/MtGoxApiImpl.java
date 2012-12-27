@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import to.sparks.mtgox.MtGoxAPI;
 import to.sparks.mtgox.dto.*;
-import to.sparks.mtgox.util.MtGoxHTTPApiClient;
-import to.sparks.mtgox.util.MtGoxWebSocketApiClient;
+import to.sparks.mtgox.net.MtGoxHTTPApiClient;
+import to.sparks.mtgox.net.MtGoxWebSocketApiClient;
 
 /**
  * All MtGox API interactions (both HTTP/REST and Websocket) are handled by this
