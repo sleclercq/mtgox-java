@@ -5,7 +5,14 @@ A Java API for the MtGox bitcoin currency exchange based on Spring & Maven.
 
 Warning:  Testing has not yet been done for each currency to ensure that mtgox's various 'magic' mutlipliers work.  Use at own risk and double-check order sizes, prices and volumes are working for your currency before doing any large trades or using in a production environment.
 
-Release versions are available from Maven Central, but you can get developer snapshot releases by adding the following to your maven pom.xml
+Release versions are available from Maven Central, add the following dependency to your pom.xml.
+        <dependency>
+            <groupId>to.sparks</groupId>
+            <artifactId>mtgox</artifactId>
+            <version>0.0.4</version>
+        </dependency>
+
+You can get developer snapshot releases by adding the following to your maven pom.xml
 
     <repositories>
         ...
@@ -26,7 +33,7 @@ Release versions are available from Maven Central, but you can get developer sna
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
+            <version>0.0.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
