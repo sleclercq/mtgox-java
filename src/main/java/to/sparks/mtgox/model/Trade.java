@@ -8,12 +8,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Trade extends DtoBase {
+public class Trade extends DtoBase implements IEventTime {
 
     private long amount_int; // "amount_int":"1000000",
     private long price_int; //    "price_int":"1336001",
     private double amount; // "amount" :0.01,
-    private String date; // "date":1356641315,
+    private long date; // "date":1356641315,
     private String item; // "item":"BTC",
     private String type; // "type":"trade"
     private double price; // "price":13.36001,
@@ -32,7 +32,7 @@ public class Trade extends DtoBase {
             @JsonProperty("amount") double amount,
             @JsonProperty("price") double price,
             @JsonProperty("trade_type") String trade_type,
-            @JsonProperty("date") String date,
+            @JsonProperty("date") long date,
             @JsonProperty("amount_int") long amount_int,
             @JsonProperty("price_int") long price_int) {
         this.tid = tid;
@@ -116,7 +116,7 @@ public class Trade extends DtoBase {
     /**
      * @return the date
      */
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
@@ -126,5 +126,10 @@ public class Trade extends DtoBase {
 
     public long getPrice_int() {
         return price_int;
+    }
+
+    @Override
+    public long getEventTime() {
+        return getDate();
     }
 }

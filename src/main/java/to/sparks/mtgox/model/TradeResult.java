@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class TradeResult extends DtoBase{
+public class TradeResult extends DtoBase {
 
     private String trade_id;
     private String primary;

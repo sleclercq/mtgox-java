@@ -23,9 +23,13 @@ public interface MtGoxAPI {
 
     List<Depth> getAllDepthSince(long timestamp);
 
+    List<Trade> getAllTradesSince(long timestamp);
+
     List<Depth> getDepthHistory();
 
     List<Ticker> getTickerHistory();
+
+    List<Trade> getTradeHistory();
 
     Ticker getTicker() throws Exception;
 

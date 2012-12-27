@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Depth extends Offer {
+public class Depth extends Offer implements IEventTime {
 
     private String currency;
     private String item;
@@ -67,5 +67,10 @@ public class Depth extends Offer {
      */
     public int getType() {
         return type;
+    }
+
+    @Override
+    public long getEventTime() {
+        return getStamp();
     }
 }

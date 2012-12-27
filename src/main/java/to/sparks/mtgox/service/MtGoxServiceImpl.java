@@ -40,6 +40,11 @@ public class MtGoxServiceImpl implements MtGoxAPI {
     }
 
     @Override
+    public List<Trade> getAllTradesSince(long timestamp) {
+        return wsApi != null ? wsApi.getAllTradesSince(timestamp) : null;
+    }
+
+    @Override
     public List<Depth> getDepthHistory() {
         return wsApi != null ? wsApi.getDepthHistory() : null;
     }
@@ -47,6 +52,11 @@ public class MtGoxServiceImpl implements MtGoxAPI {
     @Override
     public List<Ticker> getTickerHistory() {
         return wsApi != null ? wsApi.getTickerHistory() : null;
+    }
+
+    @Override
+    public List<Trade> getTradeHistory() {
+        return wsApi != null ? wsApi.getTradeHistory() : null;
     }
 
     @Override
