@@ -5,6 +5,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="5" />
+        <property name="maxPoolSize" value="10" />
+        <property name="queueCapacity" value="25" />
+    </bean>
+
     <bean id="logger" class="java.util.logging.Logger"
           scope="prototype" factory-method="getGlobal" >
     </bean>
@@ -14,15 +20,42 @@
         <constructor-arg index="0" value="USD" />
     </bean>
 
+    <bean id="httpApi" class="to.sparks.mtgox.util.MtGoxHTTPApiClient" >
+        <constructor-arg index="0">
+            <ref bean="logger"/>
+        </constructor-arg>
+        <constructor-arg index="1" value="${api.key}" />
+        <constructor-arg index="2" value="${api.secret}" />
+    </bean>
+
+    <bean id="wsApi" class="to.sparks.mtgox.util.MtGoxWebSocketApiClient" init-method="init" destroy-method="destroy">
+        <constructor-arg index="0">
+            <ref bean="logger"/>
+        </constructor-arg>
+        <constructor-arg index="1" >
+            <ref bean="taskExecutor"/>
+        </constructor-arg>
+        <constructor-arg index="2">
+            <ref bean="httpApi"/>
+        </constructor-arg>
+        <constructor-arg index="3">
+            <ref bean="usdCurrency"/>
+        </constructor-arg>
+    </bean>
+
     <bean id="mtgoxUSD" class="to.sparks.mtgox.impl.MtGoxApiImpl">
         <constructor-arg index="0">
             <ref bean="logger"/>
         </constructor-arg>
         <constructor-arg index="1">
+            <ref bean="httpApi"/>
+        </constructor-arg>
+        <constructor-arg index="2">
+            <ref bean="wsApi"/>
+        </constructor-arg>
+        <constructor-arg index="3">
             <ref bean="usdCurrency"/>
         </constructor-arg>
-        <constructor-arg index="2" value="YOUR_apikey" />
-        <constructor-arg index="3" value="YOUR_secret" />
     </bean>
 
 </beans>

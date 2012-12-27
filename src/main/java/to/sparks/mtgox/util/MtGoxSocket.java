@@ -21,10 +21,10 @@ import to.sparks.mtgox.dto.OpPrivateTicker;
  */
 public class MtGoxSocket implements WebSocketClientListener {
 
-    private MtGoxRealTime apiClient;
+    private MtGoxWebSocketApiClient apiClient;
     private Logger logger;
 
-    public MtGoxSocket(MtGoxRealTime apiClient, Logger logger) {
+    public MtGoxSocket(MtGoxWebSocketApiClient apiClient, Logger logger) {
         this.apiClient = apiClient;
         this.logger = logger;
     }

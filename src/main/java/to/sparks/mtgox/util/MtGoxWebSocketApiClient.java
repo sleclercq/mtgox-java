@@ -1,14 +1,14 @@
 package to.sparks.mtgox.util;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jwebsocket.client.java.BaseWebSocket;
-import org.jwebsocket.kit.WebSocketException;
+import org.springframework.core.task.TaskExecutor;
 import to.sparks.mtgox.dto.Depth;
 import to.sparks.mtgox.dto.FullDepth;
 import to.sparks.mtgox.dto.Offer;
@@ -21,9 +21,9 @@ import to.sparks.mtgox.impl.MtGoxApiImpl;
  *
  * @author SparksG
  */
-public class MtGoxRealTime implements MtGoxListener {
+public class MtGoxWebSocketApiClient implements MtGoxListener, Runnable {
 
-    private static final Logger logger = Logger.getLogger(MtGoxRealTime.class.getName());
+    private Logger logger;
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
     private List<Ticker> tickerHistory = new CopyOnWriteArrayList<>();
     private List<Offer> asks;
@@ -32,32 +32,27 @@ public class MtGoxRealTime implements MtGoxListener {
     private long mostRecentBidTimestamp;
     private long mostRecentTimestamp;
     final BaseWebSocket websocket = new BaseWebSocket();
+    private MtGoxHTTPApiClient httpAPI;
+    private Currency currency;
+    private TaskExecutor taskExecutor;
 
-    public MtGoxRealTime(FullDepth fullDepth) throws WebSocketException, IOException {
+    public MtGoxWebSocketApiClient(Logger logger, TaskExecutor taskExecutor, MtGoxHTTPApiClient mtGoxHTTPApi, Currency currency) {
+        this.logger = logger;
+        this.httpAPI = mtGoxHTTPApi;
+        this.currency = currency;
+        this.taskExecutor = taskExecutor;
+    }
 
-        websocket.addListener(new MtGoxSocket(this, logger));
-        websocket.open("ws://websocket.mtgox.com/mtgox");
+    public void init() {
+        taskExecutor.execute(this);
+    }
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-
-            @Override
-            public void run() {
-                System.out.println("Closing connection...");
-                try {
-                    websocket.close();
-                    //System.exit(0);
-                } catch (WebSocketException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-
-        asks = new ArrayList<>(Arrays.asList(fullDepth.getAsks()));
-        bids = new ArrayList<>(Arrays.asList(fullDepth.getBids()));
-
-        mostRecentAskTimestamp = getMostRecentTimestamp(asks);
-        mostRecentBidTimestamp = getMostRecentTimestamp(bids);
-        mostRecentTimestamp = mostRecentAskTimestamp < mostRecentBidTimestamp ? mostRecentBidTimestamp : mostRecentAskTimestamp;
+    public void destroy() {
+        try {
+            websocket.close();
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 
     /*
@@ -124,7 +119,6 @@ public class MtGoxRealTime implements MtGoxListener {
             }
             if (offer.getPrice_int() == update.getPrice_int()) {
                 double dAmount = ((double) update.getTotal_volume_int()) / covertToIntFactor;
-                logger.log(Level.INFO, "Update at price {0}   Old volume: {1}  New volume: {2}", new Object[]{offer.getPrice(), offer.getAmount(), dAmount});
                 offer.setAmount_int(update.getTotal_volume_int());
                 offer.setAmount(dAmount);
                 offer.setStamp(update.getStamp());
@@ -133,8 +127,6 @@ public class MtGoxRealTime implements MtGoxListener {
         }
 
         if (update.getAmount_int() > 0) {
-            logger.log(Level.INFO, "New offer at price {0}   volume: {1}  (total {2})", new Object[]{update.getPrice(), update.getAmount(), update.getTotal_volume_int()});
-
             // There is nothing at this price point, add it to the collection.
             Offer offer = new Offer(update.getPrice(), update.getAmount(), update.getPrice_int(), update.getAmount_int(), update.getStamp());
             depth.add(offer);
@@ -171,5 +163,27 @@ public class MtGoxRealTime implements MtGoxListener {
 
     public List<Offer> getBids() {
         return bids;
+    }
+
+    @Override
+    public void run() {
+        try {
+            logger.info("WS API downloading fulldepth...");
+            FullDepth fullDepth = httpAPI.getFullDepth(currency);
+            asks = new ArrayList<>(Arrays.asList(fullDepth.getAsks()));
+            bids = new ArrayList<>(Arrays.asList(fullDepth.getBids()));
+
+            mostRecentAskTimestamp = getMostRecentTimestamp(asks);
+            mostRecentBidTimestamp = getMostRecentTimestamp(bids);
+            mostRecentTimestamp = mostRecentAskTimestamp < mostRecentBidTimestamp ? mostRecentBidTimestamp : mostRecentAskTimestamp;
+
+            websocket.addListener(new MtGoxSocket(this, logger));
+            websocket.open("ws://websocket.mtgox.com/mtgox");
+            logger.info("WS API started.");
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+
     }
 }

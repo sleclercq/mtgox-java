@@ -6,11 +6,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import to.sparks.mtgox.MtGoxAPI;
 import to.sparks.mtgox.dto.Ticker;
-import to.sparks.mtgox.impl.MtGoxApiImpl;
 
-/**
- * Pass your MtGox API key and secret as the command line arguments.
- *
+/*
+ * Specify your API key & secret as JVM system properties, e.g,
+ * java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.App
  */
 public class App {
 
@@ -21,17 +20,16 @@ public class App {
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
         MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
 
-        // Create a $USD instance of the API
-   //     MtGoxAPI mtgoxUSD = new MtGoxApiImpl(Logger.getGlobal(), Currency.getInstance("USD"), args[0], args[1]);
-
-        // Example of parsing mtgox public JSON sources, such as the ticker price
+        // Example of getting the current ticker price
         Ticker ticker = mtgoxUSD.getTicker();
         logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getValue());
 
+        /*
         // Example of performing a private API function.
         double orderPrice = 1.00D; // $1.00
         double orderVolume = 1.00D; // 1 bitcoin
-        mtgoxUSD.placeOrder(MtGoxApiImpl.OrderType.Bid, orderPrice, orderVolume);
+        mtgoxUSD.placeOrder(MtGoxApiImpl.OrderType.Bid, orderPrice, orderVolume);        
+        */
 
     }
 }
