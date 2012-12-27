@@ -1,30 +1,31 @@
-package to.sparks.mtgox.dto;
+package to.sparks.mtgox.model;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
+import to.sparks.mtgox.model.Ticker;
 
 /**
  *
  * @author SparksG
  */
 @JsonAutoDetect
-public class OpPrivateDepth extends OpPrivate<Depth> {
+public class OpPrivateTicker extends OpPrivate<Ticker> {
 
-    private Depth depth;
+    private Ticker ticker;
 
-    public OpPrivateDepth(@JsonProperty("op") String op,
+    public OpPrivateTicker(@JsonProperty("op") String op,
             @JsonProperty("channel") String channel,
             @JsonProperty("private") String messageType,
-            @JsonProperty("depth") Depth depth,
+            @JsonProperty("ticker") Ticker ticker,
             @JsonProperty("origin") String origin) {
         super(op, channel, messageType, origin);
-        this.depth = depth;
+        this.ticker = ticker;
     }
 
     /**
-     * @return the depth
+     * @return the ticker
      */
-    public Depth getDepth() {
-        return depth;
+    public Ticker getTicker() {
+        return ticker;
     }
 }

@@ -1,10 +1,10 @@
 package to.sparks.mtgox;
 
 import java.util.List;
-import to.sparks.mtgox.dto.*;
+import to.sparks.mtgox.model.*;
 
 /**
- * A java api for the MtGox bitcoin exchange
+ * A java api for the MtGox bitcoin exchange built using Spring and Maven
  *
  * @author SparksG
  */
@@ -21,9 +21,11 @@ public interface MtGoxAPI {
 
     OrderResult getOrderResult(OrderType orderType, String orderRef) throws Exception;
 
-    List<Offer> getRealtimeAsks();
+    List<Depth> getAllDepthSince(long timestamp);
 
-    List<Offer> getRealtimeBids();
+    List<Depth> getDepthHistory();
+
+    List<Ticker> getTickerHistory();
 
     Ticker getTicker() throws Exception;
 

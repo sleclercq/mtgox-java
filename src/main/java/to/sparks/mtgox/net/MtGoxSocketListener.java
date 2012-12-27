@@ -1,5 +1,6 @@
 package to.sparks.mtgox.net;
 
+import to.sparks.mtgox.service.MtGoxWebSocketClient;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,21 +11,21 @@ import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
 import org.jwebsocket.kit.RawPacket;
-import to.sparks.mtgox.dto.Depth;
-import to.sparks.mtgox.dto.DynaBean;
-import to.sparks.mtgox.dto.OpPrivateDepth;
-import to.sparks.mtgox.dto.OpPrivateTicker;
+import to.sparks.mtgox.model.Depth;
+import to.sparks.mtgox.model.DynaBean;
+import to.sparks.mtgox.model.OpPrivateDepth;
+import to.sparks.mtgox.model.OpPrivateTicker;
 
 /**
  *
  * @author SparksG
  */
-public class MtGoxSocket implements WebSocketClientListener {
+public class MtGoxSocketListener implements WebSocketClientListener {
 
-    private MtGoxWebSocketApiClient apiClient;
+    private MtGoxWebSocketClient apiClient;
     private Logger logger;
 
-    public MtGoxSocket(MtGoxWebSocketApiClient apiClient, Logger logger) {
+    public MtGoxSocketListener(Logger logger, MtGoxWebSocketClient apiClient) {
         this.apiClient = apiClient;
         this.logger = logger;
     }

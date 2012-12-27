@@ -1,4 +1,4 @@
-package to.sparks.mtgox.dto;
+package to.sparks.mtgox.model;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;

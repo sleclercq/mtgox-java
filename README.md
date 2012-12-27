@@ -1,7 +1,7 @@
 mtgox-java
 ==========
 
-A Java API for the MtGox bitcoin currency exchange.  
+A Java API for the MtGox bitcoin currency exchange based on Spring & Maven.  
 
 Warning:  Testing has not yet been done for each currency to ensure that mtgox's various 'magic' mutlipliers work.  Use at own risk and double-check order sizes, prices and volumes are working for your currency before doing any large trades or using in a production environment.
 
@@ -32,14 +32,11 @@ Release versions are available from Maven Central, but you can get developer sna
 
 Below is an example of how to use the mtgox java API.
 
-        // Create a $USD instance of the API
-        MtGoxAPI mtgoxUSD = new MtGoxApiImpl(Logger.getGlobal(), Currency.getInstance("USD"), args[0], args[1]);
+        // Obtain a $USD instance of the API
+        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
+        MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
 
-        // Example of parsing mtgox public JSON sources, such as the ticker price
+        // Example of getting the current ticker price
         Ticker ticker = mtgoxUSD.getTicker();
-        logger.log(Level.INFO, "Last price: {0}", ticker.getLast());
-
-        // Example of performing a private API function.
-        double orderPrice = 1.00D; // $1.00
-        double orderVolume = 1.00D; // 1 bitcoin
-        mtgoxUSD.placeOrder(MtGoxApiImpl.OrderType.Bid, orderPrice, orderVolume);
+        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getValue());
+         

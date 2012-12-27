@@ -1,4 +1,4 @@
-package to.sparks.mtgox.dto;
+package to.sparks.mtgox.model;
 
 /**
  *

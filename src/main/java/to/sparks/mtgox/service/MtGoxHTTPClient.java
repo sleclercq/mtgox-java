@@ -1,4 +1,4 @@
-package to.sparks.mtgox.net;
+package to.sparks.mtgox.service;
 
 import biz.source_code.base64Coder.Base64Coder;
 import java.io.IOException;
@@ -19,14 +19,16 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import to.sparks.mtgox.dto.*;
+import to.sparks.mtgox.model.*;
+import to.sparks.mtgox.net.MtGoxUrlFactory;
 import to.sparks.mtgox.util.JSONSource;
 
 /**
+ * A simple implementation of a client for the MtGox HTTP API version 1.
  *
  * @author SparksG
  */
-public class MtGoxHTTPApiClient {
+public class MtGoxHTTPClient {
 
     private JSONSource<Result<Order[]>> openOrdersJSON;
     private JSONSource<Result<String>> stringJSON;
@@ -37,7 +39,7 @@ public class MtGoxHTTPApiClient {
     private String secret;
     private static Logger logger;
 
-    public MtGoxHTTPApiClient(final Logger logger, String apiKey, String secret) {
+    public MtGoxHTTPClient(final Logger logger, String apiKey, String secret) {
         this.apiKey = apiKey;
         this.secret = secret;
         openOrdersJSON = new JSONSource<>();

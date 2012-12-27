@@ -1,4 +1,4 @@
-package to.sparks.mtgox.impl;
+package to.sparks.mtgox.service;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -8,9 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import to.sparks.mtgox.MtGoxAPI;
-import to.sparks.mtgox.dto.*;
-import to.sparks.mtgox.net.MtGoxHTTPApiClient;
-import to.sparks.mtgox.net.MtGoxWebSocketApiClient;
+import to.sparks.mtgox.model.*;
 
 /**
  * All MtGox API interactions (both HTTP/REST and Websocket) are handled by this
@@ -18,18 +16,18 @@ import to.sparks.mtgox.net.MtGoxWebSocketApiClient;
  *
  * @author SparksG
  */
-public class MtGoxApiImpl implements MtGoxAPI {
+public class MtGoxServiceImpl implements MtGoxAPI {
 
     // TODO:  This value is currency dependent.  JPY is different from USD for example.
     public static double USD_INT_MULTIPLIER = 100000000.0D;
     public static double AUD_INT_MULTIPLIER = 100000.0D;
     public static double BTC_VOL_INT_MULTIPLIER = 100000000.0D;
     private static Logger logger;
-    private static MtGoxWebSocketApiClient wsApi;
+    private static MtGoxWebSocketClient wsApi;
     private Currency currency;
-    MtGoxHTTPApiClient httpAPI;
+    MtGoxHTTPClient httpAPI;
 
-    public MtGoxApiImpl(final Logger logger, MtGoxHTTPApiClient httpAPI, MtGoxWebSocketApiClient mtGoxWebSocketApi, Currency currency) {
+    public MtGoxServiceImpl(final Logger logger, MtGoxHTTPClient httpAPI, MtGoxWebSocketClient mtGoxWebSocketApi, Currency currency) {
         this.logger = logger;
         this.currency = currency;
         this.httpAPI = httpAPI;
@@ -37,13 +35,18 @@ public class MtGoxApiImpl implements MtGoxAPI {
     }
 
     @Override
-    public List<Offer> getRealtimeAsks() {
-        return wsApi != null ? wsApi.getAsks() : null;
+    public List<Depth> getAllDepthSince(long timestamp) {
+        return wsApi != null ? wsApi.getAllDepthSince(timestamp) : null;
     }
 
     @Override
-    public List<Offer> getRealtimeBids() {
-        return wsApi != null ? wsApi.getBids() : null;
+    public List<Depth> getDepthHistory() {
+        return wsApi != null ? wsApi.getDepthHistory() : null;
+    }
+
+    @Override
+    public List<Ticker> getTickerHistory() {
+        return wsApi != null ? wsApi.getTickerHistory() : null;
     }
 
     @Override

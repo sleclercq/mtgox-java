@@ -7,8 +7,8 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.JavaType;
-import to.sparks.mtgox.dto.DtoBase;
-import to.sparks.mtgox.dto.Result;
+import to.sparks.mtgox.model.DtoBase;
+import to.sparks.mtgox.model.Result;
 
 /**
  *

@@ -1,7 +1,7 @@
 package to.sparks.mtgox.net;
 
-import to.sparks.mtgox.dto.Depth;
-import to.sparks.mtgox.dto.Ticker;
+import to.sparks.mtgox.model.Depth;
+import to.sparks.mtgox.model.Ticker;
 
 /**
  *
