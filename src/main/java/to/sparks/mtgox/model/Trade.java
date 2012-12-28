@@ -95,6 +95,7 @@ public class Trade extends DtoBase implements IEventTime {
     /**
      * @return the amount
      */
+    @Deprecated
     public double getAmount() {
         return amount;
     }
@@ -102,6 +103,7 @@ public class Trade extends DtoBase implements IEventTime {
     /**
      * @return the price
      */
+    @Deprecated    
     public double getPrice() {
         return price;
     }

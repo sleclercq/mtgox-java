@@ -31,6 +31,7 @@ public class Offer extends DtoBase {
     /**
      * @return the price
      */
+    @Deprecated
     public double getPrice() {
         return price;
     }
@@ -38,6 +39,7 @@ public class Offer extends DtoBase {
     /**
      * @return the amount
      */
+    @Deprecated
     public double getAmount() {
         return amount;
     }

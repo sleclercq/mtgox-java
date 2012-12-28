@@ -31,6 +31,7 @@ public class TickerPrice extends DtoBase {
     /**
      * @return the value
      */
+    @Deprecated
     public double getValue() {
         return value;
     }
