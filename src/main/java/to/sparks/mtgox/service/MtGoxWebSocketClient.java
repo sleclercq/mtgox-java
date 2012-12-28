@@ -18,7 +18,7 @@ import to.sparks.mtgox.net.MtGoxSocketListener;
  *
  * @author SparksG
  */
-public class MtGoxWebSocketClient implements MtGoxEventListener, Runnable {
+class MtGoxWebSocketClient implements MtGoxEventListener, Runnable {
 
     private Logger logger;
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();

@@ -1,5 +1,6 @@
 package to.sparks.mtgox;
 
+import java.util.Currency;
 import java.util.List;
 import to.sparks.mtgox.model.*;
 
@@ -14,6 +15,8 @@ public interface MtGoxAPI {
 
         Bid, Ask
     }
+    
+    Currency getBaseCurrency();
 
     FullDepth getFullDepth() throws Exception;
 
@@ -33,7 +36,7 @@ public interface MtGoxAPI {
 
     Ticker getTicker() throws Exception;
 
-    String placeMarketOrder(OrderType orderType, double volume) throws Exception;
+    String placeMarketOrder(OrderType orderType, MtGoxBitcoin volume) throws Exception;
 
-    String placeOrder(OrderType orderType, Double price, double volume) throws Exception;
+    String placeOrder(OrderType orderType, MtGoxCurrency price, MtGoxBitcoin volume) throws Exception;
 }

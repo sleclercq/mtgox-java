@@ -12,11 +12,9 @@ public class Trade extends DtoBase implements IEventTime {
 
     private long amount_int; // "amount_int":"1000000",
     private long price_int; //    "price_int":"1336001",
-    private double amount; // "amount" :0.01,
     private long date; // "date":1356641315,
     private String item; // "item":"BTC",
     private String type; // "type":"trade"
-    private double price; // "price":13.36001,
     private String primary; // "primary":"Y",
     private String properties; // "properties":"limit",
     private String price_currency; // "price_currency":"USD",
@@ -41,8 +39,6 @@ public class Trade extends DtoBase implements IEventTime {
         this.type = type;
         this.properties = properties;
         this.item = item;
-        this.amount = amount;
-        this.price = price;
         this.trade_type = trade_type;
         this.date = date;
         this.amount_int = amount_int;
@@ -90,22 +86,6 @@ public class Trade extends DtoBase implements IEventTime {
      */
     public String getItem() {
         return item;
-    }
-
-    /**
-     * @return the amount
-     */
-    @Deprecated
-    public double getAmount() {
-        return amount;
-    }
-
-    /**
-     * @return the price
-     */
-    @Deprecated    
-    public double getPrice() {
-        return price;
     }
 
     /**

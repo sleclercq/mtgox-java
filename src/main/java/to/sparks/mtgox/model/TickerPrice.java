@@ -1,5 +1,7 @@
 package to.sparks.mtgox.model;
 
+import java.util.Currency;
+import java.util.Locale;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -10,7 +12,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class TickerPrice extends DtoBase {
 
-    private double value;
     private long value_int;
     private String display;
     private String display_short;
@@ -21,26 +22,10 @@ public class TickerPrice extends DtoBase {
             @JsonProperty("display") String display,
             @JsonProperty("display_short") String display_short,
             @JsonProperty("currency") String currency) {
-        this.value = value;
         this.value_int = value_int;
         this.display = display;
         this.display_short = display_short;
         this.currency = currency;
-    }
-
-    /**
-     * @return the value
-     */
-    @Deprecated
-    public double getValue() {
-        return value;
-    }
-
-    /**
-     * @param value the value to set
-     */
-    public void setValue(double value) {
-        this.value = value;
     }
 
     /**
@@ -88,14 +73,14 @@ public class TickerPrice extends DtoBase {
     /**
      * @return the currency
      */
-    public String getCurrency() {
-        return currency;
+    public Currency getCurrency() {
+        return Currency.getInstance(currency);
     }
 
     /**
      * @param currency the currency to set
      */
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setCurrency(Currency currency) {
+        this.currency = currency.getCurrencyCode();
     }
 }

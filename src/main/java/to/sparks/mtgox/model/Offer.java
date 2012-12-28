@@ -10,38 +10,24 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class Offer extends DtoBase {
 
-    private double price;
-    private double amount;
     private long price_int;
     private long amount_int;
     private long stamp;
+
+    public Offer(long price_int,
+            long amount_int,
+            long stamp) {
+        this.price_int = price_int;
+        this.amount_int = amount_int;
+        this.stamp = stamp;
+    }
 
     public Offer(@JsonProperty("price") double price,
             @JsonProperty("amount") double amount,
             @JsonProperty("price_int") long price_int,
             @JsonProperty("amount_int") long amount_int,
             @JsonProperty("stamp") long stamp) {
-        this.price = price;
-        this.amount = amount;
-        this.price_int = price_int;
-        this.amount_int = amount_int;
-        this.stamp = stamp;
-    }
-
-    /**
-     * @return the price
-     */
-    @Deprecated
-    public double getPrice() {
-        return price;
-    }
-
-    /**
-     * @return the amount
-     */
-    @Deprecated
-    public double getAmount() {
-        return amount;
+        this(price_int, amount_int, stamp);
     }
 
     /**
@@ -63,13 +49,6 @@ public class Offer extends DtoBase {
      */
     public long getStamp() {
         return stamp;
-    }
-
-    /**
-     * @param amount the amount to set
-     */
-    public void setAmount(double amount) {
-        this.amount = amount;
     }
 
     /**

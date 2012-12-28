@@ -1,4 +1,4 @@
-package to.sparks.mtgox.net;
+package to.sparks.mtgox.service;
 
 import java.util.ArrayList;
 import java.util.Currency;
@@ -8,16 +8,14 @@ import junit.framework.TestCase;
 import org.springframework.core.task.TaskExecutor;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.Ticker;
-import to.sparks.mtgox.service.MtGoxHTTPClient;
-import to.sparks.mtgox.service.MtGoxWebSocketClient;
 
 /**
  *
  * @author SparksG
  */
-public class MtGoxWebSocketApiClientTest extends TestCase {
+public class MtGoxWebSocketClientTest extends TestCase {
 
-    public MtGoxWebSocketApiClientTest(String testName) {
+    public MtGoxWebSocketClientTest(String testName) {
         super(testName);
     }
 

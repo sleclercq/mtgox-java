@@ -16,14 +16,10 @@ import to.sparks.mtgox.model.*;
  *
  * @author SparksG
  */
-public class MtGoxServiceImpl implements MtGoxAPI {
+class MtGoxServiceImpl implements MtGoxAPI {
 
-    // TODO:  This value is currency dependent.  JPY is different from USD for example.
-    public static double USD_INT_MULTIPLIER = 100000000.0D;
-    public static double AUD_INT_MULTIPLIER = 100000.0D;
-    public static double BTC_VOL_INT_MULTIPLIER = 100000000.0D;
     private static Logger logger;
-    private static MtGoxWebSocketClient wsApi;
+    private MtGoxWebSocketClient wsApi;
     private Currency currency;
     MtGoxHTTPClient httpAPI;
 
@@ -64,44 +60,27 @@ public class MtGoxServiceImpl implements MtGoxAPI {
         return httpAPI.getFullDepth(currency);
     }
 
-    private static int convertVolumeBTCtoInt(double d) {
-        double total = d * BTC_VOL_INT_MULTIPLIER;
-        return (int) total;
-    }
-
-    private static int convertPricetoInt(String currencyCode, double d) {
-        double multiplier;
-        // TODO:  Verify what the correct multiplier is for each currency
-        switch (currencyCode.toLowerCase()) {
-            case "aud":
-                multiplier = AUD_INT_MULTIPLIER;
-                break;
-            default:
-                multiplier = USD_INT_MULTIPLIER;
-                break;
-        }
-        double total = d * multiplier;
-        return (int) total;
-    }
-
     @Override
-    public String placeOrder(OrderType orderType, Double price, double volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+    public String placeOrder(OrderType orderType, MtGoxCurrency price, MtGoxBitcoin volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+
         HashMap<String, String> params = new HashMap<>();
         if (orderType == OrderType.Bid) {
             params.put("type", "bid");
         } else {
             params.put("type", "ask");
         }
+
         if (price != null) {
-            params.put("price_int", String.valueOf(convertPricetoInt(currency.getCurrencyCode(), price)));
+//            params.put("price_int", String.valueOf(convertPricetoInt(currency.getCurrencyCode(), price)));
+            params.put("price_int", String.valueOf(price.getAmount().longValueExact()));
         }
-        params.put("amount_int", String.valueOf(convertVolumeBTCtoInt(volume)));
+        params.put("amount_int", String.valueOf(volume.getAmount().longValueExact()));
 
         return httpAPI.placeOrder(currency, params);
     }
 
     @Override
-    public String placeMarketOrder(OrderType orderType, double volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+    public String placeMarketOrder(OrderType orderType, MtGoxBitcoin volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
         return placeOrder(orderType, null, volume);
     }
 
@@ -126,5 +105,10 @@ public class MtGoxServiceImpl implements MtGoxAPI {
     @Override
     public Ticker getTicker() throws IOException, Exception {
         return httpAPI.getTicker(currency);
+    }
+
+    @Override
+    public Currency getBaseCurrency() {
+        return currency;
     }
 }

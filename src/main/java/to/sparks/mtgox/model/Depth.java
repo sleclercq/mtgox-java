@@ -1,5 +1,6 @@
 package to.sparks.mtgox.model;
 
+import java.util.Currency;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -37,8 +38,8 @@ public class Depth extends Offer implements IEventTime {
     /**
      * @return the currency
      */
-    public String getCurrency() {
-        return currency;
+    public Currency getCurrency() {
+        return Currency.getInstance(currency);
     }
 
     /**

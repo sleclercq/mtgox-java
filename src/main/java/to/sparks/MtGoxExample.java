@@ -1,8 +1,8 @@
 package to.sparks;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,13 +13,11 @@ import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.FullDepth;
 import to.sparks.mtgox.model.Offer;
 import to.sparks.mtgox.model.Ticker;
-import to.sparks.mtgox.service.MtGoxHTTPClient;
-import to.sparks.mtgox.service.MtGoxServiceImpl;
-import to.sparks.mtgox.service.MtGoxWebSocketClient;
 
 /*
  * Specify your MtGox API key & secret as JVM system properties, e.g.,
- * <code>java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.MtGoxExample</code>
+ * <code>java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET
+ * to.sparks.MtGoxExample</code>
  */
 public class MtGoxExample {
 
@@ -36,13 +34,12 @@ public class MtGoxExample {
 
         // Example of getting the current ticker price
         Ticker ticker = mtgoxUSD.getTicker();
-        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getValue());
+        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getDisplay());
 
         // Example of code that would watch market depth
         logger.info("Downloading fulldepth...");
-        MtGoxHTTPClient httpAPI = (MtGoxHTTPClient) context.getBean("httpApi");
-        Currency currency = (Currency) context.getBean("usdCurrency");
-        FullDepth fullDepth = httpAPI.getFullDepth(currency);
+        FullDepth fullDepth = mtgoxUSD.getFullDepth();
+
         asks = new ArrayList<>(Arrays.asList(fullDepth.getAsks()));
         bids = new ArrayList<>(Arrays.asList(fullDepth.getBids()));
 
@@ -50,8 +47,7 @@ public class MtGoxExample {
         long mostRecentBidTimestamp = getMostRecentTimestamp(bids);
         mostRecentTimestamp = mostRecentAskTimestamp < mostRecentBidTimestamp ? mostRecentBidTimestamp : mostRecentAskTimestamp;
 
-        MtGoxWebSocketClient wsAPI = (MtGoxWebSocketClient) context.getBean("wsApi");
-        List<Depth> updates = wsAPI.getAllDepthSince(mostRecentTimestamp);
+        List<Depth> updates = mtgoxUSD.getAllDepthSince(mostRecentTimestamp);
         for (Depth update : updates) {
             if (update.getStamp() < mostRecentTimestamp) {
                 logger.log(Level.WARNING, "Warning:  Out of order timestamp found. {0} < {1}", new Object[]{update.getStamp(), mostRecentTimestamp});
@@ -65,17 +61,7 @@ public class MtGoxExample {
 
                 mostRecentTimestamp = update.getStamp();
 
-                double multiplier;
-                // TODO: Verify multiplier values for all currencies
-                switch (update.getCurrency().toLowerCase()) {
-                    case "aud":
-                        multiplier = MtGoxServiceImpl.AUD_INT_MULTIPLIER;
-                        break;
-                    default:
-                        multiplier = MtGoxServiceImpl.USD_INT_MULTIPLIER;
-                        break;
-                }
-                updateDepth(update, offers, multiplier);
+                updateDepth(update, offers);
             }
         }
         logger.log(Level.INFO, "Asks: {0}  Bids: {1}", new Object[]{asks != null ? asks.size() : "null", bids != null ? bids.size() : "null"});
@@ -94,7 +80,7 @@ public class MtGoxExample {
         return mostRecentTimestamp;
     }
 
-    private static void updateDepth(Depth update, List<Offer> depth, double covertToIntFactor) {
+    private static void updateDepth(Depth update, List<Offer> depth) {
 
         List<Offer> emptyOffers = new ArrayList<>();
         for (Offer offer : depth) {
@@ -102,9 +88,7 @@ public class MtGoxExample {
                 emptyOffers.add(offer);
             }
             if (offer.getPrice_int() == update.getPrice_int()) {
-                double dAmount = ((double) update.getTotal_volume_int()) / covertToIntFactor;
                 offer.setAmount_int(update.getTotal_volume_int());
-                offer.setAmount(dAmount);
                 offer.setStamp(update.getStamp());
                 break;
             }
@@ -112,7 +96,7 @@ public class MtGoxExample {
 
         if (update.getAmount_int() > 0) {
             // There is nothing at this price point, add it to the collection.
-            Offer offer = new Offer(update.getPrice(), update.getAmount(), update.getPrice_int(), update.getAmount_int(), update.getStamp());
+            Offer offer = new Offer(update.getPrice_int(), update.getAmount_int(), update.getStamp());
             depth.add(offer);
         }
 

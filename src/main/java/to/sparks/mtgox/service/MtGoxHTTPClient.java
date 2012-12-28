@@ -28,7 +28,7 @@ import to.sparks.mtgox.util.JSONSource;
  *
  * @author SparksG
  */
-public class MtGoxHTTPClient {
+class MtGoxHTTPClient {
 
     private JSONSource<Result<Order[]>> openOrdersJSON;
     private JSONSource<Result<String>> stringJSON;

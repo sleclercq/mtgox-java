@@ -11,7 +11,6 @@ import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
 import org.jwebsocket.kit.RawPacket;
 import to.sparks.mtgox.model.*;
-import to.sparks.mtgox.service.MtGoxWebSocketClient;
 
 /**
  *
@@ -19,11 +18,11 @@ import to.sparks.mtgox.service.MtGoxWebSocketClient;
  */
 public class MtGoxSocketListener implements WebSocketClientListener {
 
-    private MtGoxWebSocketClient apiClient;
+    private MtGoxEventListener eventListener;
     private Logger logger;
 
-    public MtGoxSocketListener(Logger logger, MtGoxWebSocketClient apiClient) {
-        this.apiClient = apiClient;
+    public MtGoxSocketListener(Logger logger, MtGoxEventListener eventListener) {
+        this.eventListener = eventListener;
         this.logger = logger;
     }
 
@@ -50,25 +49,25 @@ public class MtGoxSocketListener implements WebSocketClientListener {
                         if (messageType.equalsIgnoreCase("ticker")) {
                             OpPrivateTicker opPrivateTicker = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTicker.class);
                             Ticker ticker = opPrivateTicker.getTicker();
-                            apiClient.tickerEvent(ticker);
-                            logger.log(Level.FINE, "Ticker: currency: {0}", new Object[]{ticker.getAvg().getCurrency()});
+                            eventListener.tickerEvent(ticker);
+                            logger.log(Level.INFO, "Ticker: currency: {0}", new Object[]{ticker.getAvg().getCurrency()});
                         } else if (messageType.equalsIgnoreCase("depth")) {
                             OpPrivateDepth opPrivateDepth = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateDepth.class);
                             Depth depth = opPrivateDepth.getDepth();
-                            apiClient.depthEvent(depth);
-                            logger.log(Level.FINE, "Depth currency: {0}", new Object[]{depth.getCurrency()});
+                            eventListener.depthEvent(depth);
+                            logger.log(Level.INFO, "Depth currency: {0}", new Object[]{depth.getCurrency()});
                         } else if (messageType.equalsIgnoreCase("trade")) {
                             OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTrade.class);
                             Trade trade = opPrivateTrade.getTrade();
-                            apiClient.tradeEvent(trade);
-                            logger.log(Level.FINE, "Trade price: {0}", new Object[]{trade.getPrice()});
+                            eventListener.tradeEvent(trade);
+                            logger.log(Level.INFO, "Trade price: {0}", new Object[]{trade.getPrice_currency()});
                         } else {
-                            logger.log(Level.INFO, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
+                            logger.log(Level.WARNING, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
                         }
 
                         // logger.log(Level.INFO, "messageType: {0}, payload: {1}", new Object[]{messageType, dataPayload});
                     } else {
-                        logger.log(Level.INFO, "Unknown operation: {0}, payload: {1}", new Object[]{op.get("op")});
+                        logger.log(Level.WARNING, "Unknown operation: {0}, payload: {1}", new Object[]{op.get("op")});
                         // TODO:  Process the following types
                         // subscribe
                         // unsubscribe
