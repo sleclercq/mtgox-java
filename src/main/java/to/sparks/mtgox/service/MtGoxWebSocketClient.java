@@ -11,14 +11,14 @@ import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.IEventTime;
 import to.sparks.mtgox.model.Ticker;
 import to.sparks.mtgox.model.Trade;
-import to.sparks.mtgox.net.MtGoxListener;
+import to.sparks.mtgox.net.MtGoxEventListener;
 import to.sparks.mtgox.net.MtGoxSocketListener;
 
 /**
  *
  * @author SparksG
  */
-public class MtGoxWebSocketClient implements MtGoxListener, Runnable {
+public class MtGoxWebSocketClient implements MtGoxEventListener, Runnable {
 
     private Logger logger;
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
