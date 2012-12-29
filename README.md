@@ -10,7 +10,7 @@ Release versions are available from Maven Central, add the following dependency 
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5</version>
         </dependency>
 
 You can get developer snapshot releases by adding the following to your maven pom.xml
@@ -34,7 +34,7 @@ You can get developer snapshot releases by adding the following to your maven po
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.0.5-SNAPSHOT</version>
+            <version>0.0.6-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
