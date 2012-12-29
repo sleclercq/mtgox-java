@@ -60,7 +60,7 @@ public class MtGoxSocketListener implements WebSocketClientListener {
                             OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTrade.class);
                             Trade trade = opPrivateTrade.getTrade();
                             eventListener.tradeEvent(trade);
-                            logger.log(Level.INFO, "Trade price: {0}", new Object[]{trade.getPrice_int()});
+                            logger.log(Level.INFO, "Trade price: {0}", new Object[]{trade.getPrice().getCredits()});
                         } else {
                             logger.log(Level.WARNING, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
                         }

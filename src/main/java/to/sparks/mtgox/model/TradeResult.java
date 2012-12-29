@@ -13,7 +13,7 @@ public class TradeResult extends DtoBase {
 
     private String trade_id;
     private String primary;
-    private String currency;
+    private Currency currency;
     private String type;
     private String properties;
     private String item;
@@ -34,7 +34,7 @@ public class TradeResult extends DtoBase {
             @JsonProperty("date") String date) {
         this.trade_id = trade_id;
         this.primary = primary;
-        this.currency = currency;
+        this.currency = Currency.getInstance(currency);
         this.type = type;
         this.properties = properties;
         this.item = item;
@@ -62,7 +62,7 @@ public class TradeResult extends DtoBase {
      * @return the currency
      */
     public Currency getCurrency() {
-        return Currency.getInstance(currency);
+        return currency;
     }
 
     /**

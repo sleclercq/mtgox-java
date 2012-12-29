@@ -38,9 +38,9 @@ public class MtGoxWebSocketClientTest extends TestCase {
         TestHarness th = new TestHarness();
         MtGoxWebSocketClient instance = new MtGoxWebSocketClient(th.getLogger(), th.getTaskExecutor());
         assertEquals(0, instance.getAllDepthSince(0L).size());
-        Depth depth1 = new Depth("", "", 0L, "", 0, 0L, 0L, 0L, 0L, 1L);
+        Depth depth1 = new Depth("USD", "", 0L, "", 0, 0L, 0L, 0L, 0L, 1L);
         instance.depthEvent(depth1);
-        Depth depth2 = new Depth("", "", 0L, "", 0, 0L, 0L, 0L, 0L, 2L);
+        Depth depth2 = new Depth("USD", "", 0L, "", 0, 0L, 0L, 0L, 0L, 2L);
         instance.depthEvent(depth2);
         assertEquals(0, instance.getAllDepthSince(2L).size());
         assertEquals(1, instance.getAllDepthSince(1L).size());

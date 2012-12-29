@@ -1,7 +1,6 @@
 package to.sparks.mtgox.model;
 
 import java.util.Currency;
-import java.util.Locale;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -12,14 +11,14 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class Trade extends DtoBase implements IEventTime {
 
-    private long amount_int; // "amount_int":"1000000",
-    private long price_int; //    "price_int":"1336001",
+    private MtGoxBitcoin amount; // "amount_int":"1000000",
+    private MtGoxCurrency price; //    "price_int":"1336001",
     private long date; // "date":1356641315,
     private String item; // "item":"BTC",
     private String type; // "type":"trade"
     private String primary; // "primary":"Y",
     private String properties; // "properties":"limit",
-    private String price_currency; // "price_currency":"USD",
+    private Currency price_currency; // "price_currency":"USD",
     private String tid; // "tid":"1356641315101735",
     private String trade_type; // "trade_type":"ask",
 
@@ -37,14 +36,14 @@ public class Trade extends DtoBase implements IEventTime {
             @JsonProperty("price_int") long price_int) {
         this.tid = tid;
         this.primary = primary;
-        this.price_currency = price_currency;
+        this.price_currency = Currency.getInstance(price_currency);
         this.type = type;
         this.properties = properties;
         this.item = item;
         this.trade_type = trade_type;
         this.date = date;
-        this.amount_int = amount_int;
-        this.price_int = price_int;
+        this.amount = MtGoxBitcoin.createBitcoinInstance(amount_int);
+        this.price = MtGoxCurrency.createCurrencyInstance(price_int, this.price_currency);
 
     }
 
@@ -66,7 +65,7 @@ public class Trade extends DtoBase implements IEventTime {
      * @return the currency
      */
     public Currency getPriceCurrency() {
-        return Currency.getInstance(price_currency);
+        return price_currency;
     }
 
     /**
@@ -104,12 +103,12 @@ public class Trade extends DtoBase implements IEventTime {
         return date;
     }
 
-    public long getAmount_int() {
-        return amount_int;
+    public MtGoxBitcoin getAmount() {
+        return amount;
     }
 
-    public long getPrice_int() {
-        return price_int;
+    public MtGoxCurrency getPrice() {
+        return price;
     }
 
     @Override
