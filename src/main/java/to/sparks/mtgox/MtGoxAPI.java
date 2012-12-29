@@ -36,7 +36,7 @@ public interface MtGoxAPI {
 
     Ticker getTicker() throws Exception;
 
-    String placeMarketOrder(OrderType orderType, MtGoxBitcoin volume) throws Exception;
+    String placeMarketOrder(OrderType orderType, MtGoxBitcoinUnit volume) throws Exception;
 
-    String placeOrder(OrderType orderType, MtGoxCurrency price, MtGoxBitcoin volume) throws Exception;
+    String placeOrder(OrderType orderType, MtGoxFiatUnit price, MtGoxBitcoinUnit volume) throws Exception;
 }

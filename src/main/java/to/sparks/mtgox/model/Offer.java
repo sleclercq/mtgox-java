@@ -13,11 +13,11 @@ public class Offer extends DtoBase {
 
     private Currency currency;
     private long price_int;
-    private MtGoxBitcoin amount;
+    private MtGoxBitcoinUnit amount;
     private long stamp;
 
     public Offer(long price_int,
-            MtGoxBitcoin amount,
+            MtGoxBitcoinUnit amount,
             long stamp, Currency currency) {
         this.price_int = price_int;
         this.amount = amount;
@@ -36,7 +36,7 @@ public class Offer extends DtoBase {
             @JsonProperty("price_int") long price_int,
             @JsonProperty("amount_int") long amount_int,
             @JsonProperty("stamp") long stamp) {
-        this(price_int, MtGoxBitcoin.createBitcoinInstance(amount_int), stamp, null);
+        this(price_int, MtGoxBitcoinUnit.createBitcoinInstance(amount_int), stamp, null);
     }
 
     /**
@@ -57,10 +57,10 @@ public class Offer extends DtoBase {
         return price_int;
     }
 
-    public MtGoxCurrency getPrice() {
-        MtGoxCurrency price = null;
+    public MtGoxFiatUnit getPrice() {
+        MtGoxFiatUnit price = null;
         if (currency != null) {
-            price = MtGoxCurrency.createCurrencyInstance(price_int, currency);
+            price = MtGoxFiatUnit.createCurrencyInstance(price_int, currency);
         } else {
             throw new RuntimeException("Error: getPrice called before currency was initialised.");
         }
@@ -70,7 +70,7 @@ public class Offer extends DtoBase {
     /**
      * @return the amount_int
      */
-    public MtGoxBitcoin getAmount() {
+    public MtGoxBitcoinUnit getAmount() {
         return amount;
     }
 
@@ -84,7 +84,7 @@ public class Offer extends DtoBase {
     /**
      * @param amount the amount to set
      */
-    public void setAmount(MtGoxBitcoin amount) {
+    public void setAmount(MtGoxBitcoinUnit amount) {
         this.amount = amount;
     }
 

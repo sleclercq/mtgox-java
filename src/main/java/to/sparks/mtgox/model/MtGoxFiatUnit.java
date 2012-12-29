@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @author SparksG
  */
-public class MtGoxCurrency extends MtGoxUnitOfCredit {
+public class MtGoxFiatUnit extends MtGoxUnitOfCredit {
 
     private static final Map<Currency, Integer> scaleMap;
 
@@ -23,7 +23,7 @@ public class MtGoxCurrency extends MtGoxUnitOfCredit {
         scaleMap = Collections.unmodifiableMap(aMap);
     }
 
-    private MtGoxCurrency(long int_value, Currency currency, int scale) {
+    private MtGoxFiatUnit(long int_value, Currency currency, int scale) {
         super(new BigDecimal(BigInteger.valueOf(int_value), scale), currency);
     }
 
@@ -32,11 +32,11 @@ public class MtGoxCurrency extends MtGoxUnitOfCredit {
         return currency;
     }
 
-    public static MtGoxCurrency createCurrencyInstance(long int_value, Currency currency) {
+    public static MtGoxFiatUnit createCurrencyInstance(long int_value, Currency currency) {
         int scale = 5;
         if (scaleMap.containsKey(currency)) {
             scale = scaleMap.get(currency);
         }
-        return new MtGoxCurrency(int_value, currency, scale);
+        return new MtGoxFiatUnit(int_value, currency, scale);
     }
 }

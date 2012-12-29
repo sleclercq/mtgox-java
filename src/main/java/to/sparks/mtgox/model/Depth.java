@@ -12,7 +12,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class Depth extends Offer implements IEventTime {
 
     private String item;
-    private MtGoxBitcoin totalVolume;
+    private MtGoxBitcoinUnit totalVolume;
     private String type_str;
     private int type;
 
@@ -27,10 +27,10 @@ public class Depth extends Offer implements IEventTime {
             @JsonProperty("volume_int") long amount_int,
             @JsonProperty("now") long stamp) {
         super(price_int,
-                MtGoxBitcoin.createBitcoinInstance(amount_int),
+                MtGoxBitcoinUnit.createBitcoinInstance(amount_int),
                 stamp, Currency.getInstance(currency));
         this.item = item;
-        this.totalVolume = MtGoxBitcoin.createBitcoinInstance(total_volume_int);
+        this.totalVolume = MtGoxBitcoinUnit.createBitcoinInstance(total_volume_int);
         this.type_str = type_str;
         this.type = type;
     }
@@ -45,7 +45,7 @@ public class Depth extends Offer implements IEventTime {
     /**
      * @return the total_volume_int
      */
-    public MtGoxBitcoin getTotalVolume() {
+    public MtGoxBitcoinUnit getTotalVolume() {
         return totalVolume;
     }
 

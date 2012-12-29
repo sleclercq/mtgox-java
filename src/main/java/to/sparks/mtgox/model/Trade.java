@@ -11,8 +11,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class Trade extends DtoBase implements IEventTime {
 
-    private MtGoxBitcoin amount; // "amount_int":"1000000",
-    private MtGoxCurrency price; //    "price_int":"1336001",
+    private MtGoxBitcoinUnit amount; // "amount_int":"1000000",
+    private MtGoxFiatUnit price; //    "price_int":"1336001",
     private long date; // "date":1356641315,
     private String item; // "item":"BTC",
     private String type; // "type":"trade"
@@ -42,8 +42,8 @@ public class Trade extends DtoBase implements IEventTime {
         this.item = item;
         this.trade_type = trade_type;
         this.date = date;
-        this.amount = MtGoxBitcoin.createBitcoinInstance(amount_int);
-        this.price = MtGoxCurrency.createCurrencyInstance(price_int, this.price_currency);
+        this.amount = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
+        this.price = MtGoxFiatUnit.createCurrencyInstance(price_int, this.price_currency);
 
     }
 
@@ -103,11 +103,11 @@ public class Trade extends DtoBase implements IEventTime {
         return date;
     }
 
-    public MtGoxBitcoin getAmount() {
+    public MtGoxBitcoinUnit getAmount() {
         return amount;
     }
 
-    public MtGoxCurrency getPrice() {
+    public MtGoxFiatUnit getPrice() {
         return price;
     }
 

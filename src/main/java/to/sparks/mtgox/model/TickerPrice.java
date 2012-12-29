@@ -25,11 +25,11 @@ public class TickerPrice extends DtoBase {
         this.display_short = display_short;
         if(currency.equalsIgnoreCase("BTC"))
         {
-            this.priceValue = MtGoxBitcoin.createBitcoinInstance(value_int);
+            this.priceValue = MtGoxBitcoinUnit.createBitcoinInstance(value_int);
         }else
         {
         this.currency = Currency.getInstance(currency);
-        this.priceValue = MtGoxCurrency.createCurrencyInstance(value_int, this.currency);
+        this.priceValue = MtGoxFiatUnit.createCurrencyInstance(value_int, this.currency);
         }
     }
 
