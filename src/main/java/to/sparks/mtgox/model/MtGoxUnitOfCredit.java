@@ -19,7 +19,7 @@ public abstract class MtGoxUnitOfCredit<T> {
         this.currency = currency;
     }
 
-    public BigDecimal getAmount() {
+    public BigDecimal getCredits() {
         return amount;
     }
 

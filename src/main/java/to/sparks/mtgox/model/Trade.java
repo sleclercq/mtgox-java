@@ -1,5 +1,7 @@
 package to.sparks.mtgox.model;
 
+import java.util.Currency;
+import java.util.Locale;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -63,8 +65,8 @@ public class Trade extends DtoBase implements IEventTime {
     /**
      * @return the currency
      */
-    public String getPrice_currency() {
-        return price_currency;
+    public Currency getPriceCurrency() {
+        return Currency.getInstance(price_currency);
     }
 
     /**

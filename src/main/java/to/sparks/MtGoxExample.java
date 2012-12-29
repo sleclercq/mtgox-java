@@ -84,20 +84,19 @@ public class MtGoxExample {
 
         List<Offer> emptyOffers = new ArrayList<>();
         for (Offer offer : depth) {
-            if (offer.getAmount_int() == 0) {
+            if (offer.getAmount().getCredits().equals(BigDecimal.ZERO)) {
                 emptyOffers.add(offer);
             }
-            if (offer.getPrice_int() == update.getPrice_int()) {
-                offer.setAmount_int(update.getTotal_volume_int());
+            if (offer.getPrice().equals(update.getPrice())) {
+                offer.setAmount(update.getTotalVolume());
                 offer.setStamp(update.getStamp());
                 break;
             }
         }
 
-        if (update.getAmount_int() > 0) {
+        if (update.getAmount().getCredits().compareTo(BigDecimal.ZERO) > 0) {
             // There is nothing at this price point, add it to the collection.
-            Offer offer = new Offer(update.getPrice_int(), update.getAmount_int(), update.getStamp());
-            depth.add(offer);
+            depth.add(update);
         }
 
         // Clean the array.  Remove any offers of zero coins.

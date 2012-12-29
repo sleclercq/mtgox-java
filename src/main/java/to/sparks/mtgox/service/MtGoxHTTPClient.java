@@ -82,7 +82,9 @@ class MtGoxHTTPClient {
     }
 
     public FullDepth getFullDepth(Currency currency) throws Exception {
-        return fullDepthJSON.getResultFromStream(new URL(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.FullDepth)).openStream(), FullDepth.class).getReturn();
+        FullDepth fullDepth = fullDepthJSON.getResultFromStream(new URL(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.FullDepth)).openStream(), FullDepth.class).getReturn();
+        fullDepth.setCurrency(currency);  // Kludge that ensures the Offer arrays know what currency they are in.
+        return fullDepth;
     }
 
     public String placeOrder(Currency currency, HashMap<String, String> params) throws Exception {

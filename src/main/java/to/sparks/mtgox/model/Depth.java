@@ -11,9 +11,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class Depth extends Offer implements IEventTime {
 
-    private String currency;
     private String item;
-    private long total_volume_int;
+    private MtGoxBitcoin totalVolume;
     private String type_str;
     private int type;
 
@@ -27,19 +26,13 @@ public class Depth extends Offer implements IEventTime {
             @JsonProperty("price_int") long price_int,
             @JsonProperty("volume_int") long amount_int,
             @JsonProperty("now") long stamp) {
-        super(price, amount, price_int, amount_int, stamp);
-        this.currency = currency;
+        super(price_int,
+                MtGoxBitcoin.createBitcoinInstance(amount_int),
+                stamp, Currency.getInstance(currency));
         this.item = item;
-        this.total_volume_int = total_volume_int;
+        this.totalVolume = MtGoxBitcoin.createBitcoinInstance(total_volume_int);
         this.type_str = type_str;
         this.type = type;
-    }
-
-    /**
-     * @return the currency
-     */
-    public Currency getCurrency() {
-        return Currency.getInstance(currency);
     }
 
     /**
@@ -52,8 +45,8 @@ public class Depth extends Offer implements IEventTime {
     /**
      * @return the total_volume_int
      */
-    public long getTotal_volume_int() {
-        return total_volume_int;
+    public MtGoxBitcoin getTotalVolume() {
+        return totalVolume;
     }
 
     /**

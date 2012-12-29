@@ -72,9 +72,9 @@ class MtGoxServiceImpl implements MtGoxAPI {
 
         if (price != null) {
 //            params.put("price_int", String.valueOf(convertPricetoInt(currency.getCurrencyCode(), price)));
-            params.put("price_int", String.valueOf(price.getAmount().longValueExact()));
+            params.put("price_int", String.valueOf(price.getCredits().longValueExact()));
         }
-        params.put("amount_int", String.valueOf(volume.getAmount().longValueExact()));
+        params.put("amount_int", String.valueOf(volume.getCredits().longValueExact()));
 
         return httpAPI.placeOrder(currency, params);
     }
