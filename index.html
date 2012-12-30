@@ -20,7 +20,7 @@
     <header>
       <div class="inner">
         <h1>mtgox-java</h1>
-        <h2>A Java API for the MtGox bitcoin currency exchange based on Spring and Maven</h2>
+        <h2>A Java API (based on Spring &amp; Maven) for the MtGox bitcoin exchange WebSocket &amp; HTTP services.</h2>
         <a href="https://github.com/GrantSparks/mtgox-java" class="button"><small>View project on</small>GitHub</a>
       </div>
     </header>
@@ -30,16 +30,22 @@
         <section id="main-content">
           <h1>mtgox-java</h1>
 
-<p>A Java API for the MtGox bitcoin currency exchange based on Spring &amp; Maven.</p>
+<p>A Java API (based on Spring &amp; Maven) for the MtGox bitcoin exchange WebSocket &amp; HTTP services.</p>
+
+<p>See <a href="https://en.bitcoin.it/wiki/MtGox/API">https://en.bitcoin.it/wiki/MtGox/API</a> for details of the underlying protocols.</p>
+
+<p>This software is copyright 2012-2013 Grant Sparks, and is distributed under the terms of the Lesser GNU General Public License (LGPL) included in the file LICENSE.TXT.</p>
 
 <p>Warning:  Testing has not yet been done for each currency to ensure that mtgox's various 'magic' mutlipliers work.  Use at own risk and double-check order sizes, prices and volumes are working for your currency before doing any large trades or using in a production environment.</p>
+
+<p>TODO:  The private HTTP API functions and the websocker subscription functions are not yet all there.  Send me a request if you need a particular function that is not yet there.</p>
 
 <p>Release versions are available from Maven Central, add the following dependency to your pom.xml.</p>
 
 <pre><code>    &lt;dependency&gt;
         &lt;groupId&gt;to.sparks&lt;/groupId&gt;
         &lt;artifactId&gt;mtgox&lt;/artifactId&gt;
-        &lt;version&gt;0.0.5&lt;/version&gt;
+        &lt;version&gt;0.1.0&lt;/version&gt;
     &lt;/dependency&gt;
 </code></pre>
 
@@ -64,7 +70,7 @@
     &lt;dependency&gt;
         &lt;groupId&gt;to.sparks&lt;/groupId&gt;
         &lt;artifactId&gt;mtgox&lt;/artifactId&gt;
-        &lt;version&gt;0.0.6-SNAPSHOT&lt;/version&gt;
+        &lt;version&gt;0.1.1-SNAPSHOT&lt;/version&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
 </code></pre>
@@ -74,6 +80,10 @@
 <pre><code>    // Obtain a $USD instance of the API
     ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
     MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
+
+    // Get the private account info
+    Info info = mtgoxUSD.getInfo();
+    logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
 
     // Example of getting the current ticker price
     Ticker ticker = mtgoxUSD.getTicker();
@@ -86,6 +96,20 @@
 </code></pre>
 
 <p>Contact the author <a href="mailto:grant@sparks.to">grant@sparks.to</a> for reporting bugs or asking questions.  Follow the mtgox-java project on GitHub so that I know who you are.</p>
+
+<pre><code>The MtGox-Java API is free software: you can redistribute it and/or modify
+it under the terms of the Lesser GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The MtGox-Java API is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+Lesser GNU General Public License for more details.
+
+You should have received a copy of the Lesser GNU General Public License
+along with the MtGox-Java API .  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+</code></pre>
         </section>
 
         <aside id="sidebar">
