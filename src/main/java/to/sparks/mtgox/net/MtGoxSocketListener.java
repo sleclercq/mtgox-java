@@ -50,17 +50,17 @@ public class MtGoxSocketListener implements WebSocketClientListener {
                             OpPrivateTicker opPrivateTicker = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTicker.class);
                             Ticker ticker = opPrivateTicker.getTicker();
                             eventListener.tickerEvent(ticker);
-                            logger.log(Level.INFO, "Ticker: last: {0}", new Object[]{ticker.getLast().getDisplay()});
+                            logger.log(Level.FINE, "Ticker: last: {0}", new Object[]{ticker.getLast().getDisplay()});
                         } else if (messageType.equalsIgnoreCase("depth")) {
                             OpPrivateDepth opPrivateDepth = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateDepth.class);
                             Depth depth = opPrivateDepth.getDepth();
                             eventListener.depthEvent(depth);
-                            logger.log(Level.INFO, "Depth total volume: {0}", new Object[]{depth.getTotalVolume().getCredits()});
+                            logger.log(Level.FINE, "Depth total volume: {0}", new Object[]{depth.getTotalVolume().getCredits()});
                         } else if (messageType.equalsIgnoreCase("trade")) {
                             OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTrade.class);
                             Trade trade = opPrivateTrade.getTrade();
                             eventListener.tradeEvent(trade);
-                            logger.log(Level.INFO, "Trade price: {0}", new Object[]{trade.getPrice().getCredits()});
+                            logger.log(Level.FINE, "Trade price: {0}", new Object[]{trade.getPrice().getCredits()});
                         } else {
                             logger.log(Level.WARNING, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
                         }

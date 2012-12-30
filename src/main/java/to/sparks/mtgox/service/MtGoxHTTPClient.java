@@ -30,6 +30,7 @@ import to.sparks.mtgox.util.JSONSource;
  */
 class MtGoxHTTPClient {
 
+    private JSONSource<Result<Info>> privateInfoJSON;
     private JSONSource<Result<Order[]>> openOrdersJSON;
     private JSONSource<Result<String>> stringJSON;
     private JSONSource<Result<OrderResult>> orderResultJSON;
@@ -47,7 +48,7 @@ class MtGoxHTTPClient {
         orderResultJSON = new JSONSource<>();
         fullDepthJSON = new JSONSource<>();
         tickerJSON = new JSONSource<>();
-
+        privateInfoJSON = new JSONSource<>();
 
         TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {
@@ -107,6 +108,12 @@ class MtGoxHTTPClient {
 
         Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(null, MtGoxUrlFactory.RestCommand.PrivateOrders)), Order[].class);
         return openOrders.getReturn();
+    }
+
+    public Info getPrivateInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+
+        Result<Info> privateInfo = privateInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(null, MtGoxUrlFactory.RestCommand.PrivateInfo)), Info.class);
+        return privateInfo.getReturn();
     }
 
     public Ticker getTicker(Currency currency) throws IOException, Exception {

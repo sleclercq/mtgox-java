@@ -16,6 +16,7 @@ public class MtGoxUrlFactory {
         PrivateOrderAdd,
         PrivateOrderResult,
         PrivateOrders,
+        PrivateInfo,
         FullDepth,
         Ticker
     }
@@ -35,6 +36,7 @@ public class MtGoxUrlFactory {
         restMap.put(RestCommand.PrivateOrderAdd, "private/order/add");
         restMap.put(RestCommand.PrivateOrderResult, "private/order/result");
         restMap.put(RestCommand.PrivateOrders, "private/orders");
+        restMap.put(RestCommand.PrivateInfo, "private/info");
         restMap.put(RestCommand.FullDepth, "fulldepth");
         restMap.put(RestCommand.Ticker, "ticker");
 

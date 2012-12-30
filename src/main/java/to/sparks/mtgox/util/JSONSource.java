@@ -3,6 +3,8 @@ package to.sparks.mtgox.util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -11,6 +13,7 @@ import to.sparks.mtgox.model.DtoBase;
 import to.sparks.mtgox.model.Result;
 
 /**
+ * Parse JSON into java objects.
  *
  * @author SparksG
  */
@@ -21,6 +24,8 @@ public class JSONSource<T extends DtoBase> {
 
     public JSONSource() {
         factory.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        mapper.setDateFormat(df);
     }
 
     public T getResultFromStream(InputStream in, Class clazz) throws IOException {

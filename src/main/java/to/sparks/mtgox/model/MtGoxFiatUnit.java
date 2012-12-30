@@ -18,7 +18,7 @@ public class MtGoxFiatUnit extends MtGoxUnitOfCredit {
     static {
         Map<Currency, Integer> aMap = new HashMap<>();
         aMap.put(Currency.getInstance("AUD"), 5);
-        aMap.put(Currency.getInstance("USD"), 8);
+        aMap.put(Currency.getInstance("USD"), 5);
         aMap.put(Currency.getInstance("JPY"), 3);
         scaleMap = Collections.unmodifiableMap(aMap);
     }
@@ -33,7 +33,7 @@ public class MtGoxFiatUnit extends MtGoxUnitOfCredit {
     }
 
     public static MtGoxFiatUnit createCurrencyInstance(long int_value, Currency currency) {
-        int scale = 5;
+        int scale = 8; // Default is 8
         if (scaleMap.containsKey(currency)) {
             scale = scaleMap.get(currency);
         }

@@ -72,9 +72,9 @@ class MtGoxServiceImpl implements MtGoxAPI {
 
         if (price != null) {
 //            params.put("price_int", String.valueOf(convertPricetoInt(currency.getCurrencyCode(), price)));
-            params.put("price_int", String.valueOf(price.getCredits().longValueExact()));
+            params.put("price_int", String.valueOf(price.getCredits().unscaledValue().longValue()));
         }
-        params.put("amount_int", String.valueOf(volume.getCredits().longValueExact()));
+        params.put("amount_int", String.valueOf(volume.getCredits().unscaledValue().longValue()));
 
         return httpAPI.placeOrder(currency, params);
     }
@@ -110,5 +110,10 @@ class MtGoxServiceImpl implements MtGoxAPI {
     @Override
     public Currency getBaseCurrency() {
         return currency;
+    }
+
+    @Override
+    public Info getInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+        return httpAPI.getPrivateInfo();
     }
 }
