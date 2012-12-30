@@ -51,4 +51,8 @@ public class MtGoxBitcoinUnit extends MtGoxUnitOfCredit {
     public static MtGoxBitcoinUnit createBitcoinInstance(BigDecimal amount) {
         return new MtGoxBitcoinUnit(amount);
     }
+
+    public static MtGoxBitcoinUnit createBitcoinInstance(double float_value) {
+        return new MtGoxBitcoinUnit(float_value);
+    }
 }
