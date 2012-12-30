@@ -3,6 +3,8 @@ mtgox-java
 
 A Java API (based on Spring & Maven) for the MtGox bitcoin exchange WebSocket & HTTP services.
 
+See https://en.bitcoin.it/wiki/MtGox/API for details of the underlying protocols.
+
 This software is copyright 2012-2013 Grant Sparks, and is distributed under the terms of the Lesser GNU General Public License (LGPL) included in the file LICENSE.TXT.
 
 Warning:  Testing has not yet been done for each currency to ensure that mtgox's various 'magic' mutlipliers work.  Use at own risk and double-check order sizes, prices and volumes are working for your currency before doing any large trades or using in a production environment.
