@@ -61,7 +61,7 @@ public class MtGoxExample {
             long price_int = 100000L;
             long amount_int = 100000000L;
 
-            MtGoxFiatUnit fiatUnit = MtGoxFiatUnit.createCurrencyInstance(price_int, mtgoxUSD.getBaseCurrency());
+            MtGoxFiatUnit fiatUnit = MtGoxFiatUnit.createFiatInstance(price_int, mtgoxUSD.getBaseCurrency());
             MtGoxBitcoinUnit bitcoinUnit = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
             String orderRef = mtgoxUSD.placeOrder(MtGoxAPI.OrderType.Bid, fiatUnit, bitcoinUnit);
             logger.log(Level.INFO, "orderRef: {0}", new Object[]{orderRef});

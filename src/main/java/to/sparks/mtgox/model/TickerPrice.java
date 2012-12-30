@@ -29,7 +29,7 @@ public class TickerPrice extends DtoBase {
         }else
         {
         this.currency = Currency.getInstance(currency);
-        this.priceValue = MtGoxFiatUnit.createCurrencyInstance(value_int, this.currency);
+        this.priceValue = MtGoxFiatUnit.createFiatInstance(value_int, this.currency);
         }
     }
 

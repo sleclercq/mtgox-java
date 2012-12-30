@@ -60,7 +60,7 @@ public class Offer extends DtoBase {
     public MtGoxFiatUnit getPrice() {
         MtGoxFiatUnit price = null;
         if (currency != null) {
-            price = MtGoxFiatUnit.createCurrencyInstance(price_int, currency);
+            price = MtGoxFiatUnit.createFiatInstance(price_int, currency);
         } else {
             throw new RuntimeException("Error: getPrice called before currency was initialised.");
         }

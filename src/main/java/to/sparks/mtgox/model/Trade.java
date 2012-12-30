@@ -43,7 +43,7 @@ public class Trade extends DtoBase implements IEventTime {
         this.trade_type = trade_type;
         this.date = date;
         this.amount = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
-        this.price = MtGoxFiatUnit.createCurrencyInstance(price_int, this.price_currency);
+        this.price = MtGoxFiatUnit.createFiatInstance(price_int, this.price_currency);
 
     }
 
