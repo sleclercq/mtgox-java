@@ -7,6 +7,9 @@ See https://en.bitcoin.it/wiki/MtGox/API for details of the underlying protocols
 
 This software is copyright 2012-2013 Grant Sparks, and is distributed under the terms of the Lesser GNU General Public License (LGPL) included in the file LICENSE.TXT.
 
+You can support this work via bitcoin donation to my tip jar.  1DdDs3rPR9W37cbF5zQbUB8D9frcbAAoYu
+![Bitcoin tipjar QR code](https://raw.github.com/GrantSparks/mtgox-java/master/tipjar.png "bitcoin tipjar address")
+
 Warning:  Testing has not yet been done for each currency to ensure that mtgox's various 'magic' mutlipliers work.  Use at own risk and double-check order sizes, prices and volumes are working for your currency before doing any large trades or using in a production environment.
 
 TODO:  The private HTTP API functions and the websocker subscription functions are not yet all there.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... http://goo.gl/NxBG6
@@ -45,7 +48,7 @@ You can get developer snapshot releases by adding the following to your maven po
     </dependencies>
 
 Below is an example of how to use the mtgox java API.
-
+```java
         // Obtain a $USD instance of the API
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
         MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
@@ -57,7 +60,7 @@ Below is an example of how to use the mtgox java API.
         // Example of getting the current ticker price
         Ticker ticker = mtgoxUSD.getTicker();
         logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getValue());
-        
+```       
 Private API functions need a MtGox.Com API key & secret passed as JVM system properties as shown below.
         
         java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.MtGoxExample
@@ -78,6 +81,7 @@ Contact the author grant@sparks.to for reporting bugs or asking questions.  Foll
     along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
 
 
-![Project page QR code](https://raw.github.com/GrantSparks/mtgox-java/master/qr.png "mt-gox java QR code")  
+[Project page url](http://goo.gl/OJ02G "mtgox-java project page home")
 
-http://goo.gl/OJ02G
+![Project page QR code](https://raw.github.com/GrantSparks/mtgox-java/master/qr.png "mt-gox java project page QR code")  
+
