@@ -19,7 +19,8 @@ import java.util.List;
 import to.sparks.mtgox.model.*;
 
 /**
- * A java api for the MtGox bitcoin exchange built using Spring and Maven
+ * A java api for the MtGox bitcoin exchange built using Spring and Maven.
+ * See https://en.bitcoin.it/wiki/MtGox/API for protocol details.
  *
  * @author SparksG
  */
