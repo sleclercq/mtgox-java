@@ -36,38 +36,41 @@ public class MtGoxExample {
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
         MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
 
-        // Get the private account info
-        Info info = mtgoxUSD.getInfo();
-        logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
-
         // Example of getting the current ticker price
         Ticker ticker = mtgoxUSD.getTicker();
         logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getDisplay());
 
+        try {
+            // Get the private account info
+            Info info = mtgoxUSD.getInfo();
+            logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
 
-        // Purchase 0.01000000 bitcoins for USD$0.00001
-        // long price_int = 1l;
-        // long amount_int = 1000000L;
+            // Purchase 0.01000000 bitcoins for USD$0.00001
+            // long price_int = 1l;
+            // long amount_int = 1000000L;
 
-        // Purchase 10 bitcoins for USD$0.0001
-        // long price_int = 10L;
-        // long amount_int = 1000000000L;
+            // Purchase 10 bitcoins for USD$0.0001
+            // long price_int = 10L;
+            // long amount_int = 1000000000L;
 
-        // Purchase 0.1 bitcoins for USD$0.01
-        // long price_int = 1000L;
-        // long amount_int = 10000000L;
+            // Purchase 0.1 bitcoins for USD$0.01
+            // long price_int = 1000L;
+            // long amount_int = 10000000L;
 
-        // Purchase 1.0 bitcoins for USD$1.00
-        long price_int = 100000L;
-        long amount_int = 100000000L;
+            // Purchase 1.0 bitcoins for USD$1.00
+            long price_int = 100000L;
+            long amount_int = 100000000L;
 
-        MtGoxFiatUnit fiatUnit = MtGoxFiatUnit.createCurrencyInstance(price_int, mtgoxUSD.getBaseCurrency());
-        MtGoxBitcoinUnit bitcoinUnit = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
-        String orderRef = mtgoxUSD.placeOrder(MtGoxAPI.OrderType.Bid, fiatUnit, bitcoinUnit);
-        logger.log(Level.INFO, "orderRef: {0}", new Object[]{orderRef});
+            MtGoxFiatUnit fiatUnit = MtGoxFiatUnit.createCurrencyInstance(price_int, mtgoxUSD.getBaseCurrency());
+            MtGoxBitcoinUnit bitcoinUnit = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
+            String orderRef = mtgoxUSD.placeOrder(MtGoxAPI.OrderType.Bid, fiatUnit, bitcoinUnit);
+            logger.log(Level.INFO, "orderRef: {0}", new Object[]{orderRef});
 
-        for (Order order : mtgoxUSD.getOpenOrders()) {
-            logger.log(Level.INFO, "Open order: {0} status: {1} price: {2}{3} amount: {4}", new Object[]{order.getOid(), order.getStatus(), order.getCurrency().getCurrencyCode(), order.getPrice().getDisplay(), order.getAmount().getDisplay()});
+            for (Order order : mtgoxUSD.getOpenOrders()) {
+                logger.log(Level.INFO, "Open order: {0} status: {1} price: {2}{3} amount: {4}", new Object[]{order.getOid(), order.getStatus(), order.getCurrency().getCurrencyCode(), order.getPrice().getDisplay(), order.getAmount().getDisplay()});
+            }
+        } catch (IllegalArgumentException ex) {
+            logger.log(Level.SEVERE, "Private functions require your private mtgox api keys. Run java with these command line arguments:  -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET ", ex);
         }
 
         // TODO:  Other examples...  The API is very readable, just give it a try! :)
