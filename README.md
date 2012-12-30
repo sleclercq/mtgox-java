@@ -76,3 +76,5 @@ Contact the author grant@sparks.to for reporting bugs or asking questions.  Foll
 
     You should have received a copy of the Lesser GNU General Public License
     along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
+
+http://goo.gl/OJ02G
