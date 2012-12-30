@@ -36,6 +36,9 @@
 
 <p>This software is copyright 2012-2013 Grant Sparks, and is distributed under the terms of the Lesser GNU General Public License (LGPL) included in the file LICENSE.TXT.</p>
 
+<p>You can support this work via bitcoin donation to my tip jar.  1DdDs3rPR9W37cbF5zQbUB8D9frcbAAoYu
+<img src="https://raw.github.com/GrantSparks/mtgox-java/master/tipjar.png" alt="Bitcoin tipjar QR code" title="bitcoin tipjar address"></p>
+
 <p>Warning:  Testing has not yet been done for each currency to ensure that mtgox's various 'magic' mutlipliers work.  Use at own risk and double-check order sizes, prices and volumes are working for your currency before doing any large trades or using in a production environment.</p>
 
 <p>TODO:  The private HTTP API functions and the websocker subscription functions are not yet all there.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... <a href="http://goo.gl/NxBG6">http://goo.gl/NxBG6</a></p>
@@ -77,18 +80,18 @@
 
 <p>Below is an example of how to use the mtgox java API.</p>
 
-<pre><code>    // Obtain a $USD instance of the API
-    ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
-    MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
+<div class="highlight"><pre>        <span class="c1">// Obtain a $USD instance of the API</span>
+        <span class="n">ApplicationContext</span> <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClassPathXmlApplicationContext</span><span class="o">(</span><span class="s">"to/sparks/Beans.xml"</span><span class="o">);</span>
+        <span class="n">MtGoxAPI</span> <span class="n">mtgoxUSD</span> <span class="o">=</span> <span class="o">(</span><span class="n">MtGoxAPI</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">"mtgoxUSD"</span><span class="o">);</span>
 
-    // Get the private account info
-    Info info = mtgoxUSD.getInfo();
-    logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
+        <span class="c1">// Get the private account info</span>
+        <span class="n">Info</span> <span class="n">info</span> <span class="o">=</span> <span class="n">mtgoxUSD</span><span class="o">.</span><span class="na">getInfo</span><span class="o">();</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="n">Level</span><span class="o">.</span><span class="na">INFO</span><span class="o">,</span> <span class="s">"Logged into account: {0}"</span><span class="o">,</span> <span class="n">info</span><span class="o">.</span><span class="na">getLogin</span><span class="o">());</span>
 
-    // Example of getting the current ticker price
-    Ticker ticker = mtgoxUSD.getTicker();
-    logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getValue());
-</code></pre>
+        <span class="c1">// Example of getting the current ticker price</span>
+        <span class="n">Ticker</span> <span class="n">ticker</span> <span class="o">=</span> <span class="n">mtgoxUSD</span><span class="o">.</span><span class="na">getTicker</span><span class="o">();</span>
+        <span class="n">logger</span><span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="n">Level</span><span class="o">.</span><span class="na">INFO</span><span class="o">,</span> <span class="s">"Last price: {0}"</span><span class="o">,</span> <span class="n">ticker</span><span class="o">.</span><span class="na">getLast</span><span class="o">().</span><span class="na">getValue</span><span class="o">());</span>
+</pre></div>
 
 <p>Private API functions need a MtGox.Com API key &amp; secret passed as JVM system properties as shown below.</p>
 
@@ -111,9 +114,9 @@ You should have received a copy of the Lesser GNU General Public License
 along with the MtGox-Java API .  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 </code></pre>
 
-<p><img src="https://raw.github.com/GrantSparks/mtgox-java/master/qr.png" alt="Project page QR code" title="mt-gox java QR code"></p>
+<p><a href="http://goo.gl/OJ02G" title="mtgox-java project page home">Project page url</a></p>
 
-<p><a href="http://goo.gl/OJ02G">http://goo.gl/OJ02G</a></p>
+<p><img src="https://raw.github.com/GrantSparks/mtgox-java/master/qr.png" alt="Project page QR code" title="mt-gox java project page QR code"></p>
         </section>
 
         <aside id="sidebar">
