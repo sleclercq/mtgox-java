@@ -43,7 +43,7 @@ public class TradeResult extends DtoBase implements CurrencyKludge {
 
     @Override
     public void setCurrencyInfo(CurrencyInfo currencyInfo) {
-        amount.setCurrencyInfo(currencyInfo);
+//        amount.setCurrencyInfo(currencyInfo);  // This is a BTC amount!
         price.setCurrencyInfo(currencyInfo);
         spent.setCurrencyInfo(currencyInfo);
 

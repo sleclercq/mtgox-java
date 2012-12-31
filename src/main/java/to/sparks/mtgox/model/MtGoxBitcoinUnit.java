@@ -9,7 +9,7 @@ import java.math.BigInteger;
  * <code>
  *      // Create a representation of 1.0 bitcoins.
  *      long amount_int = 100000000L;
- *      MtGoxBitcoinUnit bitcoinUnit = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
+ *      MtGoxBitcoinUnit bitcoinUnit = new MtGoxBitcoinUnit(amount_int);
  * </code>
  *
  * @author SparksG
@@ -23,35 +23,23 @@ public class MtGoxBitcoinUnit extends MtGoxUnitOfCredit {
      * because you shouldn't really be storing monetary values as doubles
      * anyway. Use BigDecimal instead.
      */
-    private MtGoxBitcoinUnit(double float_value) {
+    public MtGoxBitcoinUnit(double float_value) {
         super(BigDecimal.valueOf(float_value), null);
     }
 
     /*
      * Use this constructor with the int_value returned by the MtGox API.
      */
-    private MtGoxBitcoinUnit(long int_value) {
+    public MtGoxBitcoinUnit(long int_value) {
         super(new BigDecimal(BigInteger.valueOf(int_value), BITCOIN_INT_SCALE), null);
     }
 
-    private MtGoxBitcoinUnit(BigDecimal amount) {
+    public MtGoxBitcoinUnit(BigDecimal amount) {
         super(amount, null);
     }
 
     @Override
     public CurrencyInfo getCurrencyInfo() {
         return currencyInfo;
-    }
-
-    public static MtGoxBitcoinUnit createBitcoinInstance(long int_value) {
-        return new MtGoxBitcoinUnit(int_value);
-    }
-
-    public static MtGoxBitcoinUnit createBitcoinInstance(BigDecimal amount) {
-        return new MtGoxBitcoinUnit(amount);
-    }
-
-    public static MtGoxBitcoinUnit createBitcoinInstance(double float_value) {
-        return new MtGoxBitcoinUnit(float_value);
     }
 }

@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Info extends DtoBase implements CurrencyKludge {
+public class AccountInfo extends DtoBase implements CurrencyKludge {
 
     private String login;
     private String[] rights;
@@ -22,7 +22,7 @@ public class Info extends DtoBase implements CurrencyKludge {
     private DynaBean wallets;
     private double trade_Fee;
 
-    public Info(@JsonProperty("Login") String login,
+    public AccountInfo(@JsonProperty("Login") String login,
             @JsonProperty("Rights") String[] rights,
             @JsonProperty("Last_Login") Date last_Login,
             @JsonProperty("Created") Date created,

@@ -1,6 +1,5 @@
 package to.sparks.mtgox.model;
 
-import java.util.Currency;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -11,16 +10,15 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
 
-    private MtGoxBitcoinUnit amount; // "amount_int":"1000000",
-    // private MtGoxFiatUnit price; //    "price_int":"1336001",
+    private MtGoxBitcoinUnit amount;
     private long price_int;
-    private long date; // "date":1356641315,
-    private String item; // "item":"BTC",
-    private String type; // "type":"trade"
-    private String primary; // "primary":"Y",
-    private String properties; // "properties":"limit",
-    private String tid; // "tid":"1356641315101735",
-    private String trade_type; // "trade_type":"ask",
+    private long date;
+    private String item;
+    private String type;
+    private String primary;
+    private String properties;
+    private String tid;
+    private String trade_type;
     private CurrencyInfo currencyInfo = null;
 
     public Trade(@JsonProperty("tid") String tid,
@@ -42,55 +40,34 @@ public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
         this.item = item;
         this.trade_type = trade_type;
         this.date = date;
-        this.amount = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
+        this.amount = new MtGoxBitcoinUnit(amount_int);
         this.price_int = price_int;
     }
 
-    /**
-     * @return the trade_id
-     */
     public String getTradeId() {
         return tid;
     }
 
-    /**
-     * @return the primary
-     */
     public String getPrimary() {
         return primary;
     }
 
-    /**
-     * @return the type
-     */
     public String getType() {
         return type;
     }
 
-    /**
-     * @return the properties
-     */
     public String getProperties() {
         return properties;
     }
 
-    /**
-     * @return the item
-     */
     public String getItem() {
         return item;
     }
 
-    /**
-     * @return the trade type
-     */
     public String getTrade_type() {
         return trade_type;
     }
 
-    /**
-     * @return the date
-     */
     public long getDate() {
         return date;
     }
@@ -100,7 +77,7 @@ public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
     }
 
     public MtGoxFiatUnit getPrice() {
-        return MtGoxFiatUnit.createFiatInstance(price_int, currencyInfo);
+        return new MtGoxFiatUnit(price_int, currencyInfo);
     }
 
     @Override

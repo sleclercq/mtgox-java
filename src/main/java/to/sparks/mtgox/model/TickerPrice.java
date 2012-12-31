@@ -10,7 +10,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class TickerPrice extends DtoBase implements CurrencyKludge {
 
-//    private MtGoxUnitOfCredit priceValue;
     private String display;
     private String display_short;
     private CurrencyInfo currencyInfo;
@@ -32,6 +31,7 @@ public class TickerPrice extends DtoBase implements CurrencyKludge {
      * This is a bit of a kludge that ensures the offers know what currency they
      * are in.
      */
+    @Override
     public void setCurrencyInfo(CurrencyInfo currencyInfo) {
         this.currencyInfo = currencyInfo;
     }
@@ -44,9 +44,9 @@ public class TickerPrice extends DtoBase implements CurrencyKludge {
      */
     public MtGoxUnitOfCredit getPriceValue() {
         if (currency.equalsIgnoreCase("BTC")) {
-            return MtGoxBitcoinUnit.createBitcoinInstance(value_int);
+            return new MtGoxBitcoinUnit(value_int);
         } else {
-            return MtGoxFiatUnit.createFiatInstance(value_int, currencyInfo);
+            return new MtGoxFiatUnit(value_int, currencyInfo);
         }
 
     }

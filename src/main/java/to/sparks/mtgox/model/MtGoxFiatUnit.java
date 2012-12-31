@@ -11,44 +11,11 @@ import java.math.BigInteger;
  */
 public class MtGoxFiatUnit extends MtGoxUnitOfCredit {
 
-    private MtGoxFiatUnit(BigDecimal value, CurrencyInfo currencyInfo) {
-        super(value, currencyInfo);
-    }
-
-    private MtGoxFiatUnit(double float_value, CurrencyInfo currencyInfo) {
-        super(BigDecimal.valueOf(float_value), currencyInfo);
-    }
-
-    private MtGoxFiatUnit(long int_value, CurrencyInfo currencyInfo) {
-        super(new BigDecimal(BigInteger.valueOf(int_value), currencyInfo.getDecimals()), currencyInfo);
-    }
-
-    @Override
-    public CurrencyInfo getCurrencyInfo() {
-        return currencyInfo;
-    }
-
-    /*
-     * This is an attempt to be directly compatible with the MtGox API price_int
-     * parameter, which has variable scales depending on currency code. See
-     * https://en.bitcoin.it/wiki/MtGox/API#Number_Formats
-     */
-    public static MtGoxFiatUnit createFiatInstance(long int_value, CurrencyInfo currencyInfo) {
-
-        return new MtGoxFiatUnit(int_value, currencyInfo);
-    }
-
     /*
      * This is the recommended way to create a representation of money.
-     *
-     * <code>
-     *
-     * MtGoxFiatUnit.createFiatInstance(price_int,mtgoxAPI.getBaseCurrency());
-     *
-     * </code>
      */
-    public static MtGoxFiatUnit createFiatInstance(BigDecimal amount, CurrencyInfo currencyInfo) {
-        return new MtGoxFiatUnit(amount, currencyInfo);
+    public MtGoxFiatUnit(BigDecimal value, CurrencyInfo currencyInfo) {
+        super(value, currencyInfo);
     }
 
     /*
@@ -56,7 +23,21 @@ public class MtGoxFiatUnit extends MtGoxUnitOfCredit {
      * because you shouldn't really be storing monetary values as doubles
      * anyway. Use BigDecimal instead.
      */
-    public static MtGoxFiatUnit createFiatInstance(double float_value, CurrencyInfo currencyInfo) {
-        return new MtGoxFiatUnit(float_value, currencyInfo);
+    public MtGoxFiatUnit(double float_value, CurrencyInfo currencyInfo) {
+        super(BigDecimal.valueOf(float_value), currencyInfo);
+    }
+
+    /*
+     * This is an attempt to be directly compatible with the MtGox API price_int
+     * parameter, which has variable scales depending on currency code. See
+     * https://en.bitcoin.it/wiki/MtGox/API#Number_Formats
+     */
+    public MtGoxFiatUnit(long int_value, CurrencyInfo currencyInfo) {
+        super(new BigDecimal(BigInteger.valueOf(int_value), currencyInfo.getDecimals()), currencyInfo);
+    }
+
+    @Override
+    public CurrencyInfo getCurrencyInfo() {
+        return currencyInfo;
     }
 }

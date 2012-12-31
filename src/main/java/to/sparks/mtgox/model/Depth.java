@@ -26,10 +26,10 @@ public class Depth extends Offer implements IEventTime {
             @JsonProperty("volume_int") long amount_int,
             @JsonProperty("now") long stamp) {
         super(price_int,
-                MtGoxBitcoinUnit.createBitcoinInstance(amount_int),
+                new MtGoxBitcoinUnit(amount_int),
                 stamp, null);
         this.item = item;
-        this.totalVolume = MtGoxBitcoinUnit.createBitcoinInstance(total_volume_int);
+        this.totalVolume = new MtGoxBitcoinUnit(total_volume_int);
         this.type_str = type_str;
         this.type = type;
     }

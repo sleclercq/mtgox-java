@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Offer extends DtoBase implements CurrencyKludge{
+public class Offer extends DtoBase implements CurrencyKludge {
 
     private CurrencyInfo currencyInfo;
     private long price_int;
@@ -29,7 +29,7 @@ public class Offer extends DtoBase implements CurrencyKludge{
             @JsonProperty("price_int") long price_int,
             @JsonProperty("amount_int") long amount_int,
             @JsonProperty("stamp") long stamp) {
-        this(price_int, MtGoxBitcoinUnit.createBitcoinInstance(amount_int), stamp, null);
+        this(price_int, new MtGoxBitcoinUnit(amount_int), stamp, null);
     }
 
     /**
@@ -39,6 +39,7 @@ public class Offer extends DtoBase implements CurrencyKludge{
         return currencyInfo;
     }
 
+    @Override
     public void setCurrencyInfo(CurrencyInfo currencyInfo) {
         this.currencyInfo = currencyInfo;
     }
@@ -46,7 +47,7 @@ public class Offer extends DtoBase implements CurrencyKludge{
     public MtGoxFiatUnit getPrice() {
         MtGoxFiatUnit price = null;
         if (currencyInfo != null) {
-            price = MtGoxFiatUnit.createFiatInstance(price_int, currencyInfo);
+            price = new MtGoxFiatUnit(price_int, currencyInfo);
         } else {
             throw new RuntimeException("Error: getPrice called before currency was initialised.");
         }

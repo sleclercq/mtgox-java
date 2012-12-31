@@ -159,8 +159,8 @@ class MtGoxServiceImpl implements MtGoxAPI {
     }
 
     @Override
-    public Info getAccountInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
-        Info info = httpAPI.getPrivateInfo();
+    public AccountInfo getAccountInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+        AccountInfo info = httpAPI.getPrivateInfo();
         currencyKludge(info);
         return info;
     }

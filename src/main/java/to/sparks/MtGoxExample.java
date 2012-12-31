@@ -46,7 +46,7 @@ public class MtGoxExample {
 
         try {
             // Get the private account info
-            Info info = mtgoxUSD.getAccountInfo();
+            AccountInfo info = mtgoxUSD.getAccountInfo();
             logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
 
             // Purchase 0.01000000 bitcoins for USD$0.00001
@@ -65,8 +65,8 @@ public class MtGoxExample {
             long price_int = 100000L;
             long amount_int = 100000000L;
 
-            MtGoxFiatUnit fiatUnit = MtGoxFiatUnit.createFiatInstance(price_int, currencyInfo);
-            MtGoxBitcoinUnit bitcoinUnit = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
+            MtGoxFiatUnit fiatUnit = new MtGoxFiatUnit(price_int, currencyInfo);
+            MtGoxBitcoinUnit bitcoinUnit = new MtGoxBitcoinUnit(amount_int);
             String orderRef = mtgoxUSD.placeOrder(MtGoxAPI.OrderType.Bid, fiatUnit, bitcoinUnit);
             logger.log(Level.INFO, "orderRef: {0}", new Object[]{orderRef});
 

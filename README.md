@@ -52,7 +52,7 @@ Below is an example of how to use the mtgox java API.
         MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
 
         // Get the private account info
-        Info info = mtgoxUSD.getInfo();
+        AccountInfo info = mtgoxUSD.getAccountInfo();
         logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
 
         // Example of getting the current ticker price
