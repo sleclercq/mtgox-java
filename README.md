@@ -17,7 +17,7 @@ Release versions are available from Maven Central, add the following dependency 
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
         </dependency>
 
 You can get developer snapshot releases by adding the following to your maven pom.xml
@@ -41,23 +41,27 @@ You can get developer snapshot releases by adding the following to your maven po
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
+            <version>0.1.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
 Below is an example of how to use the mtgox java API.
 ```java
-        // Obtain a $USD instance of the API
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
+        // Obtain a $USD instance of the API
         MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
+        
+        // Get handles to the currencies we'll be using
+        CurrencyInfo currencyInfo = mtgoxUSD.getCurrencyInfo(mtgoxUSD.getBaseCurrency());
+        logger.log(Level.INFO, "Base fiat currency: {0}", currencyInfo.getCurrency().getCurrencyCode());
+
+        // Example of getting the current ticker price
+        Ticker ticker = mtgoxUSD.getTicker();
+        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getPriceValue().getCredits());
 
         // Get the private account info
         AccountInfo info = mtgoxUSD.getAccountInfo();
         logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
-
-        // Example of getting the current ticker price
-        Ticker ticker = mtgoxUSD.getTicker();
-        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getValue());
 ```       
 Private API functions need a MtGox.Com API key & secret passed as JVM system properties as shown below.
         
