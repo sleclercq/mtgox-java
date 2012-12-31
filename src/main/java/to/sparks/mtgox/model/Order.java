@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Order extends DtoBase {
+public class Order extends DtoBase implements CurrencyKludge {
 
     private String oid;
     private String currency;
@@ -133,5 +133,13 @@ public class Order extends DtoBase {
      */
     public TickerPrice getInvalidAmount() {
         return invalid_amount;
+    }
+
+    @Override
+    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
+        amount.setCurrencyInfo(currencyInfo);
+        effective_amount.setCurrencyInfo(currencyInfo);
+        price.setCurrencyInfo(currencyInfo);
+        invalid_amount.setCurrencyInfo(currencyInfo);
     }
 }

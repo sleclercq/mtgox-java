@@ -1,6 +1,5 @@
 package to.sparks.mtgox.model;
 
-import java.util.Currency;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -9,11 +8,10 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class TradeResult extends DtoBase {
+public class TradeResult extends DtoBase implements CurrencyKludge {
 
     private String trade_id;
     private String primary;
-    private Currency currency;
     private String type;
     private String properties;
     private String item;
@@ -34,7 +32,6 @@ public class TradeResult extends DtoBase {
             @JsonProperty("date") String date) {
         this.trade_id = trade_id;
         this.primary = primary;
-        this.currency = Currency.getInstance(currency);
         this.type = type;
         this.properties = properties;
         this.item = item;
@@ -42,6 +39,14 @@ public class TradeResult extends DtoBase {
         this.price = price;
         this.spent = spent;
         this.date = date;
+    }
+
+    @Override
+    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
+        amount.setCurrencyInfo(currencyInfo);
+        price.setCurrencyInfo(currencyInfo);
+        spent.setCurrencyInfo(currencyInfo);
+
     }
 
     /**
@@ -56,13 +61,6 @@ public class TradeResult extends DtoBase {
      */
     public String getPrimary() {
         return primary;
-    }
-
-    /**
-     * @return the currency
-     */
-    public Currency getCurrency() {
-        return currency;
     }
 
     /**

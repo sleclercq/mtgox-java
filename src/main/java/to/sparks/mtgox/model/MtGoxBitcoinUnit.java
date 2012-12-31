@@ -2,7 +2,6 @@ package to.sparks.mtgox.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Currency;
 
 /**
  * A representation of a certain number of units of bitcoins, stored in a
@@ -40,8 +39,8 @@ public class MtGoxBitcoinUnit extends MtGoxUnitOfCredit {
     }
 
     @Override
-    public Currency getCurrency() {
-        throw new UnsupportedOperationException("Bitcoins are not a supported Java currency.");
+    public CurrencyInfo getCurrencyInfo() {
+        return currencyInfo;
     }
 
     public static MtGoxBitcoinUnit createBitcoinInstance(long int_value) {

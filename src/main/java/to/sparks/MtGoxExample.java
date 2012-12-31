@@ -36,13 +36,17 @@ public class MtGoxExample {
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
         MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
 
+        // Obtain information about the base currency of the API instance
+        CurrencyInfo currencyInfo = mtgoxUSD.getCurrencyInfo(mtgoxUSD.getBaseCurrency());
+        logger.log(Level.INFO, "Base currency: {0}", currencyInfo.getCurrency().getCurrencyCode());
+
         // Example of getting the current ticker price
         Ticker ticker = mtgoxUSD.getTicker();
         logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getDisplay());
 
         try {
             // Get the private account info
-            Info info = mtgoxUSD.getInfo();
+            Info info = mtgoxUSD.getAccountInfo();
             logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
 
             // Purchase 0.01000000 bitcoins for USD$0.00001
@@ -61,7 +65,7 @@ public class MtGoxExample {
             long price_int = 100000L;
             long amount_int = 100000000L;
 
-            MtGoxFiatUnit fiatUnit = MtGoxFiatUnit.createFiatInstance(price_int, mtgoxUSD.getBaseCurrency());
+            MtGoxFiatUnit fiatUnit = MtGoxFiatUnit.createFiatInstance(price_int, currencyInfo);
             MtGoxBitcoinUnit bitcoinUnit = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
             String orderRef = mtgoxUSD.placeOrder(MtGoxAPI.OrderType.Bid, fiatUnit, bitcoinUnit);
             logger.log(Level.INFO, "orderRef: {0}", new Object[]{orderRef});

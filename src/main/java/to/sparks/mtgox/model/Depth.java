@@ -1,6 +1,5 @@
 package to.sparks.mtgox.model;
 
-import java.util.Currency;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -28,7 +27,7 @@ public class Depth extends Offer implements IEventTime {
             @JsonProperty("now") long stamp) {
         super(price_int,
                 MtGoxBitcoinUnit.createBitcoinInstance(amount_int),
-                stamp, Currency.getInstance(currency));
+                stamp, null);
         this.item = item;
         this.totalVolume = MtGoxBitcoinUnit.createBitcoinInstance(total_volume_int);
         this.type_str = type_str;

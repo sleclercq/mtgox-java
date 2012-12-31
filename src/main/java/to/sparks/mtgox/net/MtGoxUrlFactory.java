@@ -30,7 +30,8 @@ public class MtGoxUrlFactory {
         PrivateOrders,
         PrivateInfo,
         FullDepth,
-        Ticker
+        Ticker,
+        CurrencyInfo
     }
     private static String MTGOX_HTTP_API_URL = "https://mtgox.com/api/";
     private static String MTGOX_HTTP_API_VERSION = "1/";
@@ -51,6 +52,7 @@ public class MtGoxUrlFactory {
         restMap.put(RestCommand.PrivateInfo, "private/info");
         restMap.put(RestCommand.FullDepth, "fulldepth");
         restMap.put(RestCommand.Ticker, "ticker");
+        restMap.put(RestCommand.CurrencyInfo, "currency");
 
     }
 
@@ -61,7 +63,7 @@ public class MtGoxUrlFactory {
                 url.append(MTGOX_HTTP_API_URL);
                 url.append(MTGOX_HTTP_API_VERSION);
 
-                if (currency == null) {
+                if (currency == null || restCommand == RestCommand.CurrencyInfo) {
                     url.append("generic/");
                 } else {
                     url.append(currencyMap.get(currency));

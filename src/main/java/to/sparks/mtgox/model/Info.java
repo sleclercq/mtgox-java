@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Info {
+public class Info extends DtoBase implements CurrencyKludge {
 
     private String login;
     private String[] rights;
@@ -42,6 +42,14 @@ public class Info {
         this.id = id;
         this.wallets = wallets;
         this.trade_Fee = trade_Fee;
+    }
+
+    /*
+     * This is a bit of a kludge that ensures the offers know what currency they
+     * are in.
+     */
+    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
+        monthly_Volume.setCurrencyInfo(currencyInfo);
     }
 
     public String getLogin() {

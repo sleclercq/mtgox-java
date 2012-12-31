@@ -50,6 +50,7 @@ class MtGoxHTTPClient {
     private JSONSource<Result<OrderResult>> orderResultJSON;
     private JSONSource<Result<FullDepth>> fullDepthJSON;
     private JSONSource<Result<Ticker>> tickerJSON;
+    private JSONSource<Result<CurrencyInfo>> currencyInfoJSON;
     private String apiKey;
     private String secret;
     private static Logger logger;
@@ -63,6 +64,7 @@ class MtGoxHTTPClient {
         fullDepthJSON = new JSONSource<>();
         tickerJSON = new JSONSource<>();
         privateInfoJSON = new JSONSource<>();
+        currencyInfoJSON = new JSONSource<>();
 
         TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {
@@ -98,7 +100,6 @@ class MtGoxHTTPClient {
 
     public FullDepth getFullDepth(Currency currency) throws Exception {
         FullDepth fullDepth = fullDepthJSON.getResultFromStream(new URL(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.FullDepth)).openStream(), FullDepth.class).getReturn();
-        fullDepth.setCurrency(currency);  // Kludge that ensures the Offer arrays know what currency they are in.
         return fullDepth;
     }
 
@@ -133,6 +134,11 @@ class MtGoxHTTPClient {
     public Ticker getTicker(Currency currency) throws IOException, Exception {
         Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(new URL(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.Ticker)).openStream(), Ticker.class);
         return tickerUSD.getReturn();
+    }
+
+    public CurrencyInfo getCurrencyInfo(Currency currency) throws IOException, Exception {
+        Result<CurrencyInfo> currencyInfo = currencyInfoJSON.getResultFromStream(new URL(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.CurrencyInfo)).openStream(), CurrencyInfo.class);
+        return currencyInfo.getReturn();
     }
 
     /*

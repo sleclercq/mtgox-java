@@ -1,6 +1,5 @@
 package to.sparks.mtgox.model;
 
-import java.util.Currency;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -9,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class FullDepth extends DtoBase {
+public class FullDepth extends DtoBase implements CurrencyKludge {
 
     private Offer[] asks;
     private Offer[] bids;
@@ -25,12 +24,12 @@ public class FullDepth extends DtoBase {
      * This is a bit of a kludge that ensures the offers know what currency they
      * are in.
      */
-    public void setCurrency(Currency currency) {
+    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
         for (Offer ask : asks) {
-            ask.setCurrency(currency);
+            ask.setCurrencyInfo(currencyInfo);
         }
         for (Offer bid : bids) {
-            bid.setCurrency(currency);
+            bid.setCurrencyInfo(currencyInfo);
         }
     }
 

@@ -55,5 +55,7 @@ public interface MtGoxAPI {
 
     String placeOrder(OrderType orderType, MtGoxFiatUnit price, MtGoxBitcoinUnit volume) throws Exception;
     
-    Info getInfo() throws Exception;
+    Info getAccountInfo() throws Exception;
+    
+    CurrencyInfo getCurrencyInfo(Currency currency) throws Exception;
 }

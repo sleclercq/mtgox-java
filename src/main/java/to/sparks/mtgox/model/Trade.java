@@ -9,18 +9,19 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Trade extends DtoBase implements IEventTime {
+public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
 
     private MtGoxBitcoinUnit amount; // "amount_int":"1000000",
-    private MtGoxFiatUnit price; //    "price_int":"1336001",
+    // private MtGoxFiatUnit price; //    "price_int":"1336001",
+    private long price_int;
     private long date; // "date":1356641315,
     private String item; // "item":"BTC",
     private String type; // "type":"trade"
     private String primary; // "primary":"Y",
     private String properties; // "properties":"limit",
-    private Currency price_currency; // "price_currency":"USD",
     private String tid; // "tid":"1356641315101735",
     private String trade_type; // "trade_type":"ask",
+    private CurrencyInfo currencyInfo = null;
 
     public Trade(@JsonProperty("tid") String tid,
             @JsonProperty("primary") String primary,
@@ -36,15 +37,13 @@ public class Trade extends DtoBase implements IEventTime {
             @JsonProperty("price_int") long price_int) {
         this.tid = tid;
         this.primary = primary;
-        this.price_currency = Currency.getInstance(price_currency);
         this.type = type;
         this.properties = properties;
         this.item = item;
         this.trade_type = trade_type;
         this.date = date;
         this.amount = MtGoxBitcoinUnit.createBitcoinInstance(amount_int);
-        this.price = MtGoxFiatUnit.createFiatInstance(price_int, this.price_currency);
-
+        this.price_int = price_int;
     }
 
     /**
@@ -59,13 +58,6 @@ public class Trade extends DtoBase implements IEventTime {
      */
     public String getPrimary() {
         return primary;
-    }
-
-    /**
-     * @return the currency
-     */
-    public Currency getPriceCurrency() {
-        return price_currency;
     }
 
     /**
@@ -108,11 +100,16 @@ public class Trade extends DtoBase implements IEventTime {
     }
 
     public MtGoxFiatUnit getPrice() {
-        return price;
+        return MtGoxFiatUnit.createFiatInstance(price_int, currencyInfo);
     }
 
     @Override
     public long getEventTime() {
         return getDate();
+    }
+
+    @Override
+    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
+        this.currencyInfo = currencyInfo;
     }
 }

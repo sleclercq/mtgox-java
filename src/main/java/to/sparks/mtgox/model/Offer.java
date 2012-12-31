@@ -1,6 +1,5 @@
 package to.sparks.mtgox.model;
 
-import java.util.Currency;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -9,28 +8,22 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Offer extends DtoBase {
+public class Offer extends DtoBase implements CurrencyKludge{
 
-    private Currency currency;
+    private CurrencyInfo currencyInfo;
     private long price_int;
     private MtGoxBitcoinUnit amount;
     private long stamp;
 
     public Offer(long price_int,
             MtGoxBitcoinUnit amount,
-            long stamp, Currency currency) {
+            long stamp, CurrencyInfo currencyInfo) {
         this.price_int = price_int;
         this.amount = amount;
         this.stamp = stamp;
-        this.currency = currency;
+        this.currencyInfo = currencyInfo;
     }
 
-//    public Offer(MtGoxCurrency price,
-//            MtGoxBitcoin amount,
-//            long stamp) {
-//        this(price.getCredits().longValueExact(), amount, stamp, price.getCurrency());
-//    }
-    
     public Offer(@JsonProperty("price") double price,
             @JsonProperty("amount") double amount,
             @JsonProperty("price_int") long price_int,
@@ -42,25 +35,18 @@ public class Offer extends DtoBase {
     /**
      * @return the currency
      */
-    public Currency getCurrency() {
-        return currency;
+    public CurrencyInfo getCurrencyInfo() {
+        return currencyInfo;
     }
 
-    void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
-
-    /**
-     * @return the price_int
-     */
-    long getPrice_int() {
-        return price_int;
+    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
+        this.currencyInfo = currencyInfo;
     }
 
     public MtGoxFiatUnit getPrice() {
         MtGoxFiatUnit price = null;
-        if (currency != null) {
-            price = MtGoxFiatUnit.createFiatInstance(price_int, currency);
+        if (currencyInfo != null) {
+            price = MtGoxFiatUnit.createFiatInstance(price_int, currencyInfo);
         } else {
             throw new RuntimeException("Error: getPrice called before currency was initialised.");
         }

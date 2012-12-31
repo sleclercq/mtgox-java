@@ -1,7 +1,6 @@
 package to.sparks.mtgox.model;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 
 /**
  * A class to encapsulate all the weird mtgox money conversions. See...
@@ -12,16 +11,16 @@ import java.util.Currency;
 public abstract class MtGoxUnitOfCredit<T> {
 
     private BigDecimal amount;
-    protected Currency currency;
+    protected CurrencyInfo currencyInfo;
 
-    protected MtGoxUnitOfCredit(BigDecimal amount, Currency currency) {
+    protected MtGoxUnitOfCredit(BigDecimal amount, CurrencyInfo currency) {
         this.amount = amount;
-        this.currency = currency;
+        this.currencyInfo = currency;
     }
 
     public BigDecimal getCredits() {
         return amount;
     }
 
-    public abstract Currency getCurrency();
+    public abstract CurrencyInfo getCurrencyInfo();
 }

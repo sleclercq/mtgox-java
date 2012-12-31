@@ -34,44 +34,68 @@ class MtGoxServiceImpl implements MtGoxAPI {
 
     private static Logger logger;
     private MtGoxWebSocketClient wsApi;
-    private Currency currency;
     MtGoxHTTPClient httpAPI;
+    CurrencyInfo currencyInfo;
 
-    public MtGoxServiceImpl(final Logger logger, MtGoxHTTPClient httpAPI, MtGoxWebSocketClient mtGoxWebSocketApi, Currency currency) {
+    public MtGoxServiceImpl(final Logger logger, MtGoxHTTPClient httpAPI, MtGoxWebSocketClient mtGoxWebSocketApi, Currency currency) throws IOException, Exception {
         this.logger = logger;
-        this.currency = currency;
         this.httpAPI = httpAPI;
         this.wsApi = mtGoxWebSocketApi;
+        this.currencyInfo = httpAPI.getCurrencyInfo(currency);
     }
 
     @Override
     public List<Depth> getAllDepthSince(long timestamp) {
-        return wsApi != null ? wsApi.getAllDepthSince(timestamp) : null;
+        List<Depth> depths = wsApi.getAllDepthSince(timestamp);
+        for (Depth depth : depths) {
+            currencyKludge(depth);
+        }
+        return depths;
     }
 
     @Override
     public List<Trade> getAllTradesSince(long timestamp) {
-        return wsApi != null ? wsApi.getAllTradesSince(timestamp) : null;
+        List<Trade> trades = wsApi.getAllTradesSince(timestamp);
+        for (Trade trade : trades) {
+            currencyKludge(trade);
+        }
+        return trades;
     }
 
     @Override
     public List<Depth> getDepthHistory() {
-        return wsApi != null ? wsApi.getDepthHistory() : null;
+        List<Depth> depthHistory = wsApi.getDepthHistory();
+        for (Depth depth : depthHistory) {
+            currencyKludge(depth);
+        }
+        return depthHistory;
     }
 
     @Override
     public List<Ticker> getTickerHistory() {
-        return wsApi != null ? wsApi.getTickerHistory() : null;
+        List<Ticker> tickerHistory = wsApi.getTickerHistory();
+        for (Ticker ticker : tickerHistory) {
+            currencyKludge(ticker);
+        }
+        return tickerHistory;
+
+
     }
 
     @Override
     public List<Trade> getTradeHistory() {
-        return wsApi != null ? wsApi.getTradeHistory() : null;
+        List<Trade> tradeHistory = wsApi.getTradeHistory();
+        for (Trade trade : tradeHistory) {
+            currencyKludge(trade);
+        }
+        return tradeHistory;
     }
 
     @Override
     public FullDepth getFullDepth() throws IOException, Exception {
-        return httpAPI.getFullDepth(currency);
+        FullDepth fullDepth = httpAPI.getFullDepth(currencyInfo.getCurrency());
+        currencyKludge(fullDepth);
+        return fullDepth;
     }
 
     @Override
@@ -85,12 +109,11 @@ class MtGoxServiceImpl implements MtGoxAPI {
         }
 
         if (price != null) {
-//            params.put("price_int", String.valueOf(convertPricetoInt(currency.getCurrencyCode(), price)));
             params.put("price_int", String.valueOf(price.getCredits().unscaledValue().longValue()));
         }
         params.put("amount_int", String.valueOf(volume.getCredits().unscaledValue().longValue()));
 
-        return httpAPI.placeOrder(currency, params);
+        return httpAPI.placeOrder(currencyInfo.getCurrency(), params);
     }
 
     @Override
@@ -108,26 +131,48 @@ class MtGoxServiceImpl implements MtGoxAPI {
         }
         params.put("order", orderRef);
 
-        return httpAPI.getPrivateOrderResult(params);
+        OrderResult orderResult = httpAPI.getPrivateOrderResult(params);
+        currencyKludge(orderResult);
+
+        return orderResult;
     }
 
     @Override
     public Order[] getOpenOrders() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
-        return httpAPI.getOpenOrders();
+        Order[] orders = httpAPI.getOpenOrders();
+        for (Order order : orders) {
+            currencyKludge(order);
+        }
+        return orders;
     }
 
     @Override
     public Ticker getTicker() throws IOException, Exception {
-        return httpAPI.getTicker(currency);
+        Ticker ticker = httpAPI.getTicker(currencyInfo.getCurrency());
+        currencyKludge(ticker);
+        return ticker;
     }
 
     @Override
     public Currency getBaseCurrency() {
-        return currency;
+        return currencyInfo.getCurrency();
     }
 
     @Override
-    public Info getInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
-        return httpAPI.getPrivateInfo();
+    public Info getAccountInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+        Info info = httpAPI.getPrivateInfo();
+        currencyKludge(info);
+        return info;
+    }
+
+    @Override
+    public CurrencyInfo getCurrencyInfo(Currency currency) throws IOException, Exception {
+        return httpAPI.getCurrencyInfo(currency);
+    }
+
+    private void currencyKludge(DtoBase o) {
+        if (o != null && o instanceof CurrencyKludge) {
+            ((CurrencyKludge) o).setCurrencyInfo(currencyInfo);
+        }
     }
 }

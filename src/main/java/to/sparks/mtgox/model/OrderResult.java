@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class OrderResult extends DtoBase {
+public class OrderResult extends DtoBase implements CurrencyKludge {
 
     private String order_id;
     private TradeResult[] trades;
@@ -28,6 +28,16 @@ public class OrderResult extends DtoBase {
         this.total_spent = total_spent;
         this.avg_cost = avg_cost;
 
+    }
+
+    @Override
+    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
+        for (TradeResult tr : trades) {
+            tr.setCurrencyInfo(currencyInfo);
+        }
+        total_amount.setCurrencyInfo(currencyInfo);
+        total_spent.setCurrencyInfo(currencyInfo);
+        avg_cost.setCurrencyInfo(currencyInfo);
     }
 
     /**

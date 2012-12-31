@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Ticker extends DtoBase {
+public class Ticker extends DtoBase implements CurrencyKludge {
 
     private TickerPrice high;
     private TickerPrice low;
@@ -198,5 +198,20 @@ public class Ticker extends DtoBase {
      */
     public void setSell(TickerPrice sell) {
         this.sell = sell;
+    }
+
+    @Override
+    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
+        high.setCurrencyInfo(currencyInfo);
+        low.setCurrencyInfo(currencyInfo);
+        avg.setCurrencyInfo(currencyInfo);
+        vwap.setCurrencyInfo(currencyInfo);
+        vol.setCurrencyInfo(currencyInfo);
+        last_local.setCurrencyInfo(currencyInfo);
+        last.setCurrencyInfo(currencyInfo);
+        last_orig.setCurrencyInfo(currencyInfo);
+        last_all.setCurrencyInfo(currencyInfo);
+        buy.setCurrencyInfo(currencyInfo);
+        sell.setCurrencyInfo(currencyInfo);
     }
 }
