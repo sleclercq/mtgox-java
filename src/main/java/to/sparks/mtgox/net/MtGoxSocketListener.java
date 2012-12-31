@@ -101,6 +101,6 @@ public class MtGoxSocketListener implements WebSocketClientListener {
 
     @Override
     public void processClosed(WebSocketClientEvent aEvent) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 }

@@ -1,6 +1,7 @@
 package to.sparks.mtgox.model;
 
 import java.util.Currency;
+import java.util.Locale;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
@@ -10,7 +11,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 public class CurrencyInfo extends DtoBase {
 
-    private Currency currency;
+    private String currency_code;
     private String name;
     private String symbol;
     private int decimals;
@@ -20,7 +21,7 @@ public class CurrencyInfo extends DtoBase {
     private String ticker_channel;
     private String depth_channel;
 
-    public CurrencyInfo(@JsonProperty("currency") String currency,
+    public CurrencyInfo(@JsonProperty("currency") String currency_code,
             @JsonProperty("name") String name,
             @JsonProperty("symbol") String symbol,
             @JsonProperty("decimals") int decimals,
@@ -29,7 +30,7 @@ public class CurrencyInfo extends DtoBase {
             @JsonProperty("virtual") String virtual,
             @JsonProperty("ticker_channel") String ticker_channel,
             @JsonProperty("depth_channel") String depth_channel) {
-        this.currency = Currency.getInstance(currency);
+        this.currency_code = currency_code;
         this.name = name;
         this.symbol = symbol;
         this.decimals = decimals;
@@ -47,7 +48,7 @@ public class CurrencyInfo extends DtoBase {
         if (isVirtual()) {
             throw new UnsupportedOperationException("Virtual MtGox currencies cannot be expressed as a Java currency.");
         }
-        return currency;
+        return Currency.getInstance(currency_code);
     }
 
     /**

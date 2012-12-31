@@ -10,26 +10,29 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class Offer extends DtoBase implements CurrencyKludge {
 
-    private CurrencyInfo currencyInfo;
+    protected CurrencyInfo currencyInfo;
     private long price_int;
-    private MtGoxBitcoinUnit amount;
+//    private MtGoxUnitOfCredit amount;
     private long stamp;
+    private long amount_int;
 
-    public Offer(long price_int,
-            MtGoxBitcoinUnit amount,
-            long stamp, CurrencyInfo currencyInfo) {
-        this.price_int = price_int;
-        this.amount = amount;
-        this.stamp = stamp;
-        this.currencyInfo = currencyInfo;
-    }
-
+//    public Offer(long price_int,
+//            MtGoxUnitOfCredit amount,
+//            long stamp, CurrencyInfo currencyInfo) {
+//        this.price_int = price_int;
+////        this.amount = amount;
+//        this.stamp = stamp;
+//        this.currencyInfo = currencyInfo;
+//    }
     public Offer(@JsonProperty("price") double price,
             @JsonProperty("amount") double amount,
             @JsonProperty("price_int") long price_int,
             @JsonProperty("amount_int") long amount_int,
             @JsonProperty("stamp") long stamp) {
-        this(price_int, new MtGoxBitcoinUnit(amount_int), stamp, null);
+        //this(price_int, new MtGoxUnitOfCredit(amount_int), stamp, null);
+        this.price_int = price_int;
+        this.amount_int = amount_int;
+        this.stamp = stamp;
     }
 
     /**
@@ -44,10 +47,10 @@ public class Offer extends DtoBase implements CurrencyKludge {
         this.currencyInfo = currencyInfo;
     }
 
-    public MtGoxFiatUnit getPrice() {
-        MtGoxFiatUnit price = null;
+    public MtGoxUnitOfCredit getPrice() {
+        MtGoxUnitOfCredit price = null;
         if (currencyInfo != null) {
-            price = new MtGoxFiatUnit(price_int, currencyInfo);
+            price = new MtGoxUnitOfCredit(price_int, currencyInfo);
         } else {
             throw new RuntimeException("Error: getPrice called before currency was initialised.");
         }
@@ -57,7 +60,13 @@ public class Offer extends DtoBase implements CurrencyKludge {
     /**
      * @return the amount_int
      */
-    public MtGoxBitcoinUnit getAmount() {
+    public MtGoxUnitOfCredit getAmount() {
+        MtGoxUnitOfCredit amount = null;
+        if (currencyInfo != null) {
+            amount = new MtGoxUnitOfCredit(price_int, currencyInfo);
+        } else {
+            throw new RuntimeException("Error: getAmount called before currency was initialised.");
+        }
         return amount;
     }
 
@@ -71,8 +80,8 @@ public class Offer extends DtoBase implements CurrencyKludge {
     /**
      * @param amount the amount to set
      */
-    public void setAmount(MtGoxBitcoinUnit amount) {
-        this.amount = amount;
+    public void setAmount(MtGoxUnitOfCredit amount) {
+        this.amount_int = amount.getCredits().longValueExact();
     }
 
     /**

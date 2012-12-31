@@ -112,7 +112,7 @@ class MtGoxHTTPClient {
     }
 
     public OrderResult getPrivateOrderResult(HashMap<String, String> params) throws Exception {
-        Result<OrderResult> result = orderResultJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(null, MtGoxUrlFactory.RestCommand.PrivateOrderResult), params), OrderResult.class);
+        Result<OrderResult> result = orderResultJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand("", MtGoxUrlFactory.RestCommand.PrivateOrderResult), params), OrderResult.class);
         if (result.getError() != null) {
             throw new RuntimeException(result.getToken() + ": " + result.getError());
         }
@@ -121,13 +121,13 @@ class MtGoxHTTPClient {
 
     public Order[] getOpenOrders() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
-        Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(null, MtGoxUrlFactory.RestCommand.PrivateOrders)), Order[].class);
+        Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand("", MtGoxUrlFactory.RestCommand.PrivateOrders)), Order[].class);
         return openOrders.getReturn();
     }
 
     public AccountInfo getPrivateInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
-        Result<AccountInfo> privateInfo = privateInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(null, MtGoxUrlFactory.RestCommand.PrivateInfo)), AccountInfo.class);
+        Result<AccountInfo> privateInfo = privateInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand("", MtGoxUrlFactory.RestCommand.PrivateInfo)), AccountInfo.class);
         return privateInfo.getReturn();
     }
 
@@ -137,7 +137,16 @@ class MtGoxHTTPClient {
     }
 
     public CurrencyInfo getCurrencyInfo(Currency currency) throws IOException, Exception {
-        Result<CurrencyInfo> currencyInfo = currencyInfoJSON.getResultFromStream(new URL(MtGoxUrlFactory.getUrlForRestCommand(currency, MtGoxUrlFactory.RestCommand.CurrencyInfo)).openStream(), CurrencyInfo.class);
+        return getCurrencyInfo(currency.getCurrencyCode());
+    }
+
+    public CurrencyInfo getCurrencyInfo(String currencyCode) throws IOException, Exception {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("currency", currencyCode);
+        Result<CurrencyInfo> currencyInfo = currencyInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand(currencyCode, MtGoxUrlFactory.RestCommand.CurrencyInfo), params), CurrencyInfo.class);
+        if (currencyInfo.getError() != null) {
+            throw new RuntimeException(currencyInfo.getToken() + ": " + currencyInfo.getError());
+        }
         return currencyInfo.getReturn();
     }
 

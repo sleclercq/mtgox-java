@@ -99,7 +99,7 @@ class MtGoxServiceImpl implements MtGoxAPI {
     }
 
     @Override
-    public String placeOrder(OrderType orderType, MtGoxFiatUnit price, MtGoxBitcoinUnit volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+    public String placeOrder(OrderType orderType, MtGoxUnitOfCredit price, MtGoxUnitOfCredit volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
         HashMap<String, String> params = new HashMap<>();
         if (orderType == OrderType.Bid) {
@@ -117,7 +117,7 @@ class MtGoxServiceImpl implements MtGoxAPI {
     }
 
     @Override
-    public String placeMarketOrder(OrderType orderType, MtGoxBitcoinUnit volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+    public String placeMarketOrder(OrderType orderType, MtGoxUnitOfCredit volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
         return placeOrder(orderType, null, volume);
     }
 
@@ -168,6 +168,11 @@ class MtGoxServiceImpl implements MtGoxAPI {
     @Override
     public CurrencyInfo getCurrencyInfo(Currency currency) throws IOException, Exception {
         return httpAPI.getCurrencyInfo(currency);
+    }
+
+    @Override
+    public CurrencyInfo getCurrencyInfo(String currencyCode) throws Exception {
+        return httpAPI.getCurrencyInfo(currencyCode);
     }
 
     private void currencyKludge(DtoBase o) {

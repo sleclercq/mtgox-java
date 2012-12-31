@@ -10,7 +10,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
 
-    private MtGoxBitcoinUnit amount;
+    private long amount_int;
     private long price_int;
     private long date;
     private String item;
@@ -40,7 +40,7 @@ public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
         this.item = item;
         this.trade_type = trade_type;
         this.date = date;
-        this.amount = new MtGoxBitcoinUnit(amount_int);
+        this.amount_int = amount_int;
         this.price_int = price_int;
     }
 
@@ -72,12 +72,24 @@ public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
         return date;
     }
 
-    public MtGoxBitcoinUnit getAmount() {
+    public MtGoxUnitOfCredit getAmount() {
+        MtGoxUnitOfCredit amount = null;
+        if (currencyInfo != null) {
+            amount = new MtGoxUnitOfCredit(amount_int, currencyInfo);
+        } else {
+            throw new RuntimeException("Error: getAmount called before currency was initialised.");
+        }
         return amount;
     }
 
-    public MtGoxFiatUnit getPrice() {
-        return new MtGoxFiatUnit(price_int, currencyInfo);
+    public MtGoxUnitOfCredit getPrice() {
+        MtGoxUnitOfCredit price = null;
+        if (currencyInfo != null) {
+            price = new MtGoxUnitOfCredit(price_int, currencyInfo);
+        } else {
+            throw new RuntimeException("Error: getPrice called before currency was initialised.");
+        }
+        return price;
     }
 
     @Override

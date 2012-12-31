@@ -19,8 +19,8 @@ import java.util.List;
 import to.sparks.mtgox.model.*;
 
 /**
- * A java api for the MtGox bitcoin exchange built using Spring and Maven.
- * See https://en.bitcoin.it/wiki/MtGox/API for protocol details.
+ * A java api for the MtGox bitcoin exchange built using Spring and Maven. See
+ * https://en.bitcoin.it/wiki/MtGox/API for protocol details.
  *
  * @author SparksG
  */
@@ -30,7 +30,7 @@ public interface MtGoxAPI {
 
         Bid, Ask
     }
-    
+
     Currency getBaseCurrency();
 
     FullDepth getFullDepth() throws Exception;
@@ -51,11 +51,13 @@ public interface MtGoxAPI {
 
     Ticker getTicker() throws Exception;
 
-    String placeMarketOrder(OrderType orderType, MtGoxBitcoinUnit volume) throws Exception;
+    String placeMarketOrder(OrderType orderType, MtGoxUnitOfCredit volume) throws Exception;
 
-    String placeOrder(OrderType orderType, MtGoxFiatUnit price, MtGoxBitcoinUnit volume) throws Exception;
-    
+    String placeOrder(OrderType orderType, MtGoxUnitOfCredit price, MtGoxUnitOfCredit volume) throws Exception;
+
     AccountInfo getAccountInfo() throws Exception;
-    
+
     CurrencyInfo getCurrencyInfo(Currency currency) throws Exception;
+
+    CurrencyInfo getCurrencyInfo(String currencyCode) throws Exception;
 }

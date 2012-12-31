@@ -16,6 +16,7 @@ package to.sparks.mtgox.net;
 
 import java.util.Currency;
 import java.util.HashMap;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -56,25 +57,41 @@ public class MtGoxUrlFactory {
 
     }
 
+    /**
+     * Only use this for 'generic' commands that don't depend on currency.
+     */
+    public static String getUrlForRestCommand(RestCommand restCommand) throws Exception {
+        return getUrlForRestCommand("", restCommand);
+    }
+
     public static String getUrlForRestCommand(Currency currency, RestCommand restCommand) throws Exception {
+        return getUrlForRestCommand(currency.getCurrencyCode(), restCommand);
+    }
+
+    public static String getUrlForRestCommand(String currencyCode, RestCommand restCommand) throws Exception {
         StringBuilder url = new StringBuilder();
-        if (currency == null || currencyMap.containsKey(currency)) {
+
+        if (StringUtils.isEmpty(currencyCode) || currencyCode.equalsIgnoreCase("BTC") || currencyMap.containsKey(Currency.getInstance(currencyCode))) {
             if (restMap.containsKey(restCommand)) {
                 url.append(MTGOX_HTTP_API_URL);
                 url.append(MTGOX_HTTP_API_VERSION);
-
-                if (currency == null || restCommand == RestCommand.CurrencyInfo) {
+                Currency currency = null;
+                try {
+                    currency = Currency.getInstance(currencyCode);
+                } catch (IllegalArgumentException ex) {
+                    // Sigh.
+                }
+                if (StringUtils.isEmpty(currencyCode) || currencyCode.equalsIgnoreCase("BTC") || !currencyMap.containsKey(currency)) {
                     url.append("generic/");
                 } else {
-                    url.append(currencyMap.get(currency));
+                    url.append(currencyMap.get(Currency.getInstance(currencyCode)));
                 }
-
                 url.append(restMap.get(restCommand));
             } else {
                 throw new Exception("Unknown command: " + restCommand.toString());
             }
         } else {
-            throw new Exception("Unknown currency: " + currency.getCurrencyCode());
+            throw new Exception("Unknown currency: " + currencyCode);
         }
         return url.toString();
     }

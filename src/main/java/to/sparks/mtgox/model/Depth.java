@@ -8,12 +8,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class Depth extends Offer implements IEventTime {
+public class Depth extends Offer implements IEventTime, CurrencyKludge {
 
     private String item;
-    private MtGoxBitcoinUnit totalVolume;
     private String type_str;
     private int type;
+    private long total_volume_int;
 
     public Depth(@JsonProperty("currency") String currency,
             @JsonProperty("item") String item,
@@ -25,11 +25,9 @@ public class Depth extends Offer implements IEventTime {
             @JsonProperty("price_int") long price_int,
             @JsonProperty("volume_int") long amount_int,
             @JsonProperty("now") long stamp) {
-        super(price_int,
-                new MtGoxBitcoinUnit(amount_int),
-                stamp, null);
+        super(price, amount, price_int, amount_int, stamp);
         this.item = item;
-        this.totalVolume = new MtGoxBitcoinUnit(total_volume_int);
+        this.total_volume_int = total_volume_int;
         this.type_str = type_str;
         this.type = type;
     }
@@ -44,7 +42,13 @@ public class Depth extends Offer implements IEventTime {
     /**
      * @return the total_volume_int
      */
-    public MtGoxBitcoinUnit getTotalVolume() {
+    public MtGoxUnitOfCredit getTotalVolume() {
+        MtGoxUnitOfCredit totalVolume = null;
+        if (currencyInfo != null) {
+            totalVolume = new MtGoxUnitOfCredit(total_volume_int, currencyInfo);
+        } else {
+            throw new RuntimeException("Error: getTotalVolume called before currency was initialised.");
+        }
         return totalVolume;
     }
 
