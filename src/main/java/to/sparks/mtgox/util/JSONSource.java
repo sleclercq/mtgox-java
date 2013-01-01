@@ -44,12 +44,21 @@ public class JSONSource<T extends DtoBase> {
 
     public T getResultFromStream(InputStream in, Class clazz) throws IOException {
         JsonParser jp = factory.createJsonParser(in);
-        JavaType topMost = mapper.getTypeFactory().constructParametricType(Result.class, clazz);
-        return mapper.readValue(jp, topMost);
+        return getResult(jp, clazz);
     }
 
     public T getResultFromFile(String filename, Class clazz) throws IOException {
         return getResultFromStream(new FileInputStream(filename), clazz);
+    }
+
+    public T getResultFromString(String json, Class clazz) throws IOException {
+        JsonParser jp = factory.createJsonParser(json);
+        return getResult(jp, clazz);
+    }
+
+    public T getResult(JsonParser jp, Class clazz) throws IOException {
+        JavaType topMost = mapper.getTypeFactory().constructParametricType(Result.class, clazz);
+        return mapper.readValue(jp, topMost);
     }
 
     public String getDTOasJSON(DtoBase dto) throws IOException {

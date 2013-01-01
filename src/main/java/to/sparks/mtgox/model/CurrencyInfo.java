@@ -1,7 +1,6 @@
 package to.sparks.mtgox.model;
 
 import java.util.Currency;
-import java.util.Locale;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**

@@ -39,14 +39,16 @@ public class TradeResult extends DtoBase implements CurrencyKludge {
         this.price = price;
         this.spent = spent;
         this.date = date;
+
+        if (this.amount != null) {
+            this.amount.setCurrencyInfo(MtGoxUnitOfCredit.BitcoinCurrencyInfo);
+        }
     }
 
     @Override
     public void setCurrencyInfo(CurrencyInfo currencyInfo) {
-//        amount.setCurrencyInfo(currencyInfo);  // This is a BTC amount!
         price.setCurrencyInfo(currencyInfo);
         spent.setCurrencyInfo(currencyInfo);
-
     }
 
     /**

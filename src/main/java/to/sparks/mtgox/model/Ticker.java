@@ -44,6 +44,11 @@ public class Ticker extends DtoBase implements CurrencyKludge {
         this.last_all = last_all;
         this.buy = buy;
         this.sell = sell;
+
+        if (this.vol != null) {
+            this.vol.setCurrencyInfo(MtGoxUnitOfCredit.BitcoinCurrencyInfo);
+        }
+
     }
 
     /**
@@ -206,7 +211,6 @@ public class Ticker extends DtoBase implements CurrencyKludge {
         low.setCurrencyInfo(currencyInfo);
         avg.setCurrencyInfo(currencyInfo);
         vwap.setCurrencyInfo(currencyInfo);
-        vol.setCurrencyInfo(currencyInfo);
         last_local.setCurrencyInfo(currencyInfo);
         last.setCurrencyInfo(currencyInfo);
         last_orig.setCurrencyInfo(currencyInfo);

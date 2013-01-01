@@ -12,24 +12,14 @@ public class Offer extends DtoBase implements CurrencyKludge {
 
     protected CurrencyInfo currencyInfo;
     private long price_int;
-//    private MtGoxUnitOfCredit amount;
     private long stamp;
     private long amount_int;
 
-//    public Offer(long price_int,
-//            MtGoxUnitOfCredit amount,
-//            long stamp, CurrencyInfo currencyInfo) {
-//        this.price_int = price_int;
-////        this.amount = amount;
-//        this.stamp = stamp;
-//        this.currencyInfo = currencyInfo;
-//    }
     public Offer(@JsonProperty("price") double price,
             @JsonProperty("amount") double amount,
             @JsonProperty("price_int") long price_int,
             @JsonProperty("amount_int") long amount_int,
             @JsonProperty("stamp") long stamp) {
-        //this(price_int, new MtGoxUnitOfCredit(amount_int), stamp, null);
         this.price_int = price_int;
         this.amount_int = amount_int;
         this.stamp = stamp;
@@ -61,12 +51,7 @@ public class Offer extends DtoBase implements CurrencyKludge {
      * @return the amount_int
      */
     public MtGoxUnitOfCredit getAmount() {
-        MtGoxUnitOfCredit amount = null;
-        if (currencyInfo != null) {
-            amount = new MtGoxUnitOfCredit(price_int, currencyInfo);
-        } else {
-            throw new RuntimeException("Error: getAmount called before currency was initialised.");
-        }
+        MtGoxUnitOfCredit amount = new MtGoxUnitOfCredit(amount_int, MtGoxUnitOfCredit.BitcoinCurrencyInfo);
         return amount;
     }
 

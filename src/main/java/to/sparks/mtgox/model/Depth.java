@@ -43,12 +43,7 @@ public class Depth extends Offer implements IEventTime, CurrencyKludge {
      * @return the total_volume_int
      */
     public MtGoxUnitOfCredit getTotalVolume() {
-        MtGoxUnitOfCredit totalVolume = null;
-        if (currencyInfo != null) {
-            totalVolume = new MtGoxUnitOfCredit(total_volume_int, currencyInfo);
-        } else {
-            throw new RuntimeException("Error: getTotalVolume called before currency was initialised.");
-        }
+        MtGoxUnitOfCredit totalVolume = new MtGoxUnitOfCredit(total_volume_int, MtGoxUnitOfCredit.BitcoinCurrencyInfo);
         return totalVolume;
     }
 

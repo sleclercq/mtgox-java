@@ -28,6 +28,9 @@ public class OrderResult extends DtoBase implements CurrencyKludge {
         this.total_spent = total_spent;
         this.avg_cost = avg_cost;
 
+        if (this.total_amount != null) {
+            this.total_amount.setCurrencyInfo(MtGoxUnitOfCredit.BitcoinCurrencyInfo);
+        }
     }
 
     @Override
@@ -35,7 +38,6 @@ public class OrderResult extends DtoBase implements CurrencyKludge {
         for (TradeResult tr : trades) {
             tr.setCurrencyInfo(currencyInfo);
         }
-        total_amount.setCurrencyInfo(currencyInfo);
         total_spent.setCurrencyInfo(currencyInfo);
         avg_cost.setCurrencyInfo(currencyInfo);
     }

@@ -73,12 +73,7 @@ public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
     }
 
     public MtGoxUnitOfCredit getAmount() {
-        MtGoxUnitOfCredit amount = null;
-        if (currencyInfo != null) {
-            amount = new MtGoxUnitOfCredit(amount_int, currencyInfo);
-        } else {
-            throw new RuntimeException("Error: getAmount called before currency was initialised.");
-        }
+        MtGoxUnitOfCredit amount = new MtGoxUnitOfCredit(amount_int, MtGoxUnitOfCredit.BitcoinCurrencyInfo);
         return amount;
     }
 
