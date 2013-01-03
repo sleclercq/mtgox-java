@@ -39,7 +39,11 @@
 <p>You can support this work via bitcoin donation to my tip jar.  1DdDs3rPR9W37cbF5zQbUB8D9frcbAAoYu
 <img src="https://raw.github.com/GrantSparks/mtgox-java/master/tipjar.png" alt="Bitcoin tipjar QR code" title="bitcoin tipjar address"></p>
 
-<p>TODO:  The private HTTP API functions and the websocker subscription functions are not yet all there.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... <a href="http://goo.gl/NxBG6">http://goo.gl/NxBG6</a></p>
+<h2>Current status</h2>
+
+<p>Some of the private HTTP API functions and the websocker subscription functions are not yet fully implemented.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... <a href="http://goo.gl/NxBG6">http://goo.gl/NxBG6</a></p>
+
+<h2>Using in your own project</h2>
 
 <p>Release versions are available from Maven Central, add the following dependency to your pom.xml.</p>
 
@@ -99,6 +103,25 @@
 
 <pre><code>    java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.MtGoxExample
 </code></pre>
+
+<h2>Compiling from source</h2>
+
+<p>To build on Windows...</p>
+
+<ol>
+<li><p>Make sure you have a recent Java JDK installed &amp; configured as normal.</p></li>
+<li><p>Download Maven.  (Check the downloaded file's properties and "unblock" it if you have windows protection turned on)
+<a href="http://mirror.mel.bkb.net.au/pub/apache/maven/maven-3/3.0.4/binaries/apache-maven-3.0.4-bin.zip">http://mirror.mel.bkb.net.au/pub/apache/maven/maven-3/3.0.4/binaries/apache-maven-3.0.4-bin.zip</a></p></li>
+<li><p>Extract the maven zip into anywhere, e.g., c:\tools\maven-3.0.4</p></li>
+<li><p>Edit your environment PATH to include the maven 'bin' directory.  e.g., c:\tools\maven-3.0.4\bin</p></li>
+<li><p>Clone the GitHub repo to your local computer and then open the project in GitHub for Windows and in the "Tools" menu, select "Open a shell here"</p></li>
+<li>
+<p>In the command-line shell that appears, type the following maven command to build the project...</p>
+
+<pre><code>mvn install
+</code></pre>
+</li>
+</ol><h2>Contact</h2>
 
 <p>Contact the author <a href="mailto:grant@sparks.to">grant@sparks.to</a> for reporting bugs or asking questions.  Follow the mtgox-java project on GitHub so that I know who you are.</p>
 
