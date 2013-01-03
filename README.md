@@ -10,7 +10,13 @@ This software is copyright 2012-2013 Grant Sparks, and is distributed under the 
 You can support this work via bitcoin donation to my tip jar.  1DdDs3rPR9W37cbF5zQbUB8D9frcbAAoYu
 ![Bitcoin tipjar QR code](https://raw.github.com/GrantSparks/mtgox-java/master/tipjar.png "bitcoin tipjar address")
 
-TODO:  The private HTTP API functions and the websocker subscription functions are not yet all there.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... http://goo.gl/NxBG6
+Current status
+--------------
+
+Some of the private HTTP API functions and the websocker subscription functions are not yet fully implemented.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... http://goo.gl/NxBG6
+
+Using in your own project
+-------------------------
 
 Release versions are available from Maven Central, add the following dependency to your pom.xml.
 
@@ -66,6 +72,29 @@ Below is an example of how to use the mtgox java API.
 Private API functions need a MtGox.Com API key & secret passed as JVM system properties as shown below.
         
         java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.MtGoxExample
+
+Compiling from source
+---------------------
+
+To build on Windows...
+
+1.  Make sure you have a recent Java JDK installed & configured as normal.
+
+2.  Download Maven.  (Check the downloaded file's properties and "unblock" it if you have windows protection turned on)
+http://mirror.mel.bkb.net.au/pub/apache/maven/maven-3/3.0.4/binaries/apache-maven-3.0.4-bin.zip
+
+3.  Extract the maven zip into anywhere, e.g., c:\tools\maven-3.0.4
+
+4.  Edit your environment PATH to include the maven 'bin' directory.  e.g., c:\tools\maven-3.0.4\bin
+
+5.  Clone the GitHub repo to your local computer and then open the project in GitHub for Windows and in the "Tools" menu, select "Open a shell here"
+
+6.  In the command-line shell that appears, type the following maven command to build the project...
+
+        mvn install
+
+Contact
+-------
 
 Contact the author grant@sparks.to for reporting bugs or asking questions.  Follow the mtgox-java project on GitHub so that I know who you are.
 
