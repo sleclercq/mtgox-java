@@ -94,7 +94,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>to.sparks.App</mainClass>
+                            <mainClass>to.sparks.MtGoxExample</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -107,7 +107,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <configuration>
-                    <mainClass>to.sparks.App</mainClass>
+                    <mainClass>to.sparks.MtGoxExample</mainClass>
                 </configuration>
             </plugin>
             <plugin>
