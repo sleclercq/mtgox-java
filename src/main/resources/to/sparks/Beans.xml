@@ -28,7 +28,14 @@
         Your API key and secret must be passed using java system properties.  e.g.,
         java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET
     -->
-    <bean id="httpApi" class="to.sparks.mtgox.service.MtGoxHTTPClient" >
+    <bean id="httpApiV0" class="to.sparks.mtgox.service.MtGoxHTTPClientV0" >
+        <constructor-arg index="0">
+            <ref bean="logger"/>
+        </constructor-arg>
+        <constructor-arg index="1" value="${api.key}" />
+        <constructor-arg index="2" value="${api.secret}" />
+    </bean>
+    <bean id="httpApiV1" class="to.sparks.mtgox.service.MtGoxHTTPClientV1" >
         <constructor-arg index="0">
             <ref bean="logger"/>
         </constructor-arg>
@@ -50,12 +57,15 @@
             <ref bean="logger"/>
         </constructor-arg>
         <constructor-arg index="1">
-            <ref bean="httpApi"/>
+            <ref bean="httpApiV0"/>
         </constructor-arg>
         <constructor-arg index="2">
-            <ref bean="wsApi"/>
+            <ref bean="httpApiV1"/>
         </constructor-arg>
         <constructor-arg index="3">
+            <ref bean="wsApi"/>
+        </constructor-arg>
+        <constructor-arg index="4">
             <ref bean="usdCurrency"/>
         </constructor-arg>
     </bean>

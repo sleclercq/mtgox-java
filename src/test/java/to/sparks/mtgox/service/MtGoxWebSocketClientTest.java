@@ -104,17 +104,17 @@ public class MtGoxWebSocketClientTest extends TestCase {
         private Ticker ticker = null;
         private Logger logger = null;
         private TaskExecutor taskExecutor = null;
-        private MtGoxHTTPClient mtGoxHTTPApi = null;
+        private MtGoxHTTPAuthenticator mtGoxHTTPApi = null;
         private Currency currency = null;
 
         public TestHarness() {
             ticker = new Ticker(null, null, null, null, null, null, null, null, null, null, null);
             logger = Logger.getGlobal();
-            mtGoxHTTPApi = new MtGoxHTTPClient(logger, null, null);
+            mtGoxHTTPApi = new MtGoxHTTPAuthenticator(logger, null, null);
             currency = Currency.getInstance("USD");
         }
 
-        public TestHarness(Ticker ticker, Logger logger, TaskExecutor taskExecutor, MtGoxHTTPClient mtGoxHTTPApi, Currency currency) {
+        public TestHarness(Ticker ticker, Logger logger, TaskExecutor taskExecutor, MtGoxHTTPAuthenticator mtGoxHTTPApi, Currency currency) {
             this.ticker = ticker;
             this.logger = logger;
             this.taskExecutor = taskExecutor;
@@ -134,7 +134,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
             return taskExecutor;
         }
 
-        public MtGoxHTTPClient getMtGoxHTTPApi() {
+        public MtGoxHTTPAuthenticator getMtGoxHTTPApi() {
             return mtGoxHTTPApi;
         }
 

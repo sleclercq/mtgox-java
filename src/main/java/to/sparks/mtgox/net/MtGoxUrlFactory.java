@@ -32,12 +32,15 @@ public class MtGoxUrlFactory {
         PrivateInfo,
         FullDepth,
         Ticker,
-        CurrencyInfo
+        CurrencyInfo,
+        PrivateOrderCancel
     }
     private static String MTGOX_HTTP_API_URL = "https://mtgox.com/api/";
-    private static String MTGOX_HTTP_API_VERSION = "1/";
+    private static String MTGOX_HTTP_API_VERSION_0 = "0/";
+    private static String MTGOX_HTTP_API_VERSION_1 = "1/";
     private static final HashMap<Currency, String> currencyMap;
-    private static final HashMap<RestCommand, String> restMap;
+    private static final HashMap<RestCommand, String> apiV0RestMap;
+    private static final HashMap<RestCommand, String> apiV1RestMap;
     private static final String[] currencyList = {"USD", "AUD", "CAD", "CHF", "CNY", "DKK", "EUR", "GBP", "HKD", "JPY", "NZD", "PLN", "RUB", "SEK", "SGD", "THB"};
 
     static {
@@ -46,14 +49,17 @@ public class MtGoxUrlFactory {
             currencyMap.put(Currency.getInstance(currency), "BTC" + currency + "/");
         }
 
-        restMap = new HashMap<>();
-        restMap.put(RestCommand.PrivateOrderAdd, "private/order/add");
-        restMap.put(RestCommand.PrivateOrderResult, "private/order/result");
-        restMap.put(RestCommand.PrivateOrders, "private/orders");
-        restMap.put(RestCommand.PrivateInfo, "private/info");
-        restMap.put(RestCommand.FullDepth, "fulldepth");
-        restMap.put(RestCommand.Ticker, "ticker");
-        restMap.put(RestCommand.CurrencyInfo, "currency");
+        apiV1RestMap = new HashMap<>();
+        apiV1RestMap.put(RestCommand.PrivateOrderAdd, "private/order/add");
+        apiV1RestMap.put(RestCommand.PrivateOrderResult, "private/order/result");
+        apiV1RestMap.put(RestCommand.PrivateOrders, "private/orders");
+        apiV1RestMap.put(RestCommand.PrivateInfo, "private/info");
+        apiV1RestMap.put(RestCommand.FullDepth, "fulldepth");
+        apiV1RestMap.put(RestCommand.Ticker, "ticker");
+        apiV1RestMap.put(RestCommand.CurrencyInfo, "currency");
+
+        apiV0RestMap = new HashMap<>();
+        apiV0RestMap.put(RestCommand.PrivateOrderCancel, "cancelOrder.php");
 
     }
 
@@ -72,9 +78,9 @@ public class MtGoxUrlFactory {
         StringBuilder url = new StringBuilder();
 
         if (StringUtils.isEmpty(currencyCode) || currencyCode.equalsIgnoreCase("BTC") || currencyMap.containsKey(Currency.getInstance(currencyCode))) {
-            if (restMap.containsKey(restCommand)) {
+            if (apiV1RestMap.containsKey(restCommand)) {
                 url.append(MTGOX_HTTP_API_URL);
-                url.append(MTGOX_HTTP_API_VERSION);
+                url.append(MTGOX_HTTP_API_VERSION_1);
                 Currency currency = null;
                 try {
                     currency = Currency.getInstance(currencyCode);
@@ -86,7 +92,11 @@ public class MtGoxUrlFactory {
                 } else {
                     url.append(currencyMap.get(Currency.getInstance(currencyCode)));
                 }
-                url.append(restMap.get(restCommand));
+                url.append(apiV1RestMap.get(restCommand));
+            } else if (apiV0RestMap.containsKey(restCommand)) {
+                url.append(MTGOX_HTTP_API_URL);
+                url.append(MTGOX_HTTP_API_VERSION_0);
+                url.append(apiV0RestMap.get(restCommand));
             } else {
                 throw new Exception("Unknown command: " + restCommand.toString());
             }

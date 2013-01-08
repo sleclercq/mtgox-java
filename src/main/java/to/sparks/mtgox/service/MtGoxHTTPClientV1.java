@@ -14,25 +14,13 @@
  */
 package to.sparks.mtgox.service;
 
-import biz.source_code.base64Coder.Base64Coder;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import to.sparks.mtgox.model.*;
 import to.sparks.mtgox.net.MtGoxUrlFactory;
 import to.sparks.mtgox.util.JSONSource;
@@ -42,7 +30,7 @@ import to.sparks.mtgox.util.JSONSource;
  *
  * @author SparksG
  */
-class MtGoxHTTPClient {
+public class MtGoxHTTPClientV1 extends MtGoxHTTPAuthenticator {
 
     private JSONSource<Result<AccountInfo>> privateInfoJSON;
     private JSONSource<Result<Order[]>> openOrdersJSON;
@@ -51,13 +39,9 @@ class MtGoxHTTPClient {
     private JSONSource<Result<FullDepth>> fullDepthJSON;
     private JSONSource<Result<Ticker>> tickerJSON;
     private JSONSource<Result<CurrencyInfo>> currencyInfoJSON;
-    private String apiKey;
-    private String secret;
-    private static Logger logger;
 
-    public MtGoxHTTPClient(final Logger logger, String apiKey, String secret) {
-        this.apiKey = apiKey;
-        this.secret = secret;
+    public MtGoxHTTPClientV1(final Logger logger, String apiKey, String secret) {
+        super(logger, apiKey, secret);
         openOrdersJSON = new JSONSource<>();
         stringJSON = new JSONSource<>();
         orderResultJSON = new JSONSource<>();
@@ -65,37 +49,6 @@ class MtGoxHTTPClient {
         tickerJSON = new JSONSource<>();
         privateInfoJSON = new JSONSource<>();
         currencyInfoJSON = new JSONSource<>();
-
-        TrustManager[] trustAllCerts = new TrustManager[]{
-            new X509TrustManager() {
-
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                @Override
-                public void checkClientTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
-
-                @Override
-                public void checkServerTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
-            }
-        };
-
-        try {
-
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-        } catch (Exception e) {
-
-            logger.log(Level.SEVERE, null, e);
-        }
-
     }
 
     public FullDepth getFullDepth(Currency currency) throws Exception {
@@ -148,50 +101,5 @@ class MtGoxHTTPClient {
             throw new RuntimeException(currencyInfo.getToken() + ": " + currencyInfo.getError());
         }
         return currencyInfo.getReturn();
-    }
-
-    /*
-     * This function is based on an original idea by github user christopherobin
-     * See https://gist.github.com/2396722
-     */
-    private InputStream getMtGoxHTTPInputStream(String path, HashMap<String, String> args) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-        HttpURLConnection connection;
-
-        args.put("nonce", String.valueOf(System.currentTimeMillis()));
-        String post_data = buildQueryString(args);
-
-        // args signature
-        Mac mac = Mac.getInstance("HmacSHA512");
-        SecretKeySpec secret_spec = new SecretKeySpec(Base64Coder.decode(this.secret), "HmacSHA512");
-        mac.init(secret_spec);
-        String signature = new String(Base64Coder.encode(mac.doFinal(post_data.getBytes()))).replaceAll("\n", "");
-
-        System.setProperty("jsse.enableSNIExtension", "false");
-
-        URL queryUrl = new URL(path);
-        connection = (HttpURLConnection) queryUrl.openConnection();
-        connection.setDoOutput(true);
-        connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; mtgox-java client)");
-        connection.setRequestProperty("Rest-Key", apiKey);
-        connection.setRequestProperty("Rest-Sign", signature);
-        connection.getOutputStream().write(post_data.getBytes());
-        return connection.getInputStream();
-    }
-
-    private InputStream getMtGoxHTTPInputStream(String path) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-        return getMtGoxHTTPInputStream(path, new HashMap<String, String>());
-    }
-
-    private static String buildQueryString(HashMap<String, String> args) throws UnsupportedEncodingException {
-        String result = new String();
-        for (String hashkey : args.keySet()) {
-            if (result.length() > 0) {
-                result += '&';
-            }
-            result += URLEncoder.encode(hashkey, "UTF-8") + "="
-                    + URLEncoder.encode(args.get(hashkey), "UTF-8");
-
-        }
-        return result;
     }
 }

@@ -151,4 +151,15 @@ public interface MtGoxAPI {
      * @throws Exception
      */
     CurrencyInfo getCurrencyInfo(String currencyCode) throws Exception;
+
+    /**
+     * Cancel an existing order
+     *
+     * @param orderType Bid or Ask
+     * @param orderRef The reference string that was returned when the order was
+     * pleaced
+     * @return
+     * @throws Exception
+     */
+    String cancelOrder(OrderType orderType, String orderRef) throws Exception;
 }

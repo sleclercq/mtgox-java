@@ -73,6 +73,13 @@ public class MtGoxExample {
             for (Order order : mtgoxUSD.getOpenOrders()) {
                 logger.log(Level.INFO, "Open order: {0} status: {1} price: {2}{3} amount: {4}", new Object[]{order.getOid(), order.getStatus(), order.getCurrency().getCurrencyCode(), order.getPrice().getDisplay(), order.getAmount().getDisplay()});
             }
+
+            String sResult = mtgoxUSD.cancelOrder(MtGoxAPI.OrderType.Bid, orderRef);
+            logger.log(Level.INFO, "cancelOrder result: {0}", new Object[]{sResult});
+
+            for (Order order : mtgoxUSD.getOpenOrders()) {
+                logger.log(Level.INFO, "Open order: {0} status: {1} price: {2}{3} amount: {4}", new Object[]{order.getOid(), order.getStatus(), order.getCurrency().getCurrencyCode(), order.getPrice().getDisplay(), order.getAmount().getDisplay()});
+            }
         } catch (IllegalArgumentException ex) {
             logger.log(Level.SEVERE, "Private functions require your private mtgox api keys. Run java with these command line arguments:  -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET ", ex);
         }

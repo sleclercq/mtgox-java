@@ -69,7 +69,7 @@ Below is an example of how to use the mtgox java API.
         AccountInfo info = mtgoxUSD.getAccountInfo();
         logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
 ```       
-Private API functions need a MtGox.Com API key & secret passed as JVM system properties as shown below.
+Private API functions need a MtGox.Com API key & secret passed as JVM system properties as shown below, or you can add them as maven properties in your pom.xml or settings.xml.
         
         java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET to.sparks.MtGoxExample
 

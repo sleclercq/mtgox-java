@@ -34,14 +34,16 @@ class MtGoxServiceImpl implements MtGoxAPI {
 
     private static Logger logger;
     private MtGoxWebSocketClient wsApi;
-    MtGoxHTTPClient httpAPI;
+    MtGoxHTTPClientV0 httpAPIV0;
+    MtGoxHTTPClientV1 httpAPIV1;
     CurrencyInfo currencyInfo;
 
-    public MtGoxServiceImpl(final Logger logger, MtGoxHTTPClient httpAPI, MtGoxWebSocketClient mtGoxWebSocketApi, Currency currency) throws IOException, Exception {
+    public MtGoxServiceImpl(final Logger logger, MtGoxHTTPClientV0 httpAPIV0, MtGoxHTTPClientV1 httpAPIV1, MtGoxWebSocketClient mtGoxWebSocketApi, Currency currency) throws IOException, Exception {
         this.logger = logger;
-        this.httpAPI = httpAPI;
+        this.httpAPIV0 = httpAPIV0;
+        this.httpAPIV1 = httpAPIV1;
         this.wsApi = mtGoxWebSocketApi;
-        this.currencyInfo = httpAPI.getCurrencyInfo(currency);
+        this.currencyInfo = httpAPIV1.getCurrencyInfo(currency);
     }
 
     @Override
@@ -93,7 +95,7 @@ class MtGoxServiceImpl implements MtGoxAPI {
 
     @Override
     public FullDepth getFullDepth() throws IOException, Exception {
-        FullDepth fullDepth = httpAPI.getFullDepth(currencyInfo.getCurrency());
+        FullDepth fullDepth = httpAPIV1.getFullDepth(currencyInfo.getCurrency());
         currencyKludge(fullDepth);
         return fullDepth;
     }
@@ -113,7 +115,7 @@ class MtGoxServiceImpl implements MtGoxAPI {
         }
         params.put("amount_int", String.valueOf(volume.getCredits().unscaledValue().longValue()));
 
-        return httpAPI.placeOrder(currencyInfo.getCurrency(), params);
+        return httpAPIV1.placeOrder(currencyInfo.getCurrency(), params);
     }
 
     @Override
@@ -131,7 +133,7 @@ class MtGoxServiceImpl implements MtGoxAPI {
         }
         params.put("order", orderRef);
 
-        OrderResult orderResult = httpAPI.getPrivateOrderResult(params);
+        OrderResult orderResult = httpAPIV1.getPrivateOrderResult(params);
         currencyKludge(orderResult);
 
         return orderResult;
@@ -139,7 +141,7 @@ class MtGoxServiceImpl implements MtGoxAPI {
 
     @Override
     public Order[] getOpenOrders() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
-        Order[] orders = httpAPI.getOpenOrders();
+        Order[] orders = httpAPIV1.getOpenOrders();
         for (Order order : orders) {
             currencyKludge(order);
         }
@@ -148,7 +150,7 @@ class MtGoxServiceImpl implements MtGoxAPI {
 
     @Override
     public Ticker getTicker() throws IOException, Exception {
-        Ticker ticker = httpAPI.getTicker(currencyInfo.getCurrency());
+        Ticker ticker = httpAPIV1.getTicker(currencyInfo.getCurrency());
         currencyKludge(ticker);
         return ticker;
     }
@@ -160,24 +162,36 @@ class MtGoxServiceImpl implements MtGoxAPI {
 
     @Override
     public AccountInfo getAccountInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
-        AccountInfo info = httpAPI.getPrivateInfo();
+        AccountInfo info = httpAPIV1.getPrivateInfo();
         currencyKludge(info);
         return info;
     }
 
     @Override
     public CurrencyInfo getCurrencyInfo(Currency currency) throws IOException, Exception {
-        return httpAPI.getCurrencyInfo(currency);
+        return httpAPIV1.getCurrencyInfo(currency);
     }
 
     @Override
     public CurrencyInfo getCurrencyInfo(String currencyCode) throws Exception {
-        return httpAPI.getCurrencyInfo(currencyCode);
+        return httpAPIV1.getCurrencyInfo(currencyCode);
     }
 
     private void currencyKludge(DtoBase o) {
         if (o != null && o instanceof CurrencyKludge) {
             ((CurrencyKludge) o).setCurrencyInfo(currencyInfo);
         }
+    }
+
+    @Override
+    public String cancelOrder(OrderType orderType, String orderRef) throws Exception {
+        HashMap<String, String> params = new HashMap<>();
+        if (orderType == MtGoxAPI.OrderType.Bid) {
+            params.put("type", "2");
+        } else {
+            params.put("type", "1");
+        }
+        params.put("oid", orderRef);
+        return httpAPIV0.cancelOrder(params);
     }
 }
