@@ -46,7 +46,7 @@ public interface MtGoxAPI {
     FullDepth getFullDepth() throws Exception;
 
     /**
-     * A provate function that requires credentials. Get all open orders.
+     * A private function that requires credentials. Get all open orders.
      *
      * @return An array of open orders
      * @throws Exception
