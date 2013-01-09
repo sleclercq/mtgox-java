@@ -159,9 +159,9 @@ public interface MtGoxAPI {
      * @param orderType Bid or Ask
      * @param orderRef The reference string that was returned when the order was
      * placed
-     * @return A String containing the JSON response. This has not been kept as
-     * a JSON object because it should not be used.
+     * @return The JSON response. Avoid using this response because this api
+     * call uses the old Version 0 MtGox API.
      * @throws Exception
      */
-    String cancelOrder(OrderType orderType, String orderRef) throws Exception;
+    OrderCancelResult cancelOrder(OrderType orderType, String orderRef) throws Exception;
 }

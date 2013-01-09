@@ -17,29 +17,36 @@ package to.sparks.mtgox.service;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.JavaType;
 import to.sparks.mtgox.model.OrderCancelResult;
 import to.sparks.mtgox.net.MtGoxHTTPAuthenticator;
 import to.sparks.mtgox.net.MtGoxUrlFactory;
-import to.sparks.mtgox.util.JSONSource;
 
 /**
  * A simple implementation of a client for the MtGox HTTP API version 0.
  *
  * @author SparksG
- * @deprecated This class only exists because the Version 1 API does not contain all the functions we need.  It will be removed as these functions become available on later releases of the MtGox HTTP API.
+ * @deprecated This class only exists because the Version 1 API does not contain
+ * all the functions we need. It will be removed as these functions become
+ * available on later releases of the MtGox HTTP API.
  */
 @Deprecated
 public class MtGoxHTTPClientV0 extends MtGoxHTTPAuthenticator {
 
-    private JSONSource<OrderCancelResult> orderCancelJSON;
+    private JsonFactory factory = new JsonFactory();
+    private ObjectMapper mapper = new ObjectMapper();
 
     public MtGoxHTTPClientV0(final Logger logger, String apiKey, String secret) {
         super(logger, apiKey, secret);
-        orderCancelJSON = new JSONSource<>();
     }
 
     public OrderCancelResult cancelOrder(HashMap<String, String> params) throws Exception {
         InputStream is = getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand("", MtGoxUrlFactory.RestCommand.PrivateOrderCancel), params);
-        return orderCancelJSON.getResultFromStream(is, OrderCancelResult.class);
+        JsonParser jp = factory.createJsonParser(is);
+        JavaType topMost = mapper.getTypeFactory().constructType(OrderCancelResult.class);
+        return mapper.readValue(jp, topMost);
     }
 }

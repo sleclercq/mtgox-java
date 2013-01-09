@@ -184,7 +184,7 @@ class MtGoxServiceImpl implements MtGoxAPI {
     }
 
     @Override
-    public String cancelOrder(OrderType orderType, String orderRef) throws Exception {
+    public OrderCancelResult cancelOrder(OrderType orderType, String orderRef) throws Exception {
         HashMap<String, String> params = new HashMap<>();
         if (orderType == MtGoxAPI.OrderType.Bid) {
             params.put("type", "2");
@@ -192,6 +192,6 @@ class MtGoxServiceImpl implements MtGoxAPI {
             params.put("type", "1");
         }
         params.put("oid", orderRef);
-        return httpAPIV0.cancelOrder(params).toString();
+        return httpAPIV0.cancelOrder(params);
     }
 }
