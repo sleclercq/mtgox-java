@@ -24,7 +24,6 @@ import org.codehaus.jackson.type.JavaType;
 import to.sparks.mtgox.HTTPClientV0;
 import to.sparks.mtgox.model.OrderCancelResult;
 import to.sparks.mtgox.net.HTTPAuthenticator;
-import to.sparks.mtgox.net.UrlFactory;
 
 /**
  * A simple implementation of a client for the MtGox HTTP API version 0.

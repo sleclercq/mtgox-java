@@ -25,7 +25,6 @@ import to.sparks.mtgox.HTTPClientV1;
 import to.sparks.mtgox.model.*;
 import to.sparks.mtgox.net.HTTPAuthenticator;
 import to.sparks.mtgox.net.JSONSource;
-import to.sparks.mtgox.net.UrlFactory;
 
 /**
  * A simple implementation of a client for the MtGox HTTP API version 1.

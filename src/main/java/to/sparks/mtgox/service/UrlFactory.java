@@ -12,17 +12,18 @@
  * You should have received a copy of the Lesser GNU General Public License
  * along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
  */
-package to.sparks.mtgox.net;
+package to.sparks.mtgox.service;
 
 import java.util.Currency;
 import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
+ * TODO:  This should be a Spring service API.
+ * 
  * @author SparksG
  */
-public class UrlFactory {
+class UrlFactory {
 
     public enum RestCommand {
 
