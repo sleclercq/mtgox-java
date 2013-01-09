@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jwebsocket.client.java.BaseWebSocket;
 import org.springframework.core.task.TaskExecutor;
+import to.sparks.mtgox.WebSocketClient;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.IEventTime;
 import to.sparks.mtgox.model.Ticker;
@@ -32,7 +33,7 @@ import to.sparks.mtgox.net.SocketListener;
  *
  * @author SparksG
  */
-class WebSocketClientService implements EventListener, Runnable {
+class WebSocketClientService implements EventListener, Runnable, WebSocketClient {
 
     private Logger logger;
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
@@ -61,11 +62,13 @@ class WebSocketClientService implements EventListener, Runnable {
     /*
      * Return ALL the depth items younger than the timestamp
      */
+    @Override
     public List<Depth> getAllDepthSince(long timestamp) {
         int eventIndex = getEventIndex(depthHistory, timestamp);
         return eventIndex <= depthHistory.size() - 1 ? depthHistory.subList(eventIndex, depthHistory.size()) : new ArrayList<Depth>();
     }
 
+    @Override
     public List<Trade> getAllTradesSince(long timestamp) {
         int eventIndex = getEventIndex(tradeHistory, timestamp);
         return eventIndex <= tradeHistory.size() - 1 ? tradeHistory.subList(eventIndex, tradeHistory.size()) : new ArrayList<Trade>();
@@ -99,14 +102,17 @@ class WebSocketClientService implements EventListener, Runnable {
         depthHistory.add(depth);
     }
 
+    @Override
     public List<Depth> getDepthHistory() {
         return depthHistory;
     }
 
+    @Override
     public List<Ticker> getTickerHistory() {
         return tickerHistory;
     }
 
+    @Override
     public List<Trade> getTradeHistory() {
         return tradeHistory;
     }

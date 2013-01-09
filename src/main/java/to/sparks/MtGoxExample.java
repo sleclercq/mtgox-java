@@ -26,7 +26,7 @@ import to.sparks.mtgox.model.*;
  * <code>java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET
  * to.sparks.MtGoxExample</code>
  */
-public class MtGoxExample {
+class MtGoxExample {
 
     static final Logger logger = Logger.getLogger(MtGoxExample.class.getName());
 

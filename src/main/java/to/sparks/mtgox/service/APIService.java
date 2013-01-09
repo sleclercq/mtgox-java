@@ -21,7 +21,10 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+import to.sparks.mtgox.HTTPClientV0;
+import to.sparks.mtgox.HTTPClientV1;
 import to.sparks.mtgox.MtGoxAPI;
+import to.sparks.mtgox.WebSocketClient;
 import to.sparks.mtgox.model.*;
 
 /**
@@ -33,12 +36,12 @@ import to.sparks.mtgox.model.*;
 class APIService implements MtGoxAPI {
 
     private static Logger logger;
-    private WebSocketClientService wsApi;
-    HTTPClientV0Service httpAPIV0;
-    HTTPClientV1Service httpAPIV1;
+    private WebSocketClient wsApi;
+    HTTPClientV0 httpAPIV0;
+    HTTPClientV1 httpAPIV1;
     CurrencyInfo currencyInfo;
 
-    public APIService(final Logger logger, HTTPClientV0Service httpAPIV0, HTTPClientV1Service httpAPIV1, WebSocketClientService mtGoxWebSocketApi, Currency currency) throws IOException, Exception {
+    public APIService(final Logger logger, HTTPClientV0 httpAPIV0, HTTPClientV1 httpAPIV1, WebSocketClient mtGoxWebSocketApi, Currency currency) throws IOException, Exception {
         this.logger = logger;
         this.httpAPIV0 = httpAPIV0;
         this.httpAPIV1 = httpAPIV1;
