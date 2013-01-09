@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.springframework.core.task.TaskExecutor;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.Ticker;
+import to.sparks.mtgox.net.MtGoxHTTPAuthenticator;
 
 /**
  *

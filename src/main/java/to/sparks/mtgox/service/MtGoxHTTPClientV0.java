@@ -19,7 +19,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
-import to.sparks.mtgox.MtGoxAPI;
+import to.sparks.mtgox.net.MtGoxHTTPAuthenticator;
 import to.sparks.mtgox.net.MtGoxUrlFactory;
 
 /**

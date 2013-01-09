@@ -12,7 +12,7 @@
  * You should have received a copy of the Lesser GNU General Public License
  * along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
  */
-package to.sparks.mtgox.service;
+package to.sparks.mtgox.net;
 
 import biz.source_code.base64Coder.Base64Coder;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author SparksG
  */
-class MtGoxHTTPAuthenticator {
+public class MtGoxHTTPAuthenticator {
 
     private String apiKey;
     private String secret;

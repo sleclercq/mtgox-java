@@ -22,6 +22,7 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import to.sparks.mtgox.model.*;
+import to.sparks.mtgox.net.MtGoxHTTPAuthenticator;
 import to.sparks.mtgox.net.MtGoxUrlFactory;
 import to.sparks.mtgox.util.JSONSource;
 
