@@ -153,12 +153,14 @@ public interface MtGoxAPI {
     CurrencyInfo getCurrencyInfo(String currencyCode) throws Exception;
 
     /**
-     * Cancel an existing order
+     * Cancel an existing order. Currently this is only available on the HTTP
+     * Version 0 API, so the JSON result should be discarded.
      *
      * @param orderType Bid or Ask
      * @param orderRef The reference string that was returned when the order was
-     * pleaced
-     * @return
+     * placed
+     * @return A String containing the JSON response. This has not been kept as
+     * a JSON object because it should not be used.
      * @throws Exception
      */
     String cancelOrder(OrderType orderType, String orderRef) throws Exception;

@@ -13,7 +13,7 @@ You can support this work via bitcoin donation to my tip jar.  1DdDs3rPR9W37cbF5
 Current status
 --------------
 
-Some of the private HTTP API functions and the websocker subscription functions are not yet fully implemented.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... http://goo.gl/NxBG6
+Some of the private HTTP API functions and the websocket subscription functions are not yet fully implemented.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... http://goo.gl/NxBG6
 
 Using in your own project
 -------------------------

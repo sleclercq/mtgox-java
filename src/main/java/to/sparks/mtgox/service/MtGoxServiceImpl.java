@@ -192,6 +192,6 @@ class MtGoxServiceImpl implements MtGoxAPI {
             params.put("type", "1");
         }
         params.put("oid", orderRef);
-        return httpAPIV0.cancelOrder(params);
+        return httpAPIV0.cancelOrder(params).toString();
     }
 }

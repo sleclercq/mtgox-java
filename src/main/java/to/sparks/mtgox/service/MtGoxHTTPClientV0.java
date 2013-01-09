@@ -15,29 +15,31 @@
 package to.sparks.mtgox.service;
 
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.logging.Logger;
-import org.apache.commons.io.IOUtils;
+import to.sparks.mtgox.model.OrderCancelResult;
 import to.sparks.mtgox.net.MtGoxHTTPAuthenticator;
 import to.sparks.mtgox.net.MtGoxUrlFactory;
+import to.sparks.mtgox.util.JSONSource;
 
 /**
  * A simple implementation of a client for the MtGox HTTP API version 0.
  *
  * @author SparksG
+ * @deprecated This class only exists because the Version 1 API does not contain all the functions we need.  It will be removed as these functions become available on later releases of the MtGox HTTP API.
  */
+@Deprecated
 public class MtGoxHTTPClientV0 extends MtGoxHTTPAuthenticator {
+
+    private JSONSource<OrderCancelResult> orderCancelJSON;
 
     public MtGoxHTTPClientV0(final Logger logger, String apiKey, String secret) {
         super(logger, apiKey, secret);
-
+        orderCancelJSON = new JSONSource<>();
     }
 
-    public String cancelOrder(HashMap<String, String> params) throws Exception {
+    public OrderCancelResult cancelOrder(HashMap<String, String> params) throws Exception {
         InputStream is = getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand("", MtGoxUrlFactory.RestCommand.PrivateOrderCancel), params);
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(is, writer);
-        return writer.toString();
+        return orderCancelJSON.getResultFromStream(is, OrderCancelResult.class);
     }
 }
