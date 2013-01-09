@@ -20,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jwebsocket.client.java.BaseWebSocket;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import to.sparks.mtgox.WebSocketClient;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.IEventTime;
@@ -40,9 +40,9 @@ class WebSocketClientService implements EventListener, Runnable, WebSocketClient
     private List<Ticker> tickerHistory = new CopyOnWriteArrayList<>();
     private List<Trade> tradeHistory = new CopyOnWriteArrayList<>();
     final BaseWebSocket websocket = new BaseWebSocket();
-    private TaskExecutor taskExecutor;
+    private ThreadPoolTaskExecutor taskExecutor;
 
-    public WebSocketClientService(Logger logger, TaskExecutor taskExecutor) {
+    public WebSocketClientService(Logger logger, ThreadPoolTaskExecutor taskExecutor) {
         this.logger = logger;
         this.taskExecutor = taskExecutor;
     }
@@ -57,6 +57,11 @@ class WebSocketClientService implements EventListener, Runnable, WebSocketClient
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public void shutdown() {
+        taskExecutor.shutdown();
     }
 
     /*

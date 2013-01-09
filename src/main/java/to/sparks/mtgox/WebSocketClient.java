@@ -34,5 +34,6 @@ public interface WebSocketClient {
     List<Ticker> getTickerHistory();
 
     List<Trade> getTradeHistory();
-    
+
+    void shutdown();
 }

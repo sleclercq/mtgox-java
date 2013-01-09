@@ -50,6 +50,11 @@ class APIService implements MtGoxAPI {
     }
 
     @Override
+    public void shutdown() {
+        wsApi.shutdown();
+    }
+
+    @Override
     public List<Depth> getAllDepthSince(long timestamp) {
         List<Depth> depths = wsApi.getAllDepthSince(timestamp);
         for (Depth depth : depths) {

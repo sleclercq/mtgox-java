@@ -85,5 +85,8 @@ class MtGoxExample {
 
         // TODO:  Other examples...  The API is very readable, just give it a try! :)
 
+
+        // Shutdown the api when you are finished
+        mtgoxUSD.shutdown();
     }
 }
