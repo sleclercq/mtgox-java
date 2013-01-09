@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author SparksG
  */
-public class MtGoxUrlFactory {
+public class UrlFactory {
 
     public enum RestCommand {
 

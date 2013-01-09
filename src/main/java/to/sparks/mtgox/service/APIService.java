@@ -30,15 +30,15 @@ import to.sparks.mtgox.model.*;
  *
  * @author SparksG
  */
-class MtGoxServiceImpl implements MtGoxAPI {
+class APIService implements MtGoxAPI {
 
     private static Logger logger;
-    private MtGoxWebSocketClient wsApi;
-    MtGoxHTTPClientV0 httpAPIV0;
-    MtGoxHTTPClientV1 httpAPIV1;
+    private WebSocketClientService wsApi;
+    HTTPClientV0Service httpAPIV0;
+    HTTPClientV1Service httpAPIV1;
     CurrencyInfo currencyInfo;
 
-    public MtGoxServiceImpl(final Logger logger, MtGoxHTTPClientV0 httpAPIV0, MtGoxHTTPClientV1 httpAPIV1, MtGoxWebSocketClient mtGoxWebSocketApi, Currency currency) throws IOException, Exception {
+    public APIService(final Logger logger, HTTPClientV0Service httpAPIV0, HTTPClientV1Service httpAPIV1, WebSocketClientService mtGoxWebSocketApi, Currency currency) throws IOException, Exception {
         this.logger = logger;
         this.httpAPIV0 = httpAPIV0;
         this.httpAPIV1 = httpAPIV1;

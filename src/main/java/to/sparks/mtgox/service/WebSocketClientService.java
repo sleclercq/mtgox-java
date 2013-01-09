@@ -25,14 +25,14 @@ import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.IEventTime;
 import to.sparks.mtgox.model.Ticker;
 import to.sparks.mtgox.model.Trade;
-import to.sparks.mtgox.net.MtGoxEventListener;
-import to.sparks.mtgox.net.MtGoxSocketListener;
+import to.sparks.mtgox.net.EventListener;
+import to.sparks.mtgox.net.SocketListener;
 
 /**
  *
  * @author SparksG
  */
-class MtGoxWebSocketClient implements MtGoxEventListener, Runnable {
+class WebSocketClientService implements EventListener, Runnable {
 
     private Logger logger;
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
@@ -41,7 +41,7 @@ class MtGoxWebSocketClient implements MtGoxEventListener, Runnable {
     final BaseWebSocket websocket = new BaseWebSocket();
     private TaskExecutor taskExecutor;
 
-    public MtGoxWebSocketClient(Logger logger, TaskExecutor taskExecutor) {
+    public WebSocketClientService(Logger logger, TaskExecutor taskExecutor) {
         this.logger = logger;
         this.taskExecutor = taskExecutor;
     }
@@ -115,7 +115,7 @@ class MtGoxWebSocketClient implements MtGoxEventListener, Runnable {
     public void run() {
         try {
 
-            websocket.addListener(new MtGoxSocketListener(logger, this));
+            websocket.addListener(new SocketListener(logger, this));
             websocket.open("ws://websocket.mtgox.com/mtgox");
             logger.info("WS API started.");
 

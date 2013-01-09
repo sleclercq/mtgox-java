@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import to.sparks.mtgox.util.JSONSource;
+import to.sparks.mtgox.net.JSONSource;
 
 /**
  * A class to encapsulate all the weird mtgox money conversions. See...

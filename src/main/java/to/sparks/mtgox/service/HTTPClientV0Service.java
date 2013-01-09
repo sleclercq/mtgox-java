@@ -22,8 +22,8 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.JavaType;
 import to.sparks.mtgox.model.OrderCancelResult;
-import to.sparks.mtgox.net.MtGoxHTTPAuthenticator;
-import to.sparks.mtgox.net.MtGoxUrlFactory;
+import to.sparks.mtgox.net.HTTPAuthenticator;
+import to.sparks.mtgox.net.UrlFactory;
 
 /**
  * A simple implementation of a client for the MtGox HTTP API version 0.
@@ -34,17 +34,17 @@ import to.sparks.mtgox.net.MtGoxUrlFactory;
  * available on later releases of the MtGox HTTP API.
  */
 @Deprecated
-public class MtGoxHTTPClientV0 extends MtGoxHTTPAuthenticator {
+public class HTTPClientV0Service extends HTTPAuthenticator {
 
     private JsonFactory factory = new JsonFactory();
     private ObjectMapper mapper = new ObjectMapper();
 
-    public MtGoxHTTPClientV0(final Logger logger, String apiKey, String secret) {
+    public HTTPClientV0Service(final Logger logger, String apiKey, String secret) {
         super(logger, apiKey, secret);
     }
 
     public OrderCancelResult cancelOrder(HashMap<String, String> params) throws Exception {
-        InputStream is = getMtGoxHTTPInputStream(MtGoxUrlFactory.getUrlForRestCommand("", MtGoxUrlFactory.RestCommand.PrivateOrderCancel), params);
+        InputStream is = getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateOrderCancel), params);
         JsonParser jp = factory.createJsonParser(is);
         JavaType topMost = mapper.getTypeFactory().constructType(OrderCancelResult.class);
         return mapper.readValue(jp, topMost);

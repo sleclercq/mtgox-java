@@ -30,12 +30,12 @@ import to.sparks.mtgox.model.*;
  *
  * @author SparksG
  */
-public class MtGoxSocketListener implements WebSocketClientListener {
+public class SocketListener implements WebSocketClientListener {
 
-    private MtGoxEventListener eventListener;
+    private EventListener eventListener;
     private Logger logger;
 
-    public MtGoxSocketListener(Logger logger, MtGoxEventListener eventListener) {
+    public SocketListener(Logger logger, EventListener eventListener) {
         this.eventListener = eventListener;
         this.logger = logger;
     }

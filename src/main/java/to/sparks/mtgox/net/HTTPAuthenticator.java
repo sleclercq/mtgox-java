@@ -39,13 +39,13 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author SparksG
  */
-public class MtGoxHTTPAuthenticator {
+public class HTTPAuthenticator {
 
     private String apiKey;
     private String secret;
     protected static Logger logger;
 
-    public MtGoxHTTPAuthenticator(final Logger logger, String apiKey, String secret) {
+    public HTTPAuthenticator(final Logger logger, String apiKey, String secret) {
         this.apiKey = apiKey;
         this.secret = secret;
 

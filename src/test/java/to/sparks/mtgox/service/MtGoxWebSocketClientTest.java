@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import org.springframework.core.task.TaskExecutor;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.Ticker;
-import to.sparks.mtgox.net.MtGoxHTTPAuthenticator;
+import to.sparks.mtgox.net.HTTPAuthenticator;
 
 /**
  *
@@ -37,7 +37,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
         System.out.println("getAllDepthSince");
 
         TestHarness th = new TestHarness();
-        MtGoxWebSocketClient instance = new MtGoxWebSocketClient(th.getLogger(), th.getTaskExecutor());
+        WebSocketClientService instance = new WebSocketClientService(th.getLogger(), th.getTaskExecutor());
         assertEquals(0, instance.getAllDepthSince(0L).size());
         Depth depth1 = new Depth("USD", "", 0L, "", 0, 0L, 0L, 0L, 0L, 1L);
         instance.depthEvent(depth1);
@@ -55,7 +55,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
         System.out.println("tickerEvent");
 
         TestHarness th = new TestHarness();
-        MtGoxWebSocketClient instance = new MtGoxWebSocketClient(th.getLogger(), th.getTaskExecutor());
+        WebSocketClientService instance = new WebSocketClientService(th.getLogger(), th.getTaskExecutor());
         instance.tickerEvent(th.getTicker());
         List<Ticker> result = instance.getTickerHistory();
         assertTrue(result.size() == 1);
@@ -69,7 +69,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
         System.out.println("depthEvent");
         TestHarness th = new TestHarness();
         Depth depth = null;
-        MtGoxWebSocketClient instance = new MtGoxWebSocketClient(th.getLogger(), th.getTaskExecutor());
+        WebSocketClientService instance = new WebSocketClientService(th.getLogger(), th.getTaskExecutor());
         instance.depthEvent(depth);
         List<Depth> result = instance.getDepthHistory();
         assertTrue(result.size() == 1);
@@ -82,7 +82,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
     public void testGetDepthHistory() {
         System.out.println("getDepthHistory");
         TestHarness th = new TestHarness();
-        MtGoxWebSocketClient instance = new MtGoxWebSocketClient(th.getLogger(), th.getTaskExecutor());
+        WebSocketClientService instance = new WebSocketClientService(th.getLogger(), th.getTaskExecutor());
         List<Depth> expResult = new ArrayList<>();
         List<Depth> result = instance.getDepthHistory();
         assertEquals(expResult, result);
@@ -94,7 +94,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
     public void testGetTickerHistory() {
         System.out.println("getTickerHistory");
         TestHarness th = new TestHarness();
-        MtGoxWebSocketClient instance = new MtGoxWebSocketClient(th.getLogger(), th.getTaskExecutor());
+        WebSocketClientService instance = new WebSocketClientService(th.getLogger(), th.getTaskExecutor());
         List<Ticker> expResult = new ArrayList<>();
         List<Ticker> result = instance.getTickerHistory();
         assertEquals(expResult, result);
@@ -105,17 +105,17 @@ public class MtGoxWebSocketClientTest extends TestCase {
         private Ticker ticker = null;
         private Logger logger = null;
         private TaskExecutor taskExecutor = null;
-        private MtGoxHTTPAuthenticator mtGoxHTTPApi = null;
+        private HTTPAuthenticator mtGoxHTTPApi = null;
         private Currency currency = null;
 
         public TestHarness() {
             ticker = new Ticker(null, null, null, null, null, null, null, null, null, null, null);
             logger = Logger.getGlobal();
-            mtGoxHTTPApi = new MtGoxHTTPAuthenticator(logger, null, null);
+            mtGoxHTTPApi = new HTTPAuthenticator(logger, null, null);
             currency = Currency.getInstance("USD");
         }
 
-        public TestHarness(Ticker ticker, Logger logger, TaskExecutor taskExecutor, MtGoxHTTPAuthenticator mtGoxHTTPApi, Currency currency) {
+        public TestHarness(Ticker ticker, Logger logger, TaskExecutor taskExecutor, HTTPAuthenticator mtGoxHTTPApi, Currency currency) {
             this.ticker = ticker;
             this.logger = logger;
             this.taskExecutor = taskExecutor;
@@ -135,7 +135,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
             return taskExecutor;
         }
 
-        public MtGoxHTTPAuthenticator getMtGoxHTTPApi() {
+        public HTTPAuthenticator getMtGoxHTTPApi() {
             return mtGoxHTTPApi;
         }
 

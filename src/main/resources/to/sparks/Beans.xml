@@ -28,14 +28,14 @@
         Your API key and secret must be passed using java system properties.  e.g.,
         java -Dapi.key=YOUR_KEY -Dapi.secret=YOUR_SECRET
     -->
-    <bean id="httpApiV0" class="to.sparks.mtgox.service.MtGoxHTTPClientV0" >
+    <bean id="httpApiV0" class="to.sparks.mtgox.service.HTTPClientV0Service" >
         <constructor-arg index="0">
             <ref bean="logger"/>
         </constructor-arg>
         <constructor-arg index="1" value="${api.key}" />
         <constructor-arg index="2" value="${api.secret}" />
     </bean>
-    <bean id="httpApiV1" class="to.sparks.mtgox.service.MtGoxHTTPClientV1" >
+    <bean id="httpApiV1" class="to.sparks.mtgox.service.HTTPClientV1Service" >
         <constructor-arg index="0">
             <ref bean="logger"/>
         </constructor-arg>
@@ -43,7 +43,7 @@
         <constructor-arg index="2" value="${api.secret}" />
     </bean>
 
-    <bean id="wsApi" class="to.sparks.mtgox.service.MtGoxWebSocketClient" init-method="init" destroy-method="destroy">
+    <bean id="wsApi" class="to.sparks.mtgox.service.WebSocketClientService" init-method="init" destroy-method="destroy">
         <constructor-arg index="0">
             <ref bean="logger"/>
         </constructor-arg>
@@ -52,7 +52,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="mtgoxUSD" class="to.sparks.mtgox.service.MtGoxServiceImpl">
+    <bean id="mtgoxUSD" class="to.sparks.mtgox.service.APIService">
         <constructor-arg index="0">
             <ref bean="logger"/>
         </constructor-arg>

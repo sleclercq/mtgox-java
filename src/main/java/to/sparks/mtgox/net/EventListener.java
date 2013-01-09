@@ -23,7 +23,7 @@ import to.sparks.mtgox.model.Trade;
  * 
  * @author SparksG
  */
-public interface MtGoxEventListener {
+public interface EventListener {
 
     void depthEvent(Depth depth);
 
