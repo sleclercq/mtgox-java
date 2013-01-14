@@ -202,4 +202,9 @@ class APIService implements MtGoxAPI {
         params.put("oid", orderRef);
         return httpAPIV0.cancelOrder(params);
     }
+
+    @Override
+    public OrderCancelResult cancelOrder(Order order) throws Exception {
+        return cancelOrder(order.getType(), order.getOid());
+    }
 }

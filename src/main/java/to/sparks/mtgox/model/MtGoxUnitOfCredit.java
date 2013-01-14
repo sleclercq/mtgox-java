@@ -50,7 +50,7 @@ public class MtGoxUnitOfCredit extends DtoBase {
     /*
      * Create units of any currency
      */
-    protected MtGoxUnitOfCredit(BigDecimal amount, CurrencyInfo currency) {
+    public MtGoxUnitOfCredit(BigDecimal amount, CurrencyInfo currency) {
         this.amount = amount;
         this.currencyInfo = currency;
     }
@@ -58,7 +58,7 @@ public class MtGoxUnitOfCredit extends DtoBase {
     /*
      * Create units of bitcoin currency
      */
-    protected MtGoxUnitOfCredit(BigDecimal amount) {
+    public MtGoxUnitOfCredit(BigDecimal amount) {
         this.amount = amount;
         this.currencyInfo = BitcoinCurrencyInfo;
     }

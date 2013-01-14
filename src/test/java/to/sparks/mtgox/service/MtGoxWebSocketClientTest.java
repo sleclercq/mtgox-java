@@ -5,7 +5,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.logging.Logger;
 import junit.framework.TestCase;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.Ticker;
 import to.sparks.mtgox.net.HTTPAuthenticator;
@@ -104,7 +104,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
 
         private Ticker ticker = null;
         private Logger logger = null;
-        private TaskExecutor taskExecutor = null;
+        private ThreadPoolTaskExecutor taskExecutor = null;
         private HTTPAuthenticator mtGoxHTTPApi = null;
         private Currency currency = null;
 
@@ -115,7 +115,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
             currency = Currency.getInstance("USD");
         }
 
-        public TestHarness(Ticker ticker, Logger logger, TaskExecutor taskExecutor, HTTPAuthenticator mtGoxHTTPApi, Currency currency) {
+        public TestHarness(Ticker ticker, Logger logger, ThreadPoolTaskExecutor taskExecutor, HTTPAuthenticator mtGoxHTTPApi, Currency currency) {
             this.ticker = ticker;
             this.logger = logger;
             this.taskExecutor = taskExecutor;
@@ -131,7 +131,7 @@ public class MtGoxWebSocketClientTest extends TestCase {
             return logger;
         }
 
-        public TaskExecutor getTaskExecutor() {
+        public ThreadPoolTaskExecutor getTaskExecutor() {
             return taskExecutor;
         }
 

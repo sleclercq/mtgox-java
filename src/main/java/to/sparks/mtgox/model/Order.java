@@ -3,6 +3,7 @@ package to.sparks.mtgox.model;
 import java.util.Currency;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
+import to.sparks.mtgox.MtGoxAPI;
 
 /**
  *
@@ -14,7 +15,7 @@ public class Order extends DtoBase implements CurrencyKludge {
     private String oid;
     private String currency;
     private String item;
-    private String type;
+    private MtGoxAPI.OrderType type;
     private TickerPrice amount;
     private TickerPrice effective_amount;
     private TickerPrice price;
@@ -39,7 +40,7 @@ public class Order extends DtoBase implements CurrencyKludge {
         this.oid = oid;
         this.currency = currency;
         this.item = item;
-        this.type = type;
+        this.type = type != null && type.equalsIgnoreCase("ask") ? MtGoxAPI.OrderType.Ask : MtGoxAPI.OrderType.Bid;
         this.amount = amount;
         this.effective_amount = effective_amount;
         this.price = price;
@@ -48,7 +49,7 @@ public class Order extends DtoBase implements CurrencyKludge {
         this.priority = priority;
         this.actions = actions;
         this.invalid_amount = invalid_amount;
-        
+
         if (this.amount != null) {
             this.amount.setCurrencyInfo(MtGoxUnitOfCredit.BitcoinCurrencyInfo);
         }
@@ -84,7 +85,7 @@ public class Order extends DtoBase implements CurrencyKludge {
     /**
      * @return the type
      */
-    public String getType() {
+    public MtGoxAPI.OrderType getType() {
         return type;
     }
 

@@ -164,6 +164,7 @@ public interface MtGoxAPI {
      * @throws Exception
      */
     OrderCancelResult cancelOrder(OrderType orderType, String orderRef) throws Exception;
+    OrderCancelResult cancelOrder(Order order) throws Exception;
 
     /**
      * Shutdown the api threads and close any open websockets.

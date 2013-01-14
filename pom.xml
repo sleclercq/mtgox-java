@@ -88,6 +88,10 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>*.json</exclude>
+                    <exclude>*.properties</exclude>
+                </excludes>
             </resource>
         </resources>
 
