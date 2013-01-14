@@ -42,9 +42,8 @@ public class Depth extends Offer implements IEventTime, CurrencyKludge {
     /**
      * @return the total_volume_int
      */
-    public MtGoxUnitOfCredit getTotalVolume() {
-        MtGoxUnitOfCredit totalVolume = new MtGoxUnitOfCredit(total_volume_int, MtGoxUnitOfCredit.BitcoinCurrencyInfo);
-        return totalVolume;
+    public MtGoxBitcoin getTotalVolume() {
+        return new MtGoxBitcoin(total_volume_int);
     }
 
     /**

@@ -57,7 +57,8 @@ public interface MtGoxAPI {
      * Return the result of an order request
      *
      * @param orderType Bid or Ask
-     * @param orderRef The reference string that was returned when the order was
+     * @param orderRef  The reference string that was returned when the order
+     *                  was
      * pleaced
      * @return
      * @throws Exception
@@ -109,22 +110,22 @@ public interface MtGoxAPI {
      * Place a bitcoin order at market price.
      *
      * @param orderType Bid or Ask
-     * @param volume The volume of bitcoins
+     * @param volume    The volume of bitcoins
      * @return Order reference number
      * @throws Exception
      */
-    String placeMarketOrder(OrderType orderType, MtGoxUnitOfCredit volume) throws Exception;
+    String placeMarketOrder(OrderType orderType, MtGoxBitcoin volume) throws Exception;
 
     /**
      * Place a bitcoin order at a particular price
      *
      * @param orderType Bid or Ask
-     * @param price The price in the base currency of this api instance
-     * @param volume The volume of bitcoins
+     * @param price     The price in the base currency of this api instance
+     * @param volume    The volume of bitcoins
      * @return Order reference number
      * @throws Exception
      */
-    String placeOrder(OrderType orderType, MtGoxUnitOfCredit price, MtGoxUnitOfCredit volume) throws Exception;
+    String placeOrder(OrderType orderType, MtGoxFiatCurrency price, MtGoxBitcoin volume) throws Exception;
 
     /**
      * Get private information about the currently logged-in account
@@ -157,13 +158,15 @@ public interface MtGoxAPI {
      * Version 0 API, so the JSON result should be discarded.
      *
      * @param orderType Bid or Ask
-     * @param orderRef The reference string that was returned when the order was
+     * @param orderRef  The reference string that was returned when the order
+     *                  was
      * placed
      * @return The JSON response. Avoid using this response because this api
      * call uses the old Version 0 MtGox API.
      * @throws Exception
      */
     OrderCancelResult cancelOrder(OrderType orderType, String orderRef) throws Exception;
+
     OrderCancelResult cancelOrder(Order order) throws Exception;
 
     /**

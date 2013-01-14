@@ -43,7 +43,7 @@ public class AccountInfo extends DtoBase {
         this.wallets = wallets;
         this.trade_Fee = trade_Fee;
         if (this.monthly_Volume != null) {
-            this.monthly_Volume.setCurrencyInfo(MtGoxUnitOfCredit.BitcoinCurrencyInfo);
+            this.monthly_Volume.setCurrencyInfo(MtGoxBitcoin.BitcoinCurrencyInfo);
         }
     }
 

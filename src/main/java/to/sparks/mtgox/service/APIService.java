@@ -109,7 +109,7 @@ class APIService implements MtGoxAPI {
     }
 
     @Override
-    public String placeOrder(OrderType orderType, MtGoxUnitOfCredit price, MtGoxUnitOfCredit volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+    public String placeOrder(OrderType orderType, MtGoxFiatCurrency price, MtGoxBitcoin volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
         HashMap<String, String> params = new HashMap<>();
         if (orderType == OrderType.Bid) {
@@ -127,7 +127,7 @@ class APIService implements MtGoxAPI {
     }
 
     @Override
-    public String placeMarketOrder(OrderType orderType, MtGoxUnitOfCredit volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
+    public String placeMarketOrder(OrderType orderType, MtGoxBitcoin volume) throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
         return placeOrder(orderType, null, volume);
     }
 

@@ -37,10 +37,10 @@ public class Offer extends DtoBase implements CurrencyKludge {
         this.currencyInfo = currencyInfo;
     }
 
-    public MtGoxUnitOfCredit getPrice() {
-        MtGoxUnitOfCredit price = null;
+    public MtGoxFiatCurrency getPrice() {
+        MtGoxFiatCurrency price = null;
         if (currencyInfo != null) {
-            price = new MtGoxUnitOfCredit(price_int, currencyInfo);
+            price = new MtGoxFiatCurrency(price_int, currencyInfo);
         } else {
             throw new RuntimeException("Error: getPrice called before currency was initialised.");
         }
@@ -50,8 +50,8 @@ public class Offer extends DtoBase implements CurrencyKludge {
     /**
      * @return the amount_int
      */
-    public MtGoxUnitOfCredit getAmount() {
-        MtGoxUnitOfCredit amount = new MtGoxUnitOfCredit(amount_int, MtGoxUnitOfCredit.BitcoinCurrencyInfo);
+    public MtGoxBitcoin getAmount() {
+        MtGoxBitcoin amount = new MtGoxBitcoin(amount_int);
         return amount;
     }
 

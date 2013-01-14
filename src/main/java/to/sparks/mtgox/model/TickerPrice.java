@@ -42,8 +42,8 @@ public class TickerPrice extends DtoBase implements CurrencyKludge {
      *
      * @return the value_int
      */
-    public MtGoxUnitOfCredit getPriceValue() {
-        return new MtGoxUnitOfCredit(value_int, currencyInfo);
+    public MtGoxFiatCurrency getPriceValue() {
+        return new MtGoxFiatCurrency(value_int, currencyInfo);
     }
 
     /**

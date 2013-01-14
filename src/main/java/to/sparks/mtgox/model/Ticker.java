@@ -46,7 +46,7 @@ public class Ticker extends DtoBase implements CurrencyKludge {
         this.sell = sell;
 
         if (this.vol != null) {
-            this.vol.setCurrencyInfo(MtGoxUnitOfCredit.BitcoinCurrencyInfo);
+            this.vol.setCurrencyInfo(MtGoxBitcoin.BitcoinCurrencyInfo);
         }
 
     }
