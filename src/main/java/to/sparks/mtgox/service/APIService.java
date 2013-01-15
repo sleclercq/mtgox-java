@@ -51,7 +51,9 @@ class APIService implements MtGoxAPI {
 
     @Override
     public void shutdown() {
-        wsApi.shutdown();
+        if (wsApi != null) {
+            wsApi.shutdown();
+        }
     }
 
     @Override
