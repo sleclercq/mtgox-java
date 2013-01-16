@@ -51,26 +51,17 @@ You can get developer snapshot releases by adding the following to your maven po
         </dependency>
     </dependencies>
 
-Below is an example of how to use the mtgox java API.
-```java
-        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
-        // Obtain a $USD instance of the API
-        MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
-        
-        // Get handles to the currencies we'll be using
-        CurrencyInfo currencyInfo = mtgoxUSD.getCurrencyInfo(mtgoxUSD.getBaseCurrency());
-        logger.log(Level.INFO, "Base fiat currency: {0}", currencyInfo.getCurrency().getCurrencyCode());
+Examples of how to use the API
+------------------------------
 
-        // Example of getting the current ticker price
-        Ticker ticker = mtgoxUSD.getTicker();
-        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getPriceValue().getCredits());
+Source code examples of how to use the API have been provided.
 
-        // Get the private account info
-        AccountInfo info = mtgoxUSD.getAccountInfo();
-        logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
-```       
+1.  Get ticker info and account details [HowToGetInfo.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/HowToGetInfo.java "source code example")
 
-Example mtgox.properties
+2.  Place an order [PlaceOrders.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/PlaceOrders.java "source code example")
+
+
+MtGox API credentials file: mtgox.properties
 ------------------------
 
 To keep your API credentials safe, they are stored in a separate file called mtgox.properties.  This filename is hard-coded into the application which will look for this file in the current directory.
@@ -121,5 +112,5 @@ Contact the author grant@sparks.to for reporting bugs or asking questions.  Foll
 
 [Project page url](http://goo.gl/OJ02G "mtgox-java project page home")
 
-![Project page QR code](https://raw.github.com/GrantSparks/mtgox-java/master/qr.png "mt-gox java project page QR code")  
+![Project page QR code](https://raw.github.com/GrantSparks/mtgox-java/master/qr.png "mt-gox java project page QR code")
 
