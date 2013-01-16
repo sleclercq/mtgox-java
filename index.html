@@ -80,26 +80,14 @@
 &lt;/dependencies&gt;
 </code></pre>
 
-<p>Below is an example of how to use the mtgox java API.</p>
+<h2>Examples of how to use the API</h2>
 
-<div class="highlight"><pre>        <span class="n">ApplicationContext</span> <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClassPathXmlApplicationContext</span><span class="o">(</span><span class="s">"to/sparks/Beans.xml"</span><span class="o">);</span>
-        <span class="c1">// Obtain a $USD instance of the API</span>
-        <span class="n">MtGoxAPI</span> <span class="n">mtgoxUSD</span> <span class="o">=</span> <span class="o">(</span><span class="n">MtGoxAPI</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">"mtgoxUSD"</span><span class="o">);</span>
+<p>Source code examples of how to use the API have been provided.</p>
 
-        <span class="c1">// Get handles to the currencies we'll be using</span>
-        <span class="n">CurrencyInfo</span> <span class="n">currencyInfo</span> <span class="o">=</span> <span class="n">mtgoxUSD</span><span class="o">.</span><span class="na">getCurrencyInfo</span><span class="o">(</span><span class="n">mtgoxUSD</span><span class="o">.</span><span class="na">getBaseCurrency</span><span class="o">());</span>
-        <span class="n">logger</span><span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="n">Level</span><span class="o">.</span><span class="na">INFO</span><span class="o">,</span> <span class="s">"Base fiat currency: {0}"</span><span class="o">,</span> <span class="n">currencyInfo</span><span class="o">.</span><span class="na">getCurrency</span><span class="o">().</span><span class="na">getCurrencyCode</span><span class="o">());</span>
-
-        <span class="c1">// Example of getting the current ticker price</span>
-        <span class="n">Ticker</span> <span class="n">ticker</span> <span class="o">=</span> <span class="n">mtgoxUSD</span><span class="o">.</span><span class="na">getTicker</span><span class="o">();</span>
-        <span class="n">logger</span><span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="n">Level</span><span class="o">.</span><span class="na">INFO</span><span class="o">,</span> <span class="s">"Last price: {0}"</span><span class="o">,</span> <span class="n">ticker</span><span class="o">.</span><span class="na">getLast</span><span class="o">().</span><span class="na">getPriceValue</span><span class="o">().</span><span class="na">getCredits</span><span class="o">());</span>
-
-        <span class="c1">// Get the private account info</span>
-        <span class="n">AccountInfo</span> <span class="n">info</span> <span class="o">=</span> <span class="n">mtgoxUSD</span><span class="o">.</span><span class="na">getAccountInfo</span><span class="o">();</span>
-        <span class="n">logger</span><span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="n">Level</span><span class="o">.</span><span class="na">INFO</span><span class="o">,</span> <span class="s">"Logged into account: {0}"</span><span class="o">,</span> <span class="n">info</span><span class="o">.</span><span class="na">getLogin</span><span class="o">());</span>
-</pre></div>
-
-<h2>Example mtgox.properties</h2>
+<ol>
+<li><p>Get ticker info and account details <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/HowToGetInfo.java" title="source code example">HowToGetInfo.java</a></p></li>
+<li><p>Place an order <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/PlaceOrders.java" title="source code example">PlaceOrders.java</a></p></li>
+</ol><h2>MtGox API credentials file: mtgox.properties</h2>
 
 <p>To keep your API credentials safe, they are stored in a separate file called mtgox.properties.  This filename is hard-coded into the application which will look for this file in the current directory.</p>
 
