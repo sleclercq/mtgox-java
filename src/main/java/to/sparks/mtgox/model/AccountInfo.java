@@ -1,6 +1,7 @@
 package to.sparks.mtgox.model;
 
 import java.util.Date;
+import java.util.HashMap;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -16,10 +17,10 @@ public class AccountInfo extends DtoBase {
     private Date last_Login;
     private Date created;
     private long index;
-    private TickerPrice monthly_Volume;
+    private BitcoinPrice monthly_Volume;
     private String language;
     private String id;
-    private DynaBean wallets;
+    private HashMap<String, Wallet> wallets;
     private double trade_Fee;
 
     public AccountInfo(@JsonProperty("Login") String login,
@@ -27,10 +28,10 @@ public class AccountInfo extends DtoBase {
             @JsonProperty("Last_Login") Date last_Login,
             @JsonProperty("Created") Date created,
             @JsonProperty("Index") long index,
-            @JsonProperty("Monthly_Volume") TickerPrice monthly_Volume,
+            @JsonProperty("Monthly_Volume") BitcoinPrice monthly_Volume,
             @JsonProperty("Language") String language,
             @JsonProperty("Id") String id,
-            @JsonProperty("Wallets") DynaBean wallets,
+            @JsonProperty("Wallets") HashMap<String, Wallet> wallets,
             @JsonProperty("Trade_Fee") double trade_Fee) {
         this.login = login;
         this.rights = rights;
@@ -42,9 +43,6 @@ public class AccountInfo extends DtoBase {
         this.id = id;
         this.wallets = wallets;
         this.trade_Fee = trade_Fee;
-        if (this.monthly_Volume != null) {
-            this.monthly_Volume.setCurrencyInfo(MtGoxBitcoin.BitcoinCurrencyInfo);
-        }
     }
 
     public String getLogin() {
@@ -67,7 +65,7 @@ public class AccountInfo extends DtoBase {
         return index;
     }
 
-    public TickerPrice getMonthly_Volume() {
+    public BitcoinPrice getMonthly_Volume() {
         return monthly_Volume;
     }
 
@@ -79,7 +77,7 @@ public class AccountInfo extends DtoBase {
         return id;
     }
 
-    public DynaBean getWallets() {
+    public HashMap<String, Wallet> getWallets() {
         return wallets;
     }
 

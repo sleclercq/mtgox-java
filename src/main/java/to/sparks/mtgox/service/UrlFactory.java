@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * TODO:  This should be a Spring service API.
- * 
+ *
  * @author SparksG
  */
 class UrlFactory {
@@ -34,7 +34,8 @@ class UrlFactory {
         FullDepth,
         Ticker,
         CurrencyInfo,
-        PrivateOrderCancel
+        PrivateOrderCancel,
+        SendBitcoins
     }
     private static String MTGOX_HTTP_API_URL = "https://mtgox.com/api/";
     private static String MTGOX_HTTP_API_VERSION_0 = "0/";
@@ -58,6 +59,7 @@ class UrlFactory {
         apiV1RestMap.put(RestCommand.FullDepth, "fulldepth");
         apiV1RestMap.put(RestCommand.Ticker, "ticker");
         apiV1RestMap.put(RestCommand.CurrencyInfo, "currency");
+        apiV1RestMap.put(RestCommand.SendBitcoins, "bitcoin/send_simple");
 
         apiV0RestMap = new HashMap<>();
         apiV0RestMap.put(RestCommand.PrivateOrderCancel, "cancelOrder.php");

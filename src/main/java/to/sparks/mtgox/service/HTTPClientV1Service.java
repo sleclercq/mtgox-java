@@ -40,6 +40,7 @@ class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
     private JSONSource<Result<FullDepth>> fullDepthJSON;
     private JSONSource<Result<Ticker>> tickerJSON;
     private JSONSource<Result<CurrencyInfo>> currencyInfoJSON;
+    private JSONSource<Result<SendBitcoinsTransaction>> sendBitcoinsJSON;
 
     public HTTPClientV1Service(final Logger logger, String apiKey, String secret) {
         super(logger, apiKey, secret);
@@ -50,6 +51,7 @@ class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
         tickerJSON = new JSONSource<>();
         privateInfoJSON = new JSONSource<>();
         currencyInfoJSON = new JSONSource<>();
+        sendBitcoinsJSON = new JSONSource<>();
     }
 
     @Override
@@ -92,7 +94,7 @@ class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
 
     @Override
     public Ticker getTicker(Currency currency) throws IOException, Exception {
-        Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(new URL(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.Ticker)).openStream(), Ticker.class);
+        Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.Ticker)), Ticker.class);
         return tickerUSD.getReturn();
     }
 
@@ -110,5 +112,14 @@ class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
             throw new RuntimeException(currencyInfo.getToken() + ": " + currencyInfo.getError());
         }
         return currencyInfo.getReturn();
+    }
+
+    @Override
+    public SendBitcoinsTransaction sendBitcoins(HashMap<String, String> params) throws IOException, Exception {
+        Result<SendBitcoinsTransaction> response = sendBitcoinsJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(UrlFactory.RestCommand.SendBitcoins), params), SendBitcoinsTransaction.class);
+        if (response.getError() != null) {
+            throw new RuntimeException(response.getToken() + ": " + response.getError());
+        }
+        return response.getReturn();
     }
 }

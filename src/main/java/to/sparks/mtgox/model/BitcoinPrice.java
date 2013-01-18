@@ -8,25 +8,14 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public class TickerPrice extends MtGoxPrice implements CurrencyKludge {
+public class BitcoinPrice extends MtGoxPrice {
 
-    private CurrencyInfo currencyInfo;
-
-    public TickerPrice(@JsonProperty("value") double value,
+    public BitcoinPrice(@JsonProperty("value") double value,
             @JsonProperty("value_int") long value_int,
             @JsonProperty("display") String display,
             @JsonProperty("display_short") String display_short,
             @JsonProperty("currency") String currency) {
         super(value, value_int, display, display_short, currency);
-    }
-
-    /*
-     * This is a bit of a kludge that ensures the offers know what currency they
-     * are in.
-     */
-    @Override
-    public void setCurrencyInfo(CurrencyInfo currencyInfo) {
-        this.currencyInfo = currencyInfo;
     }
 
     /**
@@ -35,7 +24,7 @@ public class TickerPrice extends MtGoxPrice implements CurrencyKludge {
      *
      * @return the value_int
      */
-    public MtGoxFiatCurrency getPriceValue() {
-        return new MtGoxFiatCurrency(this.getPriceValueInt(), currencyInfo);
+    public MtGoxBitcoin getPriceValue() {
+        return new MtGoxBitcoin(this.getPriceValueInt());
     }
 }

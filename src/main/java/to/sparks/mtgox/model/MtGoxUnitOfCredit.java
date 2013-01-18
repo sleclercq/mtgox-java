@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  *
  * @author SparksG
  */
-abstract class MtGoxUnitOfCredit extends DtoBase {
+public abstract class MtGoxUnitOfCredit extends DtoBase {
 
     protected BigDecimal amount;
     protected CurrencyInfo currencyInfo;

@@ -209,4 +209,15 @@ class APIService implements MtGoxAPI {
     public OrderCancelResult cancelOrder(Order order) throws Exception {
         return cancelOrder(order.getType(), order.getOid());
     }
+
+    @Override
+    public SendBitcoinsTransaction sendBitcoins(String destinationAddress, MtGoxBitcoin bitcoins, MtGoxBitcoin fee, boolean isNoInstant, boolean isGreen) throws Exception {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("address", destinationAddress);
+        params.put("amount_int", String.valueOf(bitcoins.getCredits().unscaledValue().longValue()));
+        params.put("fee_int", String.valueOf(fee.getCredits().unscaledValue().longValue()));
+        params.put("no_instant", isNoInstant ? "1" : "0");
+        params.put("green", isGreen ? "1" : "0");
+        return httpAPIV1.sendBitcoins(params);
+    }
 }

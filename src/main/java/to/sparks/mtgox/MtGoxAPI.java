@@ -58,7 +58,7 @@ public interface MtGoxAPI {
      *
      * @param orderType Bid or Ask
      * @param orderRef  The reference string that was returned when the order
-     *                  was
+     * was
      * pleaced
      * @return
      * @throws Exception
@@ -159,7 +159,7 @@ public interface MtGoxAPI {
      *
      * @param orderType Bid or Ask
      * @param orderRef  The reference string that was returned when the order
-     *                  was
+     * was
      * placed
      * @return The JSON response. Avoid using this response because this api
      * call uses the old Version 0 MtGox API.
@@ -168,6 +168,22 @@ public interface MtGoxAPI {
     OrderCancelResult cancelOrder(OrderType orderType, String orderRef) throws Exception;
 
     OrderCancelResult cancelOrder(Order order) throws Exception;
+
+    /**
+     * Send bitcoins from your MtGox account balance to a bitcoin address.
+     *
+     * @param destinationAddress The destination bitcoin address that should
+     * receive the funds
+     * @param bitcoins           The amount of bitcoins to transfer from your
+     * MtGox account
+     * @param fee                The fee you would like to pay the network
+     * @param isNoInstant        If true, use the bitcoin blockchain, even if
+     * the receiving address is on MtGox
+     * @param isGreen            If true, use a greenaddress
+     * https://en.bitcoin.it/wiki/GreenAddress
+     * @return
+     */
+    SendBitcoinsTransaction sendBitcoins(String destinationAddress, MtGoxBitcoin bitcoins, MtGoxBitcoin fee, boolean isNoInstant, boolean isGreen) throws Exception;
 
     /**
      * Shutdown the api threads and close any open websockets.

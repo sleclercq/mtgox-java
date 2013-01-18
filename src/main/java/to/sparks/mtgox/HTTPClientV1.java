@@ -22,6 +22,7 @@ import java.util.HashMap;
 import to.sparks.mtgox.model.*;
 
 /**
+ * See MtGoxAPI.java for javadocs
  *
  * @author SparksG
  */
@@ -42,5 +43,6 @@ public interface HTTPClientV1 {
     Ticker getTicker(Currency currency) throws IOException, Exception;
 
     String placeOrder(Currency currency, HashMap<String, String> params) throws Exception;
-    
+
+    SendBitcoinsTransaction sendBitcoins(HashMap<String, String> params) throws Exception;
 }
