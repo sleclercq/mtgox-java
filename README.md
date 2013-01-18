@@ -60,6 +60,7 @@ Source code examples of how to use the API have been provided.
 
 2.  Place an order [PlaceOrders.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/PlaceOrders.java "source code example")
 
+3.  Withdraw and send bitcoins [HowToWithdrawBitcoins.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/HowToWithdrawBitcoins.java "source code example")
 
 MtGox API credentials file: mtgox.properties
 ------------------------

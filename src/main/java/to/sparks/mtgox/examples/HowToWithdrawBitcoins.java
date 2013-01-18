@@ -28,6 +28,7 @@ import to.sparks.mtgox.model.Wallet;
 /**
  * Example that shows how to transfer the entire bitcoin balance of your MtGox
  * account to a bitcoin address given on the command line.
+ * OTP is not supported!  Please turn off Yubikey/OTP
  *
  * @author SparksG
  */
@@ -37,10 +38,11 @@ public class HowToWithdrawBitcoins {
 
     /** *
      * Send the entire bitcoin balance of a MtGox account to a destination
-     * bitcoin address
+     * bitcoin address.
+     * OTP is not supported!  Please turn off Yubikey/OTP
      *
      * @param args The destination bitcoin address
-     * @throws Exception
+     * @throws Exception OTP is not supported!  Please turn off Yubikey/OTP
      */
     public static void main(String[] args) throws Exception {
 
