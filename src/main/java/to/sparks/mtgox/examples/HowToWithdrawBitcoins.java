@@ -1,0 +1,72 @@
+/*
+ * The MtGox-Java API is free software: you can redistribute it and/or modify
+ * it under the terms of the Lesser GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The MtGox-Java API is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Lesser GNU General Public License for more details.
+ *
+ * You should have received a copy of the Lesser GNU General Public License
+ * along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
+ */
+package to.sparks.mtgox.examples;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import to.sparks.mtgox.MtGoxAPI;
+import to.sparks.mtgox.model.MtGoxBitcoin;
+import to.sparks.mtgox.model.SendBitcoinsTransaction;
+import to.sparks.mtgox.model.Wallet;
+
+/**
+ * Example that shows how to transfer the entire bitcoin balance of your MtGox
+ * account to a bitcoin address given on the command line.
+ *
+ * @author SparksG
+ */
+public class HowToWithdrawBitcoins {
+
+    static final Logger logger = Logger.getLogger(HowToGetInfo.class.getName());
+
+    /** *
+     * Send the entire bitcoin balance of a MtGox account to a destination
+     * bitcoin address
+     *
+     * @param args The destination bitcoin address
+     * @throws Exception
+     */
+    public static void main(String[] args) throws Exception {
+
+        // Obtain a $USD instance of the API
+        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
+        MtGoxAPI mtGoxAPI = (MtGoxAPI) context.getBean("mtgoxUSD");
+
+        HashMap<String, Wallet> wallets = mtGoxAPI.getAccountInfo().getWallets();
+        Wallet btcWallet = wallets.get("BTC");
+        MtGoxBitcoin mtgoxBalance = new MtGoxBitcoin(btcWallet.getBalance().getPriceValueInt());
+        logger.log(Level.INFO, "MtGox account balance: BTC {0}", mtgoxBalance.getCredits().toPlainString());
+        if (mtgoxBalance.getCredits().compareTo(BigDecimal.ZERO) > 0) {
+
+            MtGoxBitcoin fee = new MtGoxBitcoin(0.0005D); // Transaction fee
+            MtGoxBitcoin transferAmount = new MtGoxBitcoin(mtgoxBalance.getCredits().subtract(fee.getCredits()));
+
+            if (transferAmount.getCredits().compareTo(BigDecimal.ZERO) > 0) {
+                logger.log(Level.INFO, "Transferring BTC {0} to bitcoin address {1} and paying fee {2}",
+                        new Object[]{
+                            transferAmount.getCredits().toPlainString(),
+                            args[0],
+                            fee.getCredits().toPlainString()
+                        });
+                SendBitcoinsTransaction trx = mtGoxAPI.sendBitcoins(args[0], transferAmount, fee, true, false);
+                logger.log(Level.INFO, "Transfer success.  trx: {0}", trx.getTrx());
+            }
+        }
+    }
+}
