@@ -25,9 +25,6 @@ public class Offer extends DtoBase implements CurrencyKludge {
         this.stamp = stamp;
     }
 
-    /**
-     * @return the currency
-     */
     public CurrencyInfo getCurrencyInfo() {
         return currencyInfo;
     }
@@ -47,31 +44,19 @@ public class Offer extends DtoBase implements CurrencyKludge {
         return price;
     }
 
-    /**
-     * @return the amount_int
-     */
     public MtGoxBitcoin getAmount() {
         MtGoxBitcoin amount = new MtGoxBitcoin(amount_int);
         return amount;
     }
 
-    /**
-     * @return the stamp
-     */
     public long getStamp() {
         return stamp;
     }
 
-    /**
-     * @param amount the amount to set
-     */
     public void setAmount(MtGoxUnitOfCredit amount) {
-        this.amount_int = amount.getCredits().longValueExact();
+        this.amount_int = amount.longValueExact();
     }
 
-    /**
-     * @param stamp the stamp to set
-     */
     public void setStamp(long stamp) {
         this.stamp = stamp;
     }

@@ -95,7 +95,7 @@ http://mirror.mel.bkb.net.au/pub/apache/maven/maven-3/3.0.4/binaries/apache-mave
 Contact
 -------
 
-Contact the author grant@sparks.to for reporting bugs or asking questions.  Follow the mtgox-java project on GitHub so that I know who you are.
+Bug reports and feature requests should be opened in the [SourceForge issue tracker](https://github.com/GrantSparks/mtgox-java/issues "SourceForge issue tracker")
 
     The MtGox-Java API is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by

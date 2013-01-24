@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>MtGox Java API</name>
-    <url>https://github.com/GrantSparks/mtgox-java</url>
+    <url>http://grantsparks.github.com/mtgox-java/</url>
     <description>A Java API for connecting to the Mt Gox bitcoin currency exchange</description>
 
     <parent>
@@ -106,7 +106,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>to.sparks.MtGoxExample</mainClass>
+                            <mainClass>to.sparks.mtgox.examples.HowToGetInfo</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -135,7 +135,6 @@
     </build>
 
     <dependencies>
-        <!-- Jackson JSON Mapper -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
@@ -151,7 +150,7 @@
         <dependency>
             <groupId>org.jwebsocket</groupId>
             <artifactId>jWebSocketJavaSEClient</artifactId>
-            <version>0.11</version>
+            <version>1.0</version>
             <type>jar</type>
         </dependency>
 

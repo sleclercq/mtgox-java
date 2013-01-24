@@ -121,9 +121,9 @@ class APIService implements MtGoxAPI {
         }
 
         if (price != null) {
-            params.put("price_int", String.valueOf(price.getCredits().unscaledValue().longValue()));
+            params.put("price_int", String.valueOf(price.unscaledValue().longValue()));
         }
-        params.put("amount_int", String.valueOf(volume.getCredits().unscaledValue().longValue()));
+        params.put("amount_int", String.valueOf(volume.unscaledValue().longValue()));
 
         return httpAPIV1.placeOrder(currencyInfo.getCurrency(), params);
     }
@@ -174,6 +174,10 @@ class APIService implements MtGoxAPI {
     public AccountInfo getAccountInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
         AccountInfo info = httpAPIV1.getPrivateInfo();
         currencyKludge(info);
+        for (String key : info.getWallets().keySet()) {
+            CurrencyInfo walletCurrencyInfo = getCurrencyInfo(key);
+            ((CurrencyKludge) info.getWallets().get(key)).setCurrencyInfo(walletCurrencyInfo);
+        }
         return info;
     }
 
@@ -214,8 +218,8 @@ class APIService implements MtGoxAPI {
     public SendBitcoinsTransaction sendBitcoins(String destinationAddress, MtGoxBitcoin bitcoins, MtGoxBitcoin fee, boolean isNoInstant, boolean isGreen) throws Exception {
         HashMap<String, String> params = new HashMap<>();
         params.put("address", destinationAddress);
-        params.put("amount_int", String.valueOf(bitcoins.getCredits().unscaledValue().longValue()));
-        params.put("fee_int", String.valueOf(fee.getCredits().unscaledValue().longValue()));
+        params.put("amount_int", String.valueOf(bitcoins.unscaledValue().longValue()));
+        params.put("fee_int", String.valueOf(fee.unscaledValue().longValue()));
         params.put("no_instant", isNoInstant ? "1" : "0");
         params.put("green", isGreen ? "1" : "0");
         return httpAPIV1.sendBitcoins(params);

@@ -23,7 +23,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
-import org.jwebsocket.kit.RawPacket;
+import org.jwebsocket.kit.WebSocketFrameType;
 import to.sparks.mtgox.model.*;
 
 /**
@@ -48,7 +48,7 @@ public class SocketListener implements WebSocketClientListener {
     @Override
     public void processPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
         if (aEvent != null) {
-            if (aPacket != null && aPacket.getFrameType() == RawPacket.FRAMETYPE_UTF8) {
+            if (aPacket != null && aPacket.getFrameType() == WebSocketFrameType.TEXT) {  // RawPacket.FRAMETYPE_UTF8
                 try {
                     // logger.fine(aPacket.getUTF8());
 
@@ -64,17 +64,17 @@ public class SocketListener implements WebSocketClientListener {
                             OpPrivateTicker opPrivateTicker = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTicker.class);
                             Ticker ticker = opPrivateTicker.getTicker();
                             eventListener.tickerEvent(ticker);
-                            logger.log(Level.FINE, "Ticker: last: {0}", new Object[]{ticker.getLast().getDisplay()});
+                            logger.log(Level.FINE, "Ticker: last: {0}", new Object[]{ticker.getLast().toPlainString()});
                         } else if (messageType.equalsIgnoreCase("depth")) {
                             OpPrivateDepth opPrivateDepth = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateDepth.class);
                             Depth depth = opPrivateDepth.getDepth();
                             eventListener.depthEvent(depth);
-                            logger.log(Level.FINE, "Depth total volume: {0}", new Object[]{depth.getTotalVolume().getCredits()});
+                            logger.log(Level.FINE, "Depth total volume: {0}", new Object[]{depth.getTotalVolume().toPlainString()});
                         } else if (messageType.equalsIgnoreCase("trade")) {
                             OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTrade.class);
                             Trade trade = opPrivateTrade.getTrade();
                             eventListener.tradeEvent(trade);
-                            logger.log(Level.FINE, "Trade price: {0}", new Object[]{trade.getPrice().getCredits()});
+                            logger.log(Level.FINE, "Trade price: {0}", new Object[]{trade.getPrice().toPlainString()});
                         } else {
                             logger.log(Level.WARNING, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
                         }
@@ -101,6 +101,13 @@ public class SocketListener implements WebSocketClientListener {
 
     @Override
     public void processClosed(WebSocketClientEvent aEvent) {
-        
+    }
+
+    @Override
+    public void processOpening(WebSocketClientEvent wsce) {
+    }
+
+    @Override
+    public void processReconnecting(WebSocketClientEvent wsce) {
     }
 }

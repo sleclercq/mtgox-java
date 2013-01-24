@@ -29,6 +29,10 @@ public class TickerPrice extends MtGoxPrice implements CurrencyKludge {
         this.currencyInfo = currencyInfo;
     }
 
+    public CurrencyInfo getCurrencyInfo() {
+        return currencyInfo;
+    }
+
     /**
      * This function must be called *after* you have setCurrencyInfo on this
      * object.

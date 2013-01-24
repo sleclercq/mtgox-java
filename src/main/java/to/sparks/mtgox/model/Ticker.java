@@ -46,16 +46,28 @@ public class Ticker extends DtoBase implements CurrencyKludge {
         this.sell = sell;
 
         if (this.vol != null) {
-            this.vol.setCurrencyInfo(MtGoxBitcoin.BitcoinCurrencyInfo);
+            this.vol.setCurrencyInfo(CurrencyInfo.BitcoinCurrencyInfo);
         }
 
+    }
+
+    /*
+     * Cast the result to either MtGoxBitcoin or MtGoxFiatCurrency depending on
+     * which is correct for the situation.
+     */
+    private static MtGoxUnitOfCredit getMtGoxUnits(long intValue, CurrencyInfo currencyInfo) {
+        MtGoxUnitOfCredit result = new MtGoxBitcoin(intValue);
+        if (currencyInfo != null && !currencyInfo.isVirtual()) {
+            result = new MtGoxFiatCurrency(intValue, currencyInfo);
+        }
+        return result;
     }
 
     /**
      * @return the high
      */
-    public TickerPrice getHigh() {
-        return high;
+    public MtGoxUnitOfCredit getHigh() {
+        return getMtGoxUnits(high.getPriceValueInt(), high.getCurrencyInfo());
     }
 
     /**
@@ -68,8 +80,8 @@ public class Ticker extends DtoBase implements CurrencyKludge {
     /**
      * @return the low
      */
-    public TickerPrice getLow() {
-        return low;
+    public MtGoxUnitOfCredit getLow() {
+        return getMtGoxUnits(low.getPriceValueInt(), low.getCurrencyInfo());
     }
 
     /**
@@ -82,8 +94,8 @@ public class Ticker extends DtoBase implements CurrencyKludge {
     /**
      * @return the avg
      */
-    public TickerPrice getAvg() {
-        return avg;
+    public MtGoxUnitOfCredit getAvg() {
+        return getMtGoxUnits(avg.getPriceValueInt(), avg.getCurrencyInfo());
     }
 
     /**
@@ -96,8 +108,8 @@ public class Ticker extends DtoBase implements CurrencyKludge {
     /**
      * @return the vwap
      */
-    public TickerPrice getVwap() {
-        return vwap;
+    public MtGoxUnitOfCredit getVwap() {
+        return getMtGoxUnits(vwap.getPriceValueInt(), vwap.getCurrencyInfo());
     }
 
     /**
@@ -110,8 +122,8 @@ public class Ticker extends DtoBase implements CurrencyKludge {
     /**
      * @return the vol
      */
-    public TickerPrice getVol() {
-        return vol;
+    public MtGoxUnitOfCredit getVol() {
+        return getMtGoxUnits(vol.getPriceValueInt(), vol.getCurrencyInfo());
     }
 
     /**
@@ -124,8 +136,9 @@ public class Ticker extends DtoBase implements CurrencyKludge {
     /**
      * @return the last_local
      */
-    public TickerPrice getLast_local() {
-        return last_local;
+    public MtGoxUnitOfCredit getLast_local() {
+        return getMtGoxUnits(last_local.getPriceValueInt(), last_local.getCurrencyInfo());
+
     }
 
     /**
@@ -138,8 +151,8 @@ public class Ticker extends DtoBase implements CurrencyKludge {
     /**
      * @return the last
      */
-    public TickerPrice getLast() {
-        return last;
+    public MtGoxUnitOfCredit getLast() {
+        return getMtGoxUnits(last.getPriceValueInt(), last.getCurrencyInfo());
     }
 
     /**

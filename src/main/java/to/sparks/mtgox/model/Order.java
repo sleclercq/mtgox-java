@@ -51,13 +51,13 @@ public class Order extends DtoBase implements CurrencyKludge {
         this.invalid_amount = invalid_amount;
 
         if (this.amount != null) {
-            this.amount.setCurrencyInfo(MtGoxBitcoin.BitcoinCurrencyInfo);
+            this.amount.setCurrencyInfo(CurrencyInfo.BitcoinCurrencyInfo);
         }
         if (this.effective_amount != null) {
-            this.effective_amount.setCurrencyInfo(MtGoxBitcoin.BitcoinCurrencyInfo);
+            this.effective_amount.setCurrencyInfo(CurrencyInfo.BitcoinCurrencyInfo);
         }
         if (this.invalid_amount != null) {
-            this.invalid_amount.setCurrencyInfo(MtGoxBitcoin.BitcoinCurrencyInfo);
+            this.invalid_amount.setCurrencyInfo(CurrencyInfo.BitcoinCurrencyInfo);
         }
     }
 

@@ -37,7 +37,7 @@ public class PlaceOrders {
     public static void main(String[] args) throws Exception {
 
         // Obtain a $USD instance of the API
-        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/Beans.xml");
         MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
 
         // Obtain information about the base currency of the API instance

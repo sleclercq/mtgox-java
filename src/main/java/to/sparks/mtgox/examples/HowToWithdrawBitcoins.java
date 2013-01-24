@@ -28,43 +28,43 @@ import to.sparks.mtgox.model.Wallet;
 /**
  * Example that shows how to transfer the entire bitcoin balance of your MtGox
  * account to a bitcoin address given on the command line.
- * OTP is not supported!  Please turn off Yubikey/OTP
+ * OTP is not supported! Please turn off Yubikey/OTP
  *
  * @author SparksG
  */
 public class HowToWithdrawBitcoins {
 
-    static final Logger logger = Logger.getLogger(HowToGetInfo.class.getName());
+    static final Logger logger = Logger.getLogger(HowToWithdrawBitcoins.class.getName());
 
     /** *
      * Send the entire bitcoin balance of a MtGox account to a destination
      * bitcoin address.
-     * OTP is not supported!  Please turn off Yubikey/OTP
+     * OTP is not supported! Please turn off Yubikey/OTP
      *
      * @param args The destination bitcoin address
-     * @throws Exception OTP is not supported!  Please turn off Yubikey/OTP
+     * @throws Exception OTP is not supported! Please turn off Yubikey/OTP
      */
     public static void main(String[] args) throws Exception {
 
         // Obtain a $USD instance of the API
-        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/Beans.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/Beans.xml");
         MtGoxAPI mtGoxAPI = (MtGoxAPI) context.getBean("mtgoxUSD");
 
         HashMap<String, Wallet> wallets = mtGoxAPI.getAccountInfo().getWallets();
         Wallet btcWallet = wallets.get("BTC");
-        MtGoxBitcoin mtgoxBalance = new MtGoxBitcoin(btcWallet.getBalance().getPriceValueInt());
-        logger.log(Level.INFO, "MtGox account balance: BTC {0}", mtgoxBalance.getCredits().toPlainString());
-        if (mtgoxBalance.getCredits().compareTo(BigDecimal.ZERO) > 0) {
+        MtGoxBitcoin mtgoxBalance = (MtGoxBitcoin) btcWallet.getBalance();
+        logger.log(Level.INFO, "MtGox account balance: BTC {0}", mtgoxBalance.toPlainString());
+        if (mtgoxBalance.compareTo(BigDecimal.ZERO) > 0) {
 
             MtGoxBitcoin fee = new MtGoxBitcoin(0.0005D); // Transaction fee
-            MtGoxBitcoin transferAmount = new MtGoxBitcoin(mtgoxBalance.getCredits().subtract(fee.getCredits()));
+            MtGoxBitcoin transferAmount = new MtGoxBitcoin(mtgoxBalance.subtract(fee));
 
-            if (transferAmount.getCredits().compareTo(BigDecimal.ZERO) > 0) {
+            if (transferAmount.compareTo(BigDecimal.ZERO) > 0) {
                 logger.log(Level.INFO, "Transferring BTC {0} to bitcoin address {1} and paying fee {2}",
                         new Object[]{
-                            transferAmount.getCredits().toPlainString(),
+                            transferAmount.toPlainString(),
                             args[0],
-                            fee.getCredits().toPlainString()
+                            fee.toPlainString()
                         });
                 SendBitcoinsTransaction trx = mtGoxAPI.sendBitcoins(args[0], transferAmount, fee, true, false);
                 logger.log(Level.INFO, "Transfer success.  trx: {0}", trx.getTrx());

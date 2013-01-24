@@ -7,8 +7,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author SparksG
  */
 public class Wallet extends DtoBase implements CurrencyKludge {
-    private CurrencyInfo currencyInfo;
 
+    private CurrencyInfo currencyInfo;
     private MtGoxPrice balance;
     private long operations;
     private MtGoxPrice dailyWithdrawLimit;
@@ -29,7 +29,7 @@ public class Wallet extends DtoBase implements CurrencyKludge {
         this.maxWithdraw = maxWithdraw;
         this.openOrders = openOrders;
     }
-    
+
     /**
      * @return the currency
      */
@@ -41,16 +41,24 @@ public class Wallet extends DtoBase implements CurrencyKludge {
     public void setCurrencyInfo(CurrencyInfo currencyInfo) {
         this.currencyInfo = currencyInfo;
         if (currencyInfo != null && !currencyInfo.isVirtual()) {
-            ((TickerPrice) getBalance()).setCurrencyInfo(currencyInfo);
-            ((TickerPrice) getDailyWithdrawLimit()).setCurrencyInfo(currencyInfo);
-            ((TickerPrice) getMonthlyWithdrawLimit()).setCurrencyInfo(currencyInfo);
-            ((TickerPrice) getMaxWithdraw()).setCurrencyInfo(currencyInfo);
-            ((TickerPrice) getOpenOrders()).setCurrencyInfo(currencyInfo);
+            ((TickerPrice) balance).setCurrencyInfo(currencyInfo);
+            ((TickerPrice) dailyWithdrawLimit).setCurrencyInfo(currencyInfo);
+            ((TickerPrice) monthlyWithdrawLimit).setCurrencyInfo(currencyInfo);
+            ((TickerPrice) maxWithdraw).setCurrencyInfo(currencyInfo);
+            ((TickerPrice) openOrders).setCurrencyInfo(currencyInfo);
         }
     }
-    
-    public MtGoxPrice getBalance() {
-        return balance;
+
+    /*
+     * Cast the result to either MtGoxBitcoin or MtGoxFiatCurrency depending on
+     * which is correct for the situation.
+     */
+    public MtGoxUnitOfCredit getBalance() {
+        MtGoxUnitOfCredit result = new MtGoxBitcoin(balance.getPriceValueInt());
+        if (currencyInfo != null && !currencyInfo.isVirtual()) {
+            result = new MtGoxFiatCurrency(balance.getPriceValueInt(), currencyInfo);
+        }
+        return result;
     }
 
     public long getOperations() {
