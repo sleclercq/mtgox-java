@@ -16,7 +16,7 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
 
     private CurrencyInfo currencyInfo;
     private BigDecimal numUnits;
-    private final MathContext mc = new MathContext(8, RoundingMode.HALF_EVEN);
+    private final MathContext mc = new MathContext(0, RoundingMode.HALF_EVEN);
 
     public MtGoxUnitOfCredit(BigDecimal numUnits, CurrencyInfo currencyInfo) {
         this.numUnits = numUnits;
@@ -24,7 +24,7 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     }
 
     public MtGoxUnitOfCredit(long int_value, CurrencyInfo currencyInfo) {
-        this.numUnits = new BigDecimal(BigInteger.valueOf(int_value), currencyInfo.getDecimals());
+        this.numUnits = new BigDecimal(BigInteger.valueOf(int_value), currencyInfo.getDecimals(), mc);
         this.currencyInfo = currencyInfo;
     }
 
@@ -36,6 +36,14 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     @Override
     public int compareTo(BigDecimal competitor) {
         return numUnits.compareTo(competitor);
+    }
+
+    public int compareTo(MtGoxUnitOfCredit competitor) {
+        if (isCurrenciesEquivalent(competitor)) {
+            return compareTo(competitor.getNumUnits());
+        } else {
+            throw new UnsupportedOperationException("Currency must be the same.");
+        }
     }
 
     public CurrencyInfo getCurrencyInfo() {
@@ -67,11 +75,19 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     }
 
     public BigDecimal add(MtGoxUnitOfCredit target) {
-        return add(target.getNumUnits());
+        if (isCurrenciesEquivalent(target)) {
+            return add(target.getNumUnits());
+        } else {
+            throw new UnsupportedOperationException("Currency must be the same.");
+        }
     }
 
     public BigDecimal subtract(MtGoxUnitOfCredit target) {
-        return subtract(target.getNumUnits());
+        if (isCurrenciesEquivalent(target)) {
+            return subtract(target.getNumUnits());
+        } else {
+            throw new UnsupportedOperationException("Currency must be the same.");
+        }
     }
 
     public BigDecimal multiply(BigDecimal target) {
@@ -79,7 +95,11 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     }
 
     public BigDecimal multiply(MtGoxUnitOfCredit target) {
-        return multiply(target.getNumUnits());
+        if (isCurrenciesEquivalent(target)) {
+            return multiply(target.getNumUnits());
+        } else {
+            throw new UnsupportedOperationException("Currency must be the same.");
+        }
     }
 
     public BigDecimal divide(BigDecimal target) {
@@ -87,7 +107,11 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     }
 
     public BigDecimal divide(MtGoxUnitOfCredit target) {
-        return divide(target.getNumUnits());
+        if (isCurrenciesEquivalent(target)) {
+            return divide(target.getNumUnits());
+        } else {
+            throw new UnsupportedOperationException("Currency must be the same.");
+        }
     }
 
     public BigInteger unscaledValue() {
@@ -99,12 +123,19 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     }
 
     public boolean equals(MtGoxUnitOfCredit target) {
-        // TODO:  Also check currency for equality?
-        return equals(target.getNumUnits());
+        if (isCurrenciesEquivalent(target)) {
+            return equals(target.getNumUnits());
+        } else {
+            throw new UnsupportedOperationException("Currency must be the same.");
+        }
     }
 
     public boolean equals(BigDecimal target) {
         return numUnits.compareTo(target) == 0;
+    }
+
+    private boolean isCurrenciesEquivalent(MtGoxUnitOfCredit o) {
+        return (currencyInfo == null && o.getCurrencyInfo() == null) || (currencyInfo != null && currencyInfo.equals(o.getCurrencyInfo()));
     }
 
     @Override
@@ -114,7 +145,7 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
         }
         if (obj instanceof MtGoxUnitOfCredit) {
             final MtGoxUnitOfCredit o = (MtGoxUnitOfCredit) obj;
-            if ((currencyInfo == null && o.getCurrencyInfo() == null) || (currencyInfo != null && currencyInfo.equals(o.getCurrencyInfo()))) {
+            if (isCurrenciesEquivalent(o)) {
                 return equals(o.getNumUnits());
             }
         } else if (obj instanceof BigDecimal) {
