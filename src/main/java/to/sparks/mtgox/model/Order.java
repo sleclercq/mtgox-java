@@ -61,86 +61,50 @@ public class Order extends DtoBase implements CurrencyKludge {
         }
     }
 
-    /**
-     * @return the oid
-     */
     public String getOid() {
         return oid;
     }
 
-    /**
-     * @return the currency
-     */
     public Currency getCurrency() {
         return Currency.getInstance(currency);
     }
 
-    /**
-     * @return the item
-     */
     public String getItem() {
         return item;
     }
 
-    /**
-     * @return the type
-     */
     public MtGoxAPI.OrderType getType() {
         return type;
     }
 
-    /**
-     * @return the amount
-     */
     public TickerPrice getAmount() {
         return amount;
     }
 
-    /**
-     * @return the valid_amount
-     */
     public TickerPrice getValidAmount() {
         return effective_amount;
     }
 
-    /**
-     * @return the price
-     */
     public TickerPrice getPrice() {
         return price;
     }
 
-    /**
-     * @return the status
-     */
     public String getStatus() {
         return status;
     }
 
-    /**
-     * @return the date
-     */
     public String getDate() {
         return date;
     }
 
-    /**
-     * @return the priority
-     */
     public String getPriority() {
         return priority;
     }
 
-    /**
-     * @return the actions
-     */
     public DynaBean[] getActions() {
         return actions;
     }
 
-    /**
-     * @return the invalid_amount
-     */
     public TickerPrice getInvalidAmount() {
         return invalid_amount;
     }

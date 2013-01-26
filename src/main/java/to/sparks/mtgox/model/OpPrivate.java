@@ -24,23 +24,14 @@ public abstract class OpPrivate<T> extends Operation {
         this.origin = origin;
     }
 
-    /**
-     * @return the channel
-     */
     public String getChannel() {
         return channel;
     }
 
-    /**
-     * @return the messageType
-     */
     public String getMessageType() {
         return messageType;
     }
 
-    /**
-     * @return the origin
-     */
     public String getOrigin() {
         return origin;
     }

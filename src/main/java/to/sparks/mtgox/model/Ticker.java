@@ -63,157 +63,91 @@ public class Ticker extends DtoBase implements CurrencyKludge {
         return result;
     }
 
-    /**
-     * @return the high
-     */
     public MtGoxUnitOfCredit getHigh() {
         return getMtGoxUnits(high.getPriceValueInt(), high.getCurrencyInfo());
     }
 
-    /**
-     * @param high the high to set
-     */
     public void setHigh(TickerPrice high) {
         this.high = high;
     }
 
-    /**
-     * @return the low
-     */
     public MtGoxUnitOfCredit getLow() {
         return getMtGoxUnits(low.getPriceValueInt(), low.getCurrencyInfo());
     }
 
-    /**
-     * @param low the low to set
-     */
     public void setLow(TickerPrice low) {
         this.low = low;
     }
 
-    /**
-     * @return the avg
-     */
     public MtGoxUnitOfCredit getAvg() {
         return getMtGoxUnits(avg.getPriceValueInt(), avg.getCurrencyInfo());
     }
 
-    /**
-     * @param avg the avg to set
-     */
     public void setAvg(TickerPrice avg) {
         this.avg = avg;
     }
 
-    /**
-     * @return the vwap
-     */
     public MtGoxUnitOfCredit getVwap() {
         return getMtGoxUnits(vwap.getPriceValueInt(), vwap.getCurrencyInfo());
     }
 
-    /**
-     * @param vwap the vwap to set
-     */
     public void setVwap(TickerPrice vwap) {
         this.vwap = vwap;
     }
 
-    /**
-     * @return the vol
-     */
     public MtGoxUnitOfCredit getVol() {
         return getMtGoxUnits(vol.getPriceValueInt(), vol.getCurrencyInfo());
     }
 
-    /**
-     * @param vol the vol to set
-     */
     public void setVol(TickerPrice vol) {
         this.vol = vol;
     }
 
-    /**
-     * @return the last_local
-     */
     public MtGoxUnitOfCredit getLast_local() {
         return getMtGoxUnits(last_local.getPriceValueInt(), last_local.getCurrencyInfo());
 
     }
 
-    /**
-     * @param last_local the last_local to set
-     */
     public void setLast_local(TickerPrice last_local) {
         this.last_local = last_local;
     }
 
-    /**
-     * @return the last
-     */
     public MtGoxUnitOfCredit getLast() {
         return getMtGoxUnits(last.getPriceValueInt(), last.getCurrencyInfo());
     }
 
-    /**
-     * @param last the last to set
-     */
     public void setLast(TickerPrice last) {
         this.last = last;
     }
 
-    /**
-     * @return the last_orig
-     */
     public TickerPrice getLast_orig() {
         return last_orig;
     }
 
-    /**
-     * @param last_orig the last_orig to set
-     */
     public void setLast_orig(TickerPrice last_orig) {
         this.last_orig = last_orig;
     }
 
-    /**
-     * @return the last_all
-     */
     public TickerPrice getLast_all() {
         return last_all;
     }
 
-    /**
-     * @param last_all the last_all to set
-     */
     public void setLast_all(TickerPrice last_all) {
         this.last_all = last_all;
     }
 
-    /**
-     * @return the buy
-     */
     public TickerPrice getBuy() {
         return buy;
     }
 
-    /**
-     * @param buy the buy to set
-     */
     public void setBuy(TickerPrice buy) {
         this.buy = buy;
     }
 
-    /**
-     * @return the sell
-     */
     public TickerPrice getSell() {
         return sell;
     }
 
-    /**
-     * @param sell the sell to set
-     */
     public void setSell(TickerPrice sell) {
         this.sell = sell;
     }

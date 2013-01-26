@@ -27,30 +27,18 @@ public class Result<T> extends DtoBase {
         this.token = token;
     }
 
-    /**
-     * @return the result
-     */
     public String getResult() {
         return result;
     }
 
-    /**
-     * @return the ret
-     */
     public T getReturn() {
         return ret;
     }
 
-    /**
-     * @return the error
-     */
     public String getError() {
         return error;
     }
 
-    /**
-     * @return the token
-     */
     public String getToken() {
         return token;
     }

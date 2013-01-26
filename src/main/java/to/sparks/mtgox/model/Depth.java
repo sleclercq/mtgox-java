@@ -32,30 +32,18 @@ public class Depth extends Offer implements IEventTime, CurrencyKludge {
         this.type = type;
     }
 
-    /**
-     * @return the item
-     */
     public String getItem() {
         return item;
     }
 
-    /**
-     * @return the total_volume_int
-     */
     public MtGoxBitcoin getTotalVolume() {
         return new MtGoxBitcoin(total_volume_int);
     }
 
-    /**
-     * @return the type_str
-     */
     public String getType_str() {
         return type_str;
     }
 
-    /**
-     * @return the type
-     */
     public int getType() {
         return type;
     }

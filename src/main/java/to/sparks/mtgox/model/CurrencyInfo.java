@@ -55,9 +55,6 @@ public class CurrencyInfo extends DtoBase {
         this.depth_channel = depth_channel;
     }
 
-    /**
-     * @return the currency
-     */
     public Currency getCurrency() {
         if (isVirtual()) {
             throw new UnsupportedOperationException("Virtual MtGox currencies cannot be expressed as a Java currency.");
@@ -65,58 +62,34 @@ public class CurrencyInfo extends DtoBase {
         return Currency.getInstance(currency_code);
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @return the symbol
-     */
     public String getSymbol() {
         return symbol;
     }
 
-    /**
-     * @return the decimals
-     */
     public int getDecimals() {
         return decimals;
     }
 
-    /**
-     * @return the display_decimals
-     */
     public int getDisplay_decimals() {
         return display_decimals;
     }
 
-    /**
-     * @return the symbol_position
-     */
     public String getSymbol_position() {
         return symbol_position;
     }
 
-    /**
-     * @return the virtual
-     */
     public boolean isVirtual() {
         return virtual;
     }
 
-    /**
-     * @return the ticker_channel
-     */
     public String getTicker_channel() {
         return ticker_channel;
     }
 
-    /**
-     * @return the depth_channel
-     */
     public String getDepth_channel() {
         return depth_channel;
     }

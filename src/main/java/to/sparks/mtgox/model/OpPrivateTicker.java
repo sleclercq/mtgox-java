@@ -21,9 +21,6 @@ public class OpPrivateTicker extends OpPrivate<Ticker> {
         this.ticker = ticker;
     }
 
-    /**
-     * @return the ticker
-     */
     public Ticker getTicker() {
         return ticker;
     }

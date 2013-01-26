@@ -21,9 +21,6 @@ public class OpPrivateDepth extends OpPrivate<Depth> {
         this.depth = depth;
     }
 
-    /**
-     * @return the depth
-     */
     public Depth getDepth() {
         return depth;
     }

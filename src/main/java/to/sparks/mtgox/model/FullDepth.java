@@ -24,6 +24,7 @@ public class FullDepth extends DtoBase implements CurrencyKludge {
      * This is a bit of a kludge that ensures the offers know what currency they
      * are in.
      */
+    @Override
     public void setCurrencyInfo(CurrencyInfo currencyInfo) {
         for (Offer ask : asks) {
             ask.setCurrencyInfo(currencyInfo);
@@ -33,16 +34,10 @@ public class FullDepth extends DtoBase implements CurrencyKludge {
         }
     }
 
-    /**
-     * @return the asks
-     */
     public Offer[] getAsks() {
         return asks;
     }
 
-    /**
-     * @return the bids
-     */
     public Offer[] getBids() {
         return bids;
     }

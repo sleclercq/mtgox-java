@@ -16,9 +16,6 @@ public abstract class Operation extends DtoBase {
         this.op = op;
     }
 
-    /**
-     * @return the op
-     */
     public String getOp() {
         return op;
     }

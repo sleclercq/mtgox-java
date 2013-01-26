@@ -28,16 +28,10 @@ public class MtGoxPrice extends DtoBase {
         return value_int;
     }
 
-    /**
-     * @return the display
-     */
     public String getDisplay() {
         return display;
     }
 
-    /**
-     * @return the display_short
-     */
     public String getDisplay_short() {
         return display_short;
     }

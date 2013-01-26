@@ -42,37 +42,22 @@ public class OrderResult extends DtoBase implements CurrencyKludge {
         avg_cost.setCurrencyInfo(currencyInfo);
     }
 
-    /**
-     * @return the order_id
-     */
     public String getOrderId() {
         return order_id;
     }
 
-    /**
-     * @return the trades
-     */
     public TradeResult[] getTrades() {
         return trades;
     }
 
-    /**
-     * @return the total_amount
-     */
     public TickerPrice getTotalAmount() {
         return total_amount;
     }
 
-    /**
-     * @return the total_spent
-     */
     public TickerPrice getTotalSpent() {
         return total_spent;
     }
 
-    /**
-     * @return the avg_cost
-     */
     public TickerPrice getAvgCost() {
         return avg_cost;
     }

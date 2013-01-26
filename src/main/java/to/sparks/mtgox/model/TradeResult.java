@@ -51,65 +51,38 @@ public class TradeResult extends DtoBase implements CurrencyKludge {
         spent.setCurrencyInfo(currencyInfo);
     }
 
-    /**
-     * @return the trade_id
-     */
     public String getTradeId() {
         return trade_id;
     }
 
-    /**
-     * @return the primary
-     */
     public String getPrimary() {
         return primary;
     }
 
-    /**
-     * @return the type
-     */
     public String getType() {
         return type;
     }
 
-    /**
-     * @return the properties
-     */
     public String getProperties() {
         return properties;
     }
 
-    /**
-     * @return the item
-     */
     public String getItem() {
         return item;
     }
 
-    /**
-     * @return the amount
-     */
     public TickerPrice getAmount() {
         return amount;
     }
 
-    /**
-     * @return the price
-     */
     public TickerPrice getPrice() {
         return price;
     }
 
-    /**
-     * @return the spent
-     */
     public TickerPrice getSpent() {
         return spent;
     }
 
-    /**
-     * @return the date
-     */
     public String getDate() {
         return date;
     }

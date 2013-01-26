@@ -21,9 +21,6 @@ public class OpPrivateTrade extends OpPrivate<Trade> {
         this.trade = trade;
     }
 
-    /**
-     * @return the trade
-     */
     public Trade getTrade() {
         return trade;
     }
