@@ -19,7 +19,7 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * TODO:  This should be a Spring service API.
+ * TODO: This should be a Spring service API.
  *
  * @author SparksG
  */
@@ -80,7 +80,9 @@ class UrlFactory {
     public static String getUrlForRestCommand(String currencyCode, RestCommand restCommand) throws Exception {
         StringBuilder url = new StringBuilder();
 
-        if (StringUtils.isEmpty(currencyCode) || currencyCode.equalsIgnoreCase("BTC") || currencyMap.containsKey(Currency.getInstance(currencyCode))) {
+        if (StringUtils.isEmpty(currencyCode)
+                || currencyCode.equalsIgnoreCase("BTC")
+                || currencyMap.containsKey(Currency.getInstance(currencyCode))) {
             if (apiV1RestMap.containsKey(restCommand)) {
                 url.append(MTGOX_HTTP_API_URL);
                 url.append(MTGOX_HTTP_API_VERSION_1);
@@ -90,7 +92,9 @@ class UrlFactory {
                 } catch (IllegalArgumentException ex) {
                     // Sigh.
                 }
-                if (StringUtils.isEmpty(currencyCode) || currencyCode.equalsIgnoreCase("BTC") || !currencyMap.containsKey(currency)) {
+                if (StringUtils.isEmpty(currencyCode)
+                        || currencyCode.equalsIgnoreCase("BTC")
+                        || !currencyMap.containsKey(currency)) {
                     url.append("generic/");
                 } else {
                     url.append(currencyMap.get(Currency.getInstance(currencyCode)));

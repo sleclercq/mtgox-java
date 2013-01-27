@@ -20,6 +20,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jwebsocket.client.java.BaseWebSocket;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import to.sparks.mtgox.WebSocketClient;
 import to.sparks.mtgox.model.Depth;
@@ -33,8 +35,9 @@ import to.sparks.mtgox.net.SocketListener;
  *
  * @author SparksG
  */
-class WebSocketClientService implements EventListener, Runnable, WebSocketClient {
+class WebSocketClientService implements EventListener, Runnable, WebSocketClient, ApplicationEventPublisherAware {
 
+    private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
     private List<Depth> depthHistory = new CopyOnWriteArrayList<>();
     private List<Ticker> tickerHistory = new CopyOnWriteArrayList<>();
@@ -95,16 +98,28 @@ class WebSocketClientService implements EventListener, Runnable, WebSocketClient
     @Override
     public void tradeEvent(Trade trade) {
         getTradeHistory().add(trade);
+        if (applicationEventPublisher != null) {
+            StreamEvent<Trade> event = new StreamEvent<>(this, StreamEvent.EventType.Trade, trade);
+            applicationEventPublisher.publishEvent(event);
+        }
     }
 
     @Override
     public void tickerEvent(Ticker ticker) {
         tickerHistory.add(ticker);
+        if (applicationEventPublisher != null) {
+            StreamEvent<Ticker> event = new StreamEvent<>(this, StreamEvent.EventType.Ticker, ticker);
+            applicationEventPublisher.publishEvent(event);
+        }
     }
 
     @Override
     public void depthEvent(Depth depth) {
         depthHistory.add(depth);
+        if (applicationEventPublisher != null) {
+            StreamEvent<Depth> event = new StreamEvent<>(this, StreamEvent.EventType.Depth, depth);
+            applicationEventPublisher.publishEvent(event);
+        }
     }
 
     @Override
@@ -134,5 +149,10 @@ class WebSocketClientService implements EventListener, Runnable, WebSocketClient
             logger.log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }
