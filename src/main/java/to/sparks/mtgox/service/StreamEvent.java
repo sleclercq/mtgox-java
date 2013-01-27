@@ -15,12 +15,15 @@
 package to.sparks.mtgox.service;
 
 import org.springframework.context.ApplicationEvent;
+import to.sparks.mtgox.model.DtoBase;
 
 /**
  *
  * @author SparksG
  */
-public class StreamEvent<T> extends ApplicationEvent {
+public class StreamEvent<T extends DtoBase> extends ApplicationEvent {
+
+    private static final long serialVersionUID = 3487524279263502L;
 
     public enum EventType {
 

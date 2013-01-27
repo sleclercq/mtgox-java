@@ -19,7 +19,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Logger;
 import to.sparks.mtgox.HTTPClientV0;
 import to.sparks.mtgox.HTTPClientV1;
@@ -54,53 +53,6 @@ class APIService implements MtGoxAPI {
         if (wsApi != null) {
             wsApi.shutdown();
         }
-    }
-
-    @Override
-    public List<Depth> getAllDepthSince(long timestamp) {
-        List<Depth> depths = wsApi.getAllDepthSince(timestamp);
-        for (Depth depth : depths) {
-            currencyKludge(depth);
-        }
-        return depths;
-    }
-
-    @Override
-    public List<Trade> getAllTradesSince(long timestamp) {
-        List<Trade> trades = wsApi.getAllTradesSince(timestamp);
-        for (Trade trade : trades) {
-            currencyKludge(trade);
-        }
-        return trades;
-    }
-
-    @Override
-    public List<Depth> getDepthHistory() {
-        List<Depth> depthHistory = wsApi.getDepthHistory();
-        for (Depth depth : depthHistory) {
-            currencyKludge(depth);
-        }
-        return depthHistory;
-    }
-
-    @Override
-    public List<Ticker> getTickerHistory() {
-        List<Ticker> tickerHistory = wsApi.getTickerHistory();
-        for (Ticker ticker : tickerHistory) {
-            currencyKludge(ticker);
-        }
-        return tickerHistory;
-
-
-    }
-
-    @Override
-    public List<Trade> getTradeHistory() {
-        List<Trade> tradeHistory = wsApi.getTradeHistory();
-        for (Trade trade : tradeHistory) {
-            currencyKludge(trade);
-        }
-        return tradeHistory;
     }
 
     @Override

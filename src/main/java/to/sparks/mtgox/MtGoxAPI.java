@@ -66,39 +66,6 @@ public interface MtGoxAPI {
     OrderResult getOrderResult(OrderType orderType, String orderRef) throws Exception;
 
     /**
-     * Get all depth events since a particular time (or whenever this api object
-     * was created)
-     *
-     * @param timestamp The java timestamp to return events since.
-     * @return
-     */
-    List<Depth> getAllDepthSince(long timestamp);
-
-    /**
-     * Get all trade events since a particular time (or whenever this api object
-     * was created)
-     *
-     * @param timestamp The java timestamp to return trades since.
-     * @return
-     */
-    List<Trade> getAllTradesSince(long timestamp);
-
-    /**
-     * Get all depth events since this api object was created
-     */
-    List<Depth> getDepthHistory();
-
-    /**
-     * Get all ticker events since this api object was created
-     */
-    List<Ticker> getTickerHistory();
-
-    /**
-     * Get all trade events since this api object was created
-     */
-    List<Trade> getTradeHistory();
-
-    /**
      * Request the current ticker from MtGox
      *
      * @return

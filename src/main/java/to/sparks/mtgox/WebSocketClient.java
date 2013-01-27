@@ -14,26 +14,11 @@
  */
 package to.sparks.mtgox;
 
-import java.util.List;
-import to.sparks.mtgox.model.Depth;
-import to.sparks.mtgox.model.Ticker;
-import to.sparks.mtgox.model.Trade;
-
 /**
  *
  * @author SparksG
  */
 public interface WebSocketClient {
-
-    List<Depth> getAllDepthSince(long timestamp);
-
-    List<Trade> getAllTradesSince(long timestamp);
-
-    List<Depth> getDepthHistory();
-
-    List<Ticker> getTickerHistory();
-
-    List<Trade> getTradeHistory();
 
     void shutdown();
 }
