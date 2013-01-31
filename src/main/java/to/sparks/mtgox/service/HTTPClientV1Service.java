@@ -21,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.logging.Logger;
-import to.sparks.mtgox.HTTPClientV1;
 import to.sparks.mtgox.model.*;
 import to.sparks.mtgox.net.HTTPAuthenticator;
 import to.sparks.mtgox.net.JSONSource;
@@ -31,7 +30,7 @@ import to.sparks.mtgox.net.JSONSource;
  *
  * @author SparksG
  */
-class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
+class HTTPClientV1Service extends HTTPAuthenticator {
 
     private JSONSource<Result<AccountInfo>> privateInfoJSON;
     private JSONSource<Result<Order[]>> openOrdersJSON;
@@ -54,13 +53,11 @@ class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
         sendBitcoinsJSON = new JSONSource<>();
     }
 
-    @Override
     public FullDepth getFullDepth(Currency currency) throws Exception {
         FullDepth fullDepth = fullDepthJSON.getResultFromStream(new URL(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.FullDepth)).openStream(), FullDepth.class).getReturn();
         return fullDepth;
     }
 
-    @Override
     public String placeOrder(Currency currency, HashMap<String, String> params) throws Exception {
         Result<String> result = stringJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.PrivateOrderAdd), params), String.class);
         if (result.getError() != null) {
@@ -69,7 +66,6 @@ class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
         return result.getReturn();
     }
 
-    @Override
     public OrderResult getPrivateOrderResult(HashMap<String, String> params) throws Exception {
         Result<OrderResult> result = orderResultJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateOrderResult), params), OrderResult.class);
         if (result.getError() != null) {
@@ -78,32 +74,27 @@ class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
         return result.getReturn();
     }
 
-    @Override
     public Order[] getOpenOrders() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
         Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateOrders)), Order[].class);
         return openOrders.getReturn();
     }
 
-    @Override
     public AccountInfo getPrivateInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
         Result<AccountInfo> privateInfo = privateInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateInfo)), AccountInfo.class);
         return privateInfo.getReturn();
     }
 
-    @Override
     public Ticker getTicker(Currency currency) throws IOException, Exception {
         Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.Ticker)), Ticker.class);
         return tickerUSD.getReturn();
     }
 
-    @Override
     public CurrencyInfo getCurrencyInfo(Currency currency) throws IOException, Exception {
         return getCurrencyInfo(currency.getCurrencyCode());
     }
 
-    @Override
     public CurrencyInfo getCurrencyInfo(String currencyCode) throws IOException, Exception {
         HashMap<String, String> params = new HashMap<>();
         params.put("currency", currencyCode);
@@ -114,7 +105,6 @@ class HTTPClientV1Service extends HTTPAuthenticator implements HTTPClientV1 {
         return currencyInfo.getReturn();
     }
 
-    @Override
     public SendBitcoinsTransaction sendBitcoins(HashMap<String, String> params) throws IOException, Exception {
         Result<SendBitcoinsTransaction> response = sendBitcoinsJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(UrlFactory.RestCommand.SendBitcoins), params), SendBitcoinsTransaction.class);
         if (response.getError() != null) {

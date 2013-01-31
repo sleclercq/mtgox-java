@@ -52,15 +52,6 @@
         <constructor-arg index="2" value="${apisecret}" />
     </bean>
 
-    <bean id="wsApi" class="to.sparks.mtgox.service.WebSocketClientService" init-method="init" destroy-method="destroy">
-        <constructor-arg index="0">
-            <ref bean="logger"/>
-        </constructor-arg>
-        <constructor-arg index="1" >
-            <ref bean="taskExecutor"/>
-        </constructor-arg>
-    </bean>
-
     <bean id="mtgoxUSD" class="to.sparks.mtgox.service.APIService">
         <constructor-arg index="0">
             <ref bean="logger"/>
@@ -72,9 +63,6 @@
             <ref bean="httpApiV1"/>
         </constructor-arg>
         <constructor-arg index="3">
-            <ref bean="wsApi"/>
-        </constructor-arg>
-        <constructor-arg index="4">
             <ref bean="usdCurrency"/>
         </constructor-arg>
     </bean>

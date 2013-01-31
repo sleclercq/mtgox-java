@@ -23,7 +23,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
-import org.jwebsocket.kit.WebSocketFrameType;
+import org.jwebsocket.kit.RawPacket;
 import to.sparks.mtgox.model.*;
 
 /**
@@ -48,7 +48,7 @@ public class SocketListener implements WebSocketClientListener {
     @Override
     public void processPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
         if (aEvent != null) {
-            if (aPacket != null && aPacket.getFrameType() == WebSocketFrameType.TEXT) {  // RawPacket.FRAMETYPE_UTF8
+            if (aPacket != null && aPacket.getFrameType() == RawPacket.FRAMETYPE_UTF8) {  // RawPacket.FRAMETYPE_UTF8  or  WebSocketFrameType.TEXT
                 try {
                     // logger.fine(aPacket.getUTF8());
 
@@ -74,7 +74,7 @@ public class SocketListener implements WebSocketClientListener {
                             OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTrade.class);
                             Trade trade = opPrivateTrade.getTrade();
                             eventListener.tradeEvent(trade);
-                            logger.log(Level.FINE, "Trade price: {0}", new Object[]{trade.getPrice().toPlainString()});
+                            logger.log(Level.FINE, "Trade currency: {0}", new Object[]{trade.getPrice_currency()});
                         } else {
                             logger.log(Level.WARNING, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
                         }
@@ -101,13 +101,5 @@ public class SocketListener implements WebSocketClientListener {
 
     @Override
     public void processClosed(WebSocketClientEvent aEvent) {
-    }
-
-    @Override
-    public void processOpening(WebSocketClientEvent wsce) {
-    }
-
-    @Override
-    public void processReconnecting(WebSocketClientEvent wsce) {
     }
 }

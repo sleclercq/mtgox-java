@@ -62,6 +62,10 @@ Source code examples of how to use the API have been provided.
 
 3.  Withdraw and send bitcoins [HowToWithdrawBitcoins.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/HowToWithdrawBitcoins.java "source code example")
 
+4.  Receive events from the mtgox websocket API [WebsocketExamples.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/WebsocketExamples.java "source code example")
+
+5.  A simple trading bot example (not yet complete) [TradingBot.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/TradingBot.java "source code example")
+
 MtGox API credentials file: mtgox.properties
 ------------------------
 

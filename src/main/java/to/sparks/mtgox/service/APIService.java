@@ -20,10 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.logging.Logger;
-import to.sparks.mtgox.HTTPClientV0;
-import to.sparks.mtgox.HTTPClientV1;
-import to.sparks.mtgox.MtGoxAPI;
-import to.sparks.mtgox.WebSocketClient;
+import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.model.*;
 
 /**
@@ -32,27 +29,18 @@ import to.sparks.mtgox.model.*;
  *
  * @author SparksG
  */
-class APIService implements MtGoxAPI {
+class APIService implements MtGoxHTTPClient {
 
     private static Logger logger;
-    private WebSocketClient wsApi;
-    HTTPClientV0 httpAPIV0;
-    HTTPClientV1 httpAPIV1;
+    HTTPClientV0Service httpAPIV0;
+    HTTPClientV1Service httpAPIV1;
     CurrencyInfo currencyInfo;
 
-    public APIService(final Logger logger, HTTPClientV0 httpAPIV0, HTTPClientV1 httpAPIV1, WebSocketClient mtGoxWebSocketApi, Currency currency) throws IOException, Exception {
+    public APIService(final Logger logger, HTTPClientV0Service httpAPIV0, HTTPClientV1Service httpAPIV1, Currency currency) throws IOException, Exception {
         this.logger = logger;
         this.httpAPIV0 = httpAPIV0;
         this.httpAPIV1 = httpAPIV1;
-        this.wsApi = mtGoxWebSocketApi;
         this.currencyInfo = httpAPIV1.getCurrencyInfo(currency);
-    }
-
-    @Override
-    public void shutdown() {
-        if (wsApi != null) {
-            wsApi.shutdown();
-        }
     }
 
     @Override
@@ -152,7 +140,7 @@ class APIService implements MtGoxAPI {
     @Override
     public OrderCancelResult cancelOrder(OrderType orderType, String orderRef) throws Exception {
         HashMap<String, String> params = new HashMap<>();
-        if (orderType == MtGoxAPI.OrderType.Bid) {
+        if (orderType == MtGoxHTTPClient.OrderType.Bid) {
             params.put("type", "2");
         } else {
             params.put("type", "1");

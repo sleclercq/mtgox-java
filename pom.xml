@@ -150,7 +150,7 @@
         <dependency>
             <groupId>org.jwebsocket</groupId>
             <artifactId>jWebSocketJavaSEClient</artifactId>
-            <version>1.0</version>
+            <version>0.11</version>
             <type>jar</type>
         </dependency>
 
@@ -172,7 +172,7 @@
             <artifactId>spring-context</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
-
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>

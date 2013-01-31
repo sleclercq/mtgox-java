@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import to.sparks.mtgox.MtGoxAPI;
+import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.model.*;
 
 /**
@@ -57,7 +57,7 @@ public class TradingBot {
 
         // Obtain an instance of the API
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/Beans.xml");
-        MtGoxAPI mtgoxAPI = (MtGoxAPI) context.getBean("mtgoxUSD");
+        MtGoxHTTPClient mtgoxAPI = (MtGoxHTTPClient) context.getBean("mtgoxUSD");
 
 //        Ticker ticker = mtgoxUSD.getTicker();
 //        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getDisplay());
@@ -90,9 +90,6 @@ public class TradingBot {
             logger.info("There are invalid bid or ask orders, or none exist.");
             cancelOrders(mtgoxAPI, openOrders);
         }
-
-        // Shutdown the api when you are finished
-        mtgoxAPI.shutdown();
     }
 
     private static boolean isOrdersValid(Order[] orders) {
@@ -109,7 +106,7 @@ public class TradingBot {
         return bRet;
     }
 
-    private static void cancelOrders(MtGoxAPI mtGoxAPI, Order[] orders) throws Exception {
+    private static void cancelOrders(MtGoxHTTPClient mtGoxAPI, Order[] orders) throws Exception {
         if (ArrayUtils.isNotEmpty(orders)) {
             for (Order order : orders) {
                 logger.log(Level.INFO, "Cancelling order: {0}", order.getOid());

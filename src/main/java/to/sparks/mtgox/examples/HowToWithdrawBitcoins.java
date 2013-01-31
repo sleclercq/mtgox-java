@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import to.sparks.mtgox.MtGoxAPI;
+import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.model.MtGoxBitcoin;
 import to.sparks.mtgox.model.SendBitcoinsTransaction;
 import to.sparks.mtgox.model.Wallet;
@@ -48,7 +48,7 @@ public class HowToWithdrawBitcoins {
 
         // Obtain a $USD instance of the API
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/Beans.xml");
-        MtGoxAPI mtGoxAPI = (MtGoxAPI) context.getBean("mtgoxUSD");
+        MtGoxHTTPClient mtGoxAPI = (MtGoxHTTPClient) context.getBean("mtgoxUSD");
 
         HashMap<String, Wallet> wallets = mtGoxAPI.getAccountInfo().getWallets();
         Wallet btcWallet = wallets.get("BTC");

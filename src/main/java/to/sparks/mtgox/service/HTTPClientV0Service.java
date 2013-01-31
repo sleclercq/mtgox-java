@@ -21,7 +21,6 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.JavaType;
-import to.sparks.mtgox.HTTPClientV0;
 import to.sparks.mtgox.model.OrderCancelResult;
 import to.sparks.mtgox.net.HTTPAuthenticator;
 
@@ -34,7 +33,7 @@ import to.sparks.mtgox.net.HTTPAuthenticator;
  * available on later releases of the MtGox HTTP API.
  */
 @Deprecated
-class HTTPClientV0Service extends HTTPAuthenticator implements HTTPClientV0 {
+class HTTPClientV0Service extends HTTPAuthenticator {
 
     private JsonFactory factory = new JsonFactory();
     private ObjectMapper mapper = new ObjectMapper();
@@ -43,7 +42,6 @@ class HTTPClientV0Service extends HTTPAuthenticator implements HTTPClientV0 {
         super(logger, apiKey, secret);
     }
 
-    @Override
     public OrderCancelResult cancelOrder(HashMap<String, String> params) throws Exception {
         InputStream is = getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateOrderCancel), params);
         JsonParser jp = factory.createJsonParser(is);

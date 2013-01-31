@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="5" />
+        <property name="maxPoolSize" value="10" />
+        <property name="queueCapacity" value="25" />
+    </bean>
+
+    <bean id="logger" class="java.util.logging.Logger"
+          scope="prototype" factory-method="getGlobal" >
+        <property name="level">
+            <util:constant static-field="java.util.logging.Level.ALL"/>
+        </property>
+    </bean>
+
+    <bean id="wsApi" class="to.sparks.mtgox.service.WebsocketClientService" init-method="init" destroy-method="destroy">
+        <constructor-arg index="0">
+            <ref bean="logger"/>
+        </constructor-arg>
+        <constructor-arg index="1" >
+            <ref bean="taskExecutor"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id='websocketExamples' class='to.sparks.mtgox.examples.WebsocketExamples' />
+
+
+    </beans>

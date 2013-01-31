@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import to.sparks.mtgox.MtGoxAPI;
+import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.model.CurrencyInfo;
 import to.sparks.mtgox.model.MtGoxBitcoin;
 import to.sparks.mtgox.model.MtGoxFiatCurrency;
@@ -38,7 +38,7 @@ public class PlaceOrders {
 
         // Obtain a $USD instance of the API
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/Beans.xml");
-        MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
+        MtGoxHTTPClient mtgoxUSD = (MtGoxHTTPClient) context.getBean("mtgoxUSD");
 
         // Obtain information about the base currency of the API instance
         CurrencyInfo currencyInfo = mtgoxUSD.getCurrencyInfo(mtgoxUSD.getBaseCurrency());
@@ -48,13 +48,10 @@ public class PlaceOrders {
         // Purchase 1.0 bitcoins for USD$0.01
         MtGoxFiatCurrency fiatUnit = new MtGoxFiatCurrency(0.01D, currencyInfo);  // We use the currencyInfo to be explicit about what this money represents
         MtGoxBitcoin bitcoinUnit = new MtGoxBitcoin(1.0D);  // You should probably use BigDecimals instead of double types to represent money.
-        String orderRef = mtgoxUSD.placeOrder(MtGoxAPI.OrderType.Bid, fiatUnit, bitcoinUnit);
+        String orderRef = mtgoxUSD.placeOrder(MtGoxHTTPClient.OrderType.Bid, fiatUnit, bitcoinUnit);
         logger.log(Level.INFO, "orderRef: {0}", new Object[]{orderRef});
 
         // Cancel the order
-        mtgoxUSD.cancelOrder(MtGoxAPI.OrderType.Bid, orderRef);
-
-        // Shutdown the api when you are finished
-        mtgoxUSD.shutdown();
+        mtgoxUSD.cancelOrder(MtGoxHTTPClient.OrderType.Bid, orderRef);
     }
 }

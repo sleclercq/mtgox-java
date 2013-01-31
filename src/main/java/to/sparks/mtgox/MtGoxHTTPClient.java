@@ -15,7 +15,6 @@
 package to.sparks.mtgox;
 
 import java.util.Currency;
-import java.util.List;
 import to.sparks.mtgox.model.*;
 
 /**
@@ -24,7 +23,7 @@ import to.sparks.mtgox.model.*;
  *
  * @author SparksG
  */
-public interface MtGoxAPI {
+public interface MtGoxHTTPClient {
 
     public enum OrderType {
 
@@ -125,9 +124,7 @@ public interface MtGoxAPI {
      * Version 0 API, so the JSON result should be discarded.
      *
      * @param orderType Bid or Ask
-     * @param orderRef  The reference string that was returned when the order
-     * was
-     * placed
+     * @param orderRef  The reference returned when the order was placed
      * @return The JSON response. Avoid using this response because this api
      * call uses the old Version 0 MtGox API.
      * @throws Exception
@@ -151,9 +148,4 @@ public interface MtGoxAPI {
      * @return
      */
     SendBitcoinsTransaction sendBitcoins(String destinationAddress, MtGoxBitcoin bitcoins, MtGoxBitcoin fee, boolean isNoInstant, boolean isGreen) throws Exception;
-
-    /**
-     * Shutdown the api threads and close any open websockets.
-     */
-    void shutdown();
 }

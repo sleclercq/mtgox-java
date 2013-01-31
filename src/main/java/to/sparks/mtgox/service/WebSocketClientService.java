@@ -14,16 +14,18 @@
  */
 package to.sparks.mtgox.service;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jwebsocket.client.java.BaseWebSocket;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import to.sparks.mtgox.WebSocketClient;
-import to.sparks.mtgox.model.Depth;
-import to.sparks.mtgox.model.Ticker;
-import to.sparks.mtgox.model.Trade;
+import to.sparks.mtgox.MtGoxWebsocketClient;
+import to.sparks.mtgox.StreamEvent;
+import to.sparks.mtgox.model.*;
 import to.sparks.mtgox.net.EventListener;
 import to.sparks.mtgox.net.SocketListener;
 
@@ -31,16 +33,21 @@ import to.sparks.mtgox.net.SocketListener;
  *
  * @author SparksG
  */
-class WebSocketClientService implements EventListener, Runnable, WebSocketClient, ApplicationEventPublisherAware {
+class WebsocketClientService implements EventListener, Runnable, MtGoxWebsocketClient, ApplicationEventPublisherAware {
 
     private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
     final BaseWebSocket websocket = new BaseWebSocket();
     private ThreadPoolTaskExecutor taskExecutor;
+    private Map<String, CurrencyInfo> currencyCache;
+    private HTTPClientV1Service httpAPIV1;
 
-    public WebSocketClientService(Logger logger, ThreadPoolTaskExecutor taskExecutor) {
+    public WebsocketClientService(Logger logger, ThreadPoolTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1) {
         this.logger = logger;
         this.taskExecutor = taskExecutor;
+        this.httpAPIV1 = httpAPIV1;
+        currencyCache = new HashMap<>();
+        currencyCache.put("BTC", CurrencyInfo.BitcoinCurrencyInfo);
     }
 
     public void init() {
@@ -49,7 +56,9 @@ class WebSocketClientService implements EventListener, Runnable, WebSocketClient
 
     public void destroy() {
         try {
-            websocket.close();
+            if (websocket != null) {
+                websocket.close();
+            }
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
@@ -63,7 +72,20 @@ class WebSocketClientService implements EventListener, Runnable, WebSocketClient
     @Override
     public void tradeEvent(Trade trade) {
         if (applicationEventPublisher != null) {
-            StreamEvent<Trade> event = new StreamEvent<>(this, StreamEvent.EventType.Trade, trade);
+            CurrencyInfo ci = null;
+            if (!currencyCache.containsKey(trade.getPrice_currency())) {
+                try {
+                    ci = httpAPIV1.getCurrencyInfo(trade.getPrice_currency());
+                    currencyCache.put(trade.getPrice_currency(), ci);
+                } catch (Exception ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+            ci = currencyCache.get(trade.getPrice_currency());
+            if (ci != null) {
+                trade.setCurrencyInfo(ci);
+            }
+            StreamEvent event = new StreamEvent(this, StreamEvent.EventType.Trade, trade);
             applicationEventPublisher.publishEvent(event);
         }
     }
@@ -71,14 +93,15 @@ class WebSocketClientService implements EventListener, Runnable, WebSocketClient
     @Override
     public void tickerEvent(Ticker ticker) {
         if (applicationEventPublisher != null) {
-            StreamEvent<Ticker> event = new StreamEvent<>(this, StreamEvent.EventType.Ticker, ticker);
+            StreamEvent event = new StreamEvent(this, StreamEvent.EventType.Ticker, ticker);
             applicationEventPublisher.publishEvent(event);
         }
     }
 
+    @Override
     public void depthEvent(Depth depth) {
         if (applicationEventPublisher != null) {
-            StreamEvent<Depth> event = new StreamEvent<>(this, StreamEvent.EventType.Depth, depth);
+            StreamEvent event = new StreamEvent(this, StreamEvent.EventType.Depth, depth);
             applicationEventPublisher.publishEvent(event);
         }
     }
@@ -94,7 +117,6 @@ class WebSocketClientService implements EventListener, Runnable, WebSocketClient
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
-
     }
 
     @Override

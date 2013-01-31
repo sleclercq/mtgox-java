@@ -14,11 +14,37 @@
  */
 package to.sparks.mtgox;
 
+import org.springframework.context.ApplicationEvent;
+
 /**
  *
  * @author SparksG
  */
-public interface WebSocketClient {
+public class StreamEvent extends ApplicationEvent {
 
-    void shutdown();
+    private static final long serialVersionUID = 3487524279263502L;
+
+    public enum EventType {
+
+        Trade,
+        Ticker,
+        Depth
+    }
+    private EventType eventType;
+    private Object payload;
+
+    public StreamEvent(Object source, EventType eventType, Object payload) {
+        super(source);
+        this.eventType = eventType;
+        this.payload = payload;
+
+    }
+
+    public Object getPayload() {
+        return payload;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
 }

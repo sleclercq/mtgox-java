@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import to.sparks.mtgox.MtGoxAPI;
+import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.model.AccountInfo;
 import to.sparks.mtgox.model.Order;
 import to.sparks.mtgox.model.Ticker;
@@ -37,7 +37,7 @@ public class HowToGetInfo {
 
         // Obtain a $USD instance of the API
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/Beans.xml");
-        MtGoxAPI mtgoxUSD = (MtGoxAPI) context.getBean("mtgoxUSD");
+        MtGoxHTTPClient mtgoxUSD = (MtGoxHTTPClient) context.getBean("mtgoxUSD");
 
         Ticker ticker = mtgoxUSD.getTicker();
         logger.log(Level.INFO, "Last price: {0}", ticker.getLast().toPlainString());
@@ -55,8 +55,5 @@ public class HowToGetInfo {
         } else {
             logger.info("There are no currently open bid or ask orders.");
         }
-
-        // Shutdown the api when you are finished
-        mtgoxUSD.shutdown();
     }
 }
