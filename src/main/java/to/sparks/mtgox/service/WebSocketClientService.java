@@ -14,7 +14,6 @@
  */
 package to.sparks.mtgox.service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -25,7 +24,10 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import to.sparks.mtgox.MtGoxWebsocketClient;
 import to.sparks.mtgox.StreamEvent;
-import to.sparks.mtgox.model.*;
+import to.sparks.mtgox.model.CurrencyInfo;
+import to.sparks.mtgox.model.Depth;
+import to.sparks.mtgox.model.Ticker;
+import to.sparks.mtgox.model.Trade;
 import to.sparks.mtgox.net.EventListener;
 import to.sparks.mtgox.net.SocketListener;
 
