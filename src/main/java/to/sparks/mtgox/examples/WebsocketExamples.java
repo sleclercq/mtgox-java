@@ -14,6 +14,7 @@
  */
 package to.sparks.mtgox.examples;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -50,13 +51,14 @@ public class WebsocketExamples implements ApplicationListener<StreamEvent> {
 
         if (event instanceof DepthEvent) {
             Depth depth = (Depth) event.getPayload();
-            logger.info(depth.getItem());
+            logger.log(Level.INFO, "Depth: {0}", new Object[]{depth.getTotalVolume().toPlainString()});
+
         } else if (event instanceof TickerEvent) {
             Ticker ticker = (Ticker) event.getPayload();
-            logger.info(ticker.getLast().toPlainString());
+            logger.log(Level.INFO, "Last: {0}", new Object[]{ticker.getLast().toPlainString()});
         } else if (event instanceof TradeEvent) {
             Trade trade = (Trade) event.getPayload();
-            logger.info(trade.getPrice_currency());
+            logger.log(Level.INFO, "Trade: {0} {1}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString()});
         }
     }
 }
