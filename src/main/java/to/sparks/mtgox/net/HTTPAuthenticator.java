@@ -91,23 +91,22 @@ public class HTTPAuthenticator {
         args.put("nonce", String.valueOf(System.currentTimeMillis()));
         String post_data = buildQueryString(args);
 
-        String signature = "";
-        // args signature
-        if (StringUtils.isNotBlank(this.secret) && !this.secret.equalsIgnoreCase("${api.secret}")) {
-            Mac mac = Mac.getInstance("HmacSHA512");
-            SecretKeySpec secret_spec = new SecretKeySpec(Base64Coder.decode(this.secret), "HmacSHA512");
-            mac.init(secret_spec);
-            signature = new String(Base64Coder.encode(mac.doFinal(post_data.getBytes()))).replaceAll("\n", "");
-        }
-
         System.setProperty("jsse.enableSNIExtension", "false");
 
         URL queryUrl = new URL(path);
         connection = (HttpURLConnection) queryUrl.openConnection();
         connection.setDoOutput(true);
         connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; mtgox-java client)");
-        connection.setRequestProperty("Rest-Key", apiKey);
-        connection.setRequestProperty("Rest-Sign", signature);
+
+        if (StringUtils.isNotBlank(this.secret) && !this.secret.equalsIgnoreCase("${api.secret}")) {
+            Mac mac = Mac.getInstance("HmacSHA512");
+            SecretKeySpec secret_spec = new SecretKeySpec(Base64Coder.decode(this.secret), "HmacSHA512");
+            mac.init(secret_spec);
+            String signature = new String(Base64Coder.encode(mac.doFinal(post_data.getBytes()))).replaceAll("\n", "");
+            connection.setRequestProperty("Rest-Key", apiKey);
+            connection.setRequestProperty("Rest-Sign", signature);
+        }
+
         connection.getOutputStream().write(post_data.getBytes());
         return connection.getInputStream();
     }
