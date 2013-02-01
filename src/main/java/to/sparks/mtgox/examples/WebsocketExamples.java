@@ -29,7 +29,7 @@ import to.sparks.mtgox.model.Trade;
  * @author SparksG
  */
 public class WebsocketExamples implements ApplicationListener<StreamEvent> {
-    
+
     /* The logger */
     static final Logger logger = Logger.getLogger(WebsocketExamples.class.getName());
 

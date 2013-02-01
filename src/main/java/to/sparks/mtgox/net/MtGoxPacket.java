@@ -14,20 +14,29 @@
  */
 package to.sparks.mtgox.net;
 
-import to.sparks.mtgox.model.Depth;
-import to.sparks.mtgox.model.Ticker;
-import to.sparks.mtgox.model.Trade;
+import org.jwebsocket.api.WebSocketClientEvent;
+import org.jwebsocket.api.WebSocketPacket;
 
 /**
- * An implementing class will be called on these methods when the corresponding packet arrives from the WebSocket.
- * 
+ *
  * @author SparksG
  */
-public interface EventListener {
+public class MtGoxPacket {
 
-    void depthEvent(Depth depth);
+    private static final long serialVersionUID = 3487542960316548L;
+    private WebSocketClientEvent aEvent;
+    private WebSocketPacket aPacket;
 
-    void tickerEvent(Ticker ticker);
+    public MtGoxPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
+        this.aEvent = aEvent;
+        this.aPacket = aPacket;
+    }
 
-    void tradeEvent(Trade trade);
+    public WebSocketClientEvent getaEvent() {
+        return aEvent;
+    }
+
+    public WebSocketPacket getaPacket() {
+        return aPacket;
+    }
 }

@@ -28,7 +28,8 @@ public class StreamEvent extends ApplicationEvent {
 
         Trade,
         Ticker,
-        Depth
+        Depth,
+        Packet
     }
     private EventType eventType;
     private Object payload;

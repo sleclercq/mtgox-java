@@ -14,29 +14,25 @@
  */
 package to.sparks.mtgox.net;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
-import org.jwebsocket.kit.RawPacket;
-import to.sparks.mtgox.model.*;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
+import to.sparks.mtgox.StreamEvent;
 
 /**
  *
  * @author SparksG
  */
-public class SocketListener implements WebSocketClientListener {
+public class SocketListener implements WebSocketClientListener, ApplicationEventPublisherAware {
 
-    private EventListener eventListener;
+    private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
 
-    public SocketListener(Logger logger, EventListener eventListener) {
-        this.eventListener = eventListener;
+    public SocketListener(Logger logger) {
         this.logger = logger;
     }
 
@@ -47,59 +43,20 @@ public class SocketListener implements WebSocketClientListener {
 
     @Override
     public void processPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
-        if (aEvent != null) {
-            if (aPacket != null && aPacket.getFrameType() == RawPacket.FRAMETYPE_UTF8) {  // RawPacket.FRAMETYPE_UTF8  or  WebSocketFrameType.TEXT
-                try {
-                    // logger.fine(aPacket.getUTF8());
-
-                    JsonFactory factory = new JsonFactory();
-                    ObjectMapper mapper = new ObjectMapper();
-
-                    JsonParser jp = factory.createJsonParser(aPacket.getUTF8());
-                    DynaBean op = mapper.readValue(jp, DynaBean.class);
-
-                    if (op.get("op") != null && op.get("op").equals("private")) {
-                        String messageType = op.get("private").toString();
-                        if (messageType.equalsIgnoreCase("ticker")) {
-                            OpPrivateTicker opPrivateTicker = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTicker.class);
-                            Ticker ticker = opPrivateTicker.getTicker();
-                            eventListener.tickerEvent(ticker);
-                            logger.log(Level.FINE, "Ticker: last: {0}", new Object[]{ticker.getLast().toPlainString()});
-                        } else if (messageType.equalsIgnoreCase("depth")) {
-                            OpPrivateDepth opPrivateDepth = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateDepth.class);
-                            Depth depth = opPrivateDepth.getDepth();
-                            eventListener.depthEvent(depth);
-                            logger.log(Level.FINE, "Depth total volume: {0}", new Object[]{depth.getTotalVolume().toPlainString()});
-                        } else if (messageType.equalsIgnoreCase("trade")) {
-                            OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTrade.class);
-                            Trade trade = opPrivateTrade.getTrade();
-                            eventListener.tradeEvent(trade);
-                            logger.log(Level.FINE, "Trade currency: {0}", new Object[]{trade.getPrice_currency()});
-                        } else {
-                            logger.log(Level.WARNING, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
-                        }
-
-                        // logger.log(Level.INFO, "messageType: {0}, payload: {1}", new Object[]{messageType, dataPayload});
-                    } else {
-                        logger.log(Level.WARNING, "Unknown operation: {0}, payload: {1}", new Object[]{op.get("op")});
-                        // TODO:  Process the following types
-                        // subscribe
-                        // unsubscribe
-                        // remark
-                        // result
-                    }
-                } catch (IOException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            } else {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        } else {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
+        String sEvent = aEvent != null ? aEvent.toString() : "null";
+        String sPacket = aPacket != null ? aPacket.getUTF8() : "null";
+        logger.log(Level.INFO, "Event: {0}  Packet: {1}", new Object[]{sEvent, sPacket});
+        MtGoxPacket packet = new MtGoxPacket(aEvent, aPacket);
+        StreamEvent event = new StreamEvent(this, StreamEvent.EventType.Packet, packet);
+        applicationEventPublisher.publishEvent(event);
     }
 
     @Override
     public void processClosed(WebSocketClientEvent aEvent) {
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }
