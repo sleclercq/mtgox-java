@@ -12,7 +12,7 @@
  * You should have received a copy of the Lesser GNU General Public License
  * along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
  */
-package to.sparks.mtgox.net;
+package to.sparks.mtgox.service;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +21,8 @@ import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import to.sparks.mtgox.PacketEvent;
+import to.sparks.mtgox.event.PacketEvent;
+import to.sparks.mtgox.net.MtGoxPacket;
 
 /**
  *

@@ -14,6 +14,10 @@
  */
 package to.sparks.mtgox.service;
 
+import to.sparks.mtgox.event.DepthEvent;
+import to.sparks.mtgox.event.TickerEvent;
+import to.sparks.mtgox.event.PacketEvent;
+import to.sparks.mtgox.event.TradeEvent;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +37,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import to.sparks.mtgox.*;
 import to.sparks.mtgox.model.*;
 import to.sparks.mtgox.net.MtGoxPacket;
-import to.sparks.mtgox.net.SocketListener;
 
 /**
  *

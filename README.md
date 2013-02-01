@@ -56,15 +56,15 @@ Examples of how to use the API
 
 Source code examples of how to use the API have been provided.
 
-1.  Get ticker info and account details [HowToGetInfo.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/HowToGetInfo.java "source code example")
+1.  Get ticker info and account details [HowToGetInfo.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/HowToGetInfo.java "source code example")
 
-2.  Place an order [PlaceOrders.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/PlaceOrders.java "source code example")
+2.  Place an order [PlaceOrders.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/PlaceOrders.java "source code example")
 
-3.  Withdraw and send bitcoins [HowToWithdrawBitcoins.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/HowToWithdrawBitcoins.java "source code example")
+3.  Withdraw and send bitcoins [HowToWithdrawBitcoins.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/HowToWithdrawBitcoins.java "source code example")
 
-4.  Receive events from the mtgox websocket API [WebsocketExamples.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/WebsocketExamples.java "source code example")
+4.  Receive events from the mtgox websocket API [WebsocketExamples.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/WebsocketExamples.java "source code example")
 
-5.  A simple trading bot example (not yet complete) [TradingBot.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/examples/TradingBot.java "source code example")
+5.  A simple trading bot example (not yet complete) [TradingBot.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/TradingBot.java "source code example")
 
 MtGox API credentials file: mtgox.properties
 ------------------------

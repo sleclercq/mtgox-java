@@ -12,17 +12,17 @@
  * You should have received a copy of the Lesser GNU General Public License
  * along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
  */
-package to.sparks.mtgox;
+package to.sparks.mtgox.event;
 
-import to.sparks.mtgox.model.Ticker;
+import to.sparks.mtgox.net.MtGoxPacket;
 
 /**
  *
  * @author SparksG
  */
-public class TickerEvent extends StreamEvent<Ticker> {
+public class PacketEvent extends StreamEvent<MtGoxPacket> {
 
-    public TickerEvent(Object source, Ticker payload) {
+    public PacketEvent(Object source, MtGoxPacket payload) {
         super(source, payload);
     }
 }

@@ -19,12 +19,6 @@
         </property>
     </bean>
 
-    <bean id="socketListener" class="to.sparks.mtgox.net.SocketListener">
-        <constructor-arg index="0">
-            <ref bean="logger"/>
-        </constructor-arg>
-    </bean>
-
     <bean id="httpApiV1" class="to.sparks.mtgox.service.HTTPClientV1Service" >
         <constructor-arg index="0">
             <ref bean="logger"/>
@@ -34,6 +28,12 @@
         </constructor-arg>
         <constructor-arg index="2">
             <null />
+        </constructor-arg>
+    </bean>
+
+    <bean id="socketListener" class="to.sparks.mtgox.service.SocketListener">
+        <constructor-arg index="0">
+            <ref bean="logger"/>
         </constructor-arg>
     </bean>
 

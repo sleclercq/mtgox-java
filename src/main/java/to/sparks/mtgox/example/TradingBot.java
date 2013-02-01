@@ -12,7 +12,7 @@
  * You should have received a copy of the Lesser GNU General Public License
  * along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
  */
-package to.sparks.mtgox.examples;
+package to.sparks.mtgox.example;
 
 import java.math.BigDecimal;
 import java.util.logging.Level;

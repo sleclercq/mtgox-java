@@ -12,17 +12,26 @@
  * You should have received a copy of the Lesser GNU General Public License
  * along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
  */
-package to.sparks.mtgox;
+package to.sparks.mtgox.event;
 
-import to.sparks.mtgox.model.Trade;
+import org.springframework.context.ApplicationEvent;
 
 /**
  *
  * @author SparksG
  */
-public class TradeEvent extends StreamEvent<Trade> {
+public abstract class StreamEvent<T> extends ApplicationEvent {
 
-    public TradeEvent(Object source, Trade payload) {
-        super(source, payload);
+ //   private static final long serialVersionUID = 3487524279263502L;
+    private T payload;
+
+    public StreamEvent(Object source, T payload) {
+        super(source);
+        this.payload = payload;
+
+    }
+
+    public Object getPayload() {
+        return payload;
     }
 }

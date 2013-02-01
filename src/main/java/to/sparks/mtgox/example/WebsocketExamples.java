@@ -12,17 +12,17 @@
  * You should have received a copy of the Lesser GNU General Public License
  * along with the MtGox-Java API .  If not, see <http://www.gnu.org/licenses/>.
  */
-package to.sparks.mtgox.examples;
+package to.sparks.mtgox.example;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import to.sparks.mtgox.DepthEvent;
-import to.sparks.mtgox.StreamEvent;
-import to.sparks.mtgox.TickerEvent;
-import to.sparks.mtgox.TradeEvent;
+import to.sparks.mtgox.event.DepthEvent;
+import to.sparks.mtgox.event.StreamEvent;
+import to.sparks.mtgox.event.TickerEvent;
+import to.sparks.mtgox.event.TradeEvent;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.Ticker;
 import to.sparks.mtgox.model.Trade;
