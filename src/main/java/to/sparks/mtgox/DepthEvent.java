@@ -14,24 +14,15 @@
  */
 package to.sparks.mtgox;
 
-import org.springframework.context.ApplicationEvent;
+import to.sparks.mtgox.model.Depth;
 
 /**
  *
  * @author SparksG
  */
-public abstract class StreamEvent<T> extends ApplicationEvent {
+public class DepthEvent extends StreamEvent<Depth> {
 
- //   private static final long serialVersionUID = 3487524279263502L;
-    private T payload;
-
-    public StreamEvent(Object source, T payload) {
-        super(source);
-        this.payload = payload;
-
-    }
-
-    public Object getPayload() {
-        return payload;
+    public DepthEvent(Object source, Depth payload) {
+        super(source, payload);
     }
 }

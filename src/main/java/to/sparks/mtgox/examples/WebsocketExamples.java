@@ -18,7 +18,10 @@ import java.util.logging.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import to.sparks.mtgox.DepthEvent;
 import to.sparks.mtgox.StreamEvent;
+import to.sparks.mtgox.TickerEvent;
+import to.sparks.mtgox.TradeEvent;
 import to.sparks.mtgox.model.Depth;
 import to.sparks.mtgox.model.Ticker;
 import to.sparks.mtgox.model.Trade;
@@ -44,19 +47,16 @@ public class WebsocketExamples implements ApplicationListener<StreamEvent> {
 
     @Override
     public void onApplicationEvent(StreamEvent event) {
-        switch (event.getEventType()) {
-            case Depth:
-                Depth depth = (Depth) event.getPayload();
-                logger.info(depth.getItem());
-                break;
-            case Ticker:
-                Ticker ticker = (Ticker) event.getPayload();
-                logger.info(ticker.getLast().toPlainString());
-                break;
-            case Trade:
-                Trade trade = (Trade) event.getPayload();
-                logger.info(trade.getPrice_currency());
-                break;
+
+        if (event instanceof DepthEvent) {
+            Depth depth = (Depth) event.getPayload();
+            logger.info(depth.getItem());
+        } else if (event instanceof TickerEvent) {
+            Ticker ticker = (Ticker) event.getPayload();
+            logger.info(ticker.getLast().toPlainString());
+        } else if (event instanceof TradeEvent) {
+            Trade trade = (Trade) event.getPayload();
+            logger.info(trade.getPrice_currency());
         }
     }
 }

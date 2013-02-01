@@ -30,8 +30,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import to.sparks.mtgox.MtGoxWebsocketClient;
-import to.sparks.mtgox.StreamEvent;
+import to.sparks.mtgox.*;
 import to.sparks.mtgox.model.*;
 import to.sparks.mtgox.net.MtGoxPacket;
 import to.sparks.mtgox.net.SocketListener;
@@ -40,7 +39,7 @@ import to.sparks.mtgox.net.SocketListener;
  *
  * @author SparksG
  */
-class WebsocketClientService implements Runnable, MtGoxWebsocketClient, ApplicationEventPublisherAware, ApplicationListener<StreamEvent> {
+class WebsocketClientService implements Runnable, MtGoxWebsocketClient, ApplicationEventPublisherAware, ApplicationListener<PacketEvent> {
 
     private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
@@ -78,7 +77,62 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         taskExecutor.shutdown();
     }
 
-    public void packetEvent(MtGoxPacket packet) {
+    public void tradeEvent(Trade trade) {
+        if (applicationEventPublisher != null) {
+            CurrencyInfo ci = null;
+            if (!currencyCache.containsKey(trade.getPrice_currency())) {
+                try {
+                    ci = httpAPIV1.getCurrencyInfo(trade.getPrice_currency());
+                    currencyCache.put(trade.getPrice_currency(), ci);
+                } catch (Exception ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+            ci = currencyCache.get(trade.getPrice_currency());
+            if (ci != null) {
+                trade.setCurrencyInfo(ci);
+            }
+            TradeEvent event = new TradeEvent(this, trade);
+            applicationEventPublisher.publishEvent(event);
+        }
+    }
+
+    public void tickerEvent(Ticker ticker) {
+        if (applicationEventPublisher != null) {
+            TickerEvent event = new TickerEvent(this, ticker);
+            applicationEventPublisher.publishEvent(event);
+        }
+    }
+
+    public void depthEvent(Depth depth) {
+        if (applicationEventPublisher != null) {
+            DepthEvent event = new DepthEvent(this, depth);
+            applicationEventPublisher.publishEvent(event);
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+
+            websocket.addListener(socketListener);
+            websocket.open("ws://websocket.mtgox.com/mtgox");
+            logger.info("WebSocket API Client started.");
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @Override
+    public void onApplicationEvent(PacketEvent event) {
+        MtGoxPacket packet = (MtGoxPacket) event.getPayload();
+
         WebSocketClientEvent aEvent = packet.getaEvent();
         WebSocketPacket aPacket = packet.getaPacket();
 
@@ -131,68 +185,6 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
             }
         } else {
             throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
-
-    public void tradeEvent(Trade trade) {
-        if (applicationEventPublisher != null) {
-            CurrencyInfo ci = null;
-            if (!currencyCache.containsKey(trade.getPrice_currency())) {
-                try {
-                    ci = httpAPIV1.getCurrencyInfo(trade.getPrice_currency());
-                    currencyCache.put(trade.getPrice_currency(), ci);
-                } catch (Exception ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
-            ci = currencyCache.get(trade.getPrice_currency());
-            if (ci != null) {
-                trade.setCurrencyInfo(ci);
-            }
-            StreamEvent event = new StreamEvent(this, StreamEvent.EventType.Trade, trade);
-            applicationEventPublisher.publishEvent(event);
-        }
-    }
-
-    public void tickerEvent(Ticker ticker) {
-        if (applicationEventPublisher != null) {
-            StreamEvent event = new StreamEvent(this, StreamEvent.EventType.Ticker, ticker);
-            applicationEventPublisher.publishEvent(event);
-        }
-    }
-
-    public void depthEvent(Depth depth) {
-        if (applicationEventPublisher != null) {
-            StreamEvent event = new StreamEvent(this, StreamEvent.EventType.Depth, depth);
-            applicationEventPublisher.publishEvent(event);
-        }
-    }
-
-    @Override
-    public void run() {
-        try {
-
-            websocket.addListener(socketListener);
-            websocket.open("ws://websocket.mtgox.com/mtgox");
-            logger.info("WebSocket API Client started.");
-
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
-    }
-
-    @Override
-    public void onApplicationEvent(StreamEvent event) {
-        switch (event.getEventType()) {
-            case Packet:
-                MtGoxPacket packet = (MtGoxPacket) event.getPayload();
-                packetEvent(packet);
-                break;
         }
     }
 }

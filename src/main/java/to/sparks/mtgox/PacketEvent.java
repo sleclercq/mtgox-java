@@ -14,24 +14,15 @@
  */
 package to.sparks.mtgox;
 
-import org.springframework.context.ApplicationEvent;
+import to.sparks.mtgox.net.MtGoxPacket;
 
 /**
  *
  * @author SparksG
  */
-public abstract class StreamEvent<T> extends ApplicationEvent {
+public class PacketEvent extends StreamEvent<MtGoxPacket> {
 
- //   private static final long serialVersionUID = 3487524279263502L;
-    private T payload;
-
-    public StreamEvent(Object source, T payload) {
-        super(source);
-        this.payload = payload;
-
-    }
-
-    public Object getPayload() {
-        return payload;
+    public PacketEvent(Object source, MtGoxPacket payload) {
+        super(source, payload);
     }
 }

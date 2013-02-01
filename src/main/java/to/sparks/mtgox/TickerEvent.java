@@ -14,24 +14,15 @@
  */
 package to.sparks.mtgox;
 
-import org.springframework.context.ApplicationEvent;
+import to.sparks.mtgox.model.Ticker;
 
 /**
  *
  * @author SparksG
  */
-public abstract class StreamEvent<T> extends ApplicationEvent {
+public class TickerEvent extends StreamEvent<Ticker> {
 
- //   private static final long serialVersionUID = 3487524279263502L;
-    private T payload;
-
-    public StreamEvent(Object source, T payload) {
-        super(source);
-        this.payload = payload;
-
-    }
-
-    public Object getPayload() {
-        return payload;
+    public TickerEvent(Object source, Ticker payload) {
+        super(source, payload);
     }
 }

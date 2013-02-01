@@ -21,7 +21,7 @@ import org.jwebsocket.api.WebSocketClientListener;
 import org.jwebsocket.api.WebSocketPacket;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import to.sparks.mtgox.StreamEvent;
+import to.sparks.mtgox.PacketEvent;
 
 /**
  *
@@ -45,9 +45,9 @@ public class SocketListener implements WebSocketClientListener, ApplicationEvent
     public void processPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
         String sEvent = aEvent != null ? aEvent.toString() : "null";
         String sPacket = aPacket != null ? aPacket.getUTF8() : "null";
-        logger.log(Level.INFO, "Event: {0}  Packet: {1}", new Object[]{sEvent, sPacket});
+        logger.log(Level.FINE, "WebSocketClientListener.processPacket( Event: {0}  Packet: {1} )", new Object[]{sEvent, sPacket});
         MtGoxPacket packet = new MtGoxPacket(aEvent, aPacket);
-        StreamEvent event = new StreamEvent(this, StreamEvent.EventType.Packet, packet);
+        PacketEvent event = new PacketEvent(this, packet);
         applicationEventPublisher.publishEvent(event);
     }
 
