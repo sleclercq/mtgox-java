@@ -13,7 +13,11 @@ You can support this work via bitcoin donation to my tip jar.  1DdDs3rPR9W37cbF5
 Current status
 --------------
 
-Some of the private HTTP API functions and the websocket subscription functions are not yet fully implemented.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface here... http://goo.gl/NxBG6
+Some of the private HTTP API functions and the websocket subscription functions are not yet fully implemented.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface in the following files.
+
+1,  The MtGox HTTP API [MtGoxHTTPClient.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/MtGoxHTTPClient.java "source code example")
+
+2,  The MtGox Websocket API [MtGoxWebsocketClient.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/MtGoxWebsocketClient.java "source code example")
 
 Using in your own project
 -------------------------
