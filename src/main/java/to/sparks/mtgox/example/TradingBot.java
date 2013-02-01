@@ -56,7 +56,7 @@ public class TradingBot {
     public static void main(String[] args) throws Exception {
 
         // Obtain an instance of the API
-        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/Beans.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/example/Beans.xml");
         MtGoxHTTPClient mtgoxAPI = (MtGoxHTTPClient) context.getBean("mtgoxUSD");
 
 //        Ticker ticker = mtgoxUSD.getTicker();

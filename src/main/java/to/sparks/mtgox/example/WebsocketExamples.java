@@ -42,7 +42,7 @@ public class WebsocketExamples implements ApplicationListener<StreamEvent> {
 
     public static void main(String[] args) throws Exception {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/WebsocketExamples.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/example/WebsocketExamples.xml");
         WebsocketExamples me = context.getBean("websocketExamples", WebsocketExamples.class);
     }
 

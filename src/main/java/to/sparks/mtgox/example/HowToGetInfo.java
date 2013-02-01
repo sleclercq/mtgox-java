@@ -36,7 +36,7 @@ public class HowToGetInfo {
     public static void main(String[] args) throws Exception {
 
         // Obtain a $USD instance of the API
-        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/examples/Beans.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/example/Beans.xml");
         MtGoxHTTPClient mtgoxUSD = (MtGoxHTTPClient) context.getBean("mtgoxUSD");
 
         Ticker ticker = mtgoxUSD.getTicker();
