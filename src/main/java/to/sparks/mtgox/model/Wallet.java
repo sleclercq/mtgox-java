@@ -1,6 +1,6 @@
 package to.sparks.mtgox.model;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *

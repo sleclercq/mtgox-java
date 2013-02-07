@@ -14,18 +14,14 @@
  */
 package to.sparks.mtgox.service;
 
-import to.sparks.mtgox.event.DepthEvent;
-import to.sparks.mtgox.event.TickerEvent;
-import to.sparks.mtgox.event.PacketEvent;
-import to.sparks.mtgox.event.TradeEvent;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketPacket;
 import org.jwebsocket.client.java.BaseWebSocket;
@@ -34,7 +30,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import to.sparks.mtgox.*;
+import to.sparks.mtgox.MtGoxWebsocketClient;
+import to.sparks.mtgox.event.DepthEvent;
+import to.sparks.mtgox.event.PacketEvent;
+import to.sparks.mtgox.event.TickerEvent;
+import to.sparks.mtgox.event.TradeEvent;
 import to.sparks.mtgox.model.*;
 import to.sparks.mtgox.net.MtGoxPacket;
 

@@ -5,7 +5,7 @@ import java.util.Currency;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import to.sparks.mtgox.net.JSONSource;
 
 /**

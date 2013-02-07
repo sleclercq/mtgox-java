@@ -2,9 +2,9 @@ package to.sparks.mtgox.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
  * This bean can be used as a dynamic proxy for *any* JSON object
