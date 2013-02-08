@@ -52,7 +52,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
     static final Logger logger = Logger.getLogger(TradingBot.class.getName());
 
     /* The percentage of total coins ordered in each staggered order */
-    static final double[] percentagesOrderPriceSpread = new double[]{0.12D, 0.18D, 0.50D, 0.15D, 0.05D};
+    static final double[] percentagesOrderPriceSpread = new double[]{0.10D, 0.16D, 0.45D, 0.14D, 0.05D};
 
     /* The percentage below last price that each order should be staggered */
     static final double[] percentagesAboveOrBelowPrice = new double[]{0.002D, 0.004D, 0.008D, 0.0120D, 0.016D};
