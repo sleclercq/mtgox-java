@@ -288,11 +288,11 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
         private void cancelOrders(MtGoxHTTPClient mtGoxAPI, Order[] orders) throws Exception {
             if (ArrayUtils.isNotEmpty(orders)) {
                 for (Order order : orders) {
-                    logger.log(Level.INFO, "Cancelling order: {0}", order.getOid());
+                    logger.log(Level.FINE, "Cancelling order: {0}", order.getOid());
                     mtGoxAPI.cancelOrder(order);
                 }
             } else {
-                logger.info("There are no orders to cancel.");
+                logger.fine("There are no orders to cancel.");
             }
         }
     }
