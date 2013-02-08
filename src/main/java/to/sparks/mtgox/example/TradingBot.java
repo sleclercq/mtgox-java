@@ -52,14 +52,14 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
     static final Logger logger = Logger.getLogger(TradingBot.class.getName());
 
     /* The percentage of total coins ordered in each staggered order */
-    static final double[] percentagesOrderPriceSpread = new double[]{0.10D, 0.16D, 0.45D, 0.14D, 0.05D};
+    static final double[] percentagesOrderPriceSpread = new double[]{0.08D, 0.18D, 0.46D, 0.14D, 0.05D};
 
-    /* The percentage below last price that each order should be staggered */
-    static final double[] percentagesAboveOrBelowPrice = new double[]{0.002D, 0.004D, 0.008D, 0.0120D, 0.016D};
+    /* The percentage above ot below last price that each order should be staggered */
+    static final double[] percentagesAboveOrBelowPrice = new double[]{0.003D, 0.005D, 0.008D, 0.0120D, 0.016D};
 
     /* The percentage of price that an order is allowed to deviate before re-ordering
      * at the newly calculated prices */
-    static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.002D);
+    static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.0015D);
     private ThreadPoolTaskExecutor taskExecutor;
     private MtGoxHTTPClient mtgoxAPI;
     private AccountInfo info;
@@ -112,7 +112,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
             } else if (event instanceof TickerEvent) {
                 if (((Ticker) event.getPayload()).getCurrencyCode().equalsIgnoreCase(baseCurrency.getCurrency().getCurrencyCode())) {
                     lastTicker = (Ticker) event.getPayload();
-                    logger.log(Level.INFO, "Ticker Last: {0}{1}{2} Volume: {3} Buy: {0}{4} Sell: {0}{5}", new Object[]{
+                    logger.log(Level.FINE, "Ticker Last: {0}{1}{2} Volume: {3} Buy: {0}{4} Sell: {0}{5}", new Object[]{
                                 lastTicker.getVwap().getCurrencyInfo().getCurrency().getCurrencyCode(),
                                 lastTicker.getVwap().getCurrencyInfo().getSymbol(),
                                 lastTicker.getLast().toPlainString(),
