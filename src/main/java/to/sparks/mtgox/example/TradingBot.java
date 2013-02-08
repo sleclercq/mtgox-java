@@ -41,26 +41,23 @@ public class TradingBot {
     static final Logger logger = Logger.getLogger(TradingBot.class.getName());
 
     /* The percentage of total coins ordered in each staggered order */
-    static final double[] percentagesOrderPriceSpread = new double[]{0.10D, 0.15D, 0.50D, 0.15D, 0.10D};
+    static final double[] percentagesOrderPriceSpread = new double[]{0.12D, 0.18D, 0.50D, 0.15D, 0.05D};
 
     /* The percentage below last price that each order should be staggered */
     static final double[] percentagesBelowLastPrice = new double[]{0.005D, 0.0075D, 0.0125D, 0.0150D, 0.02D};
 
     /* The percentage of price that an order is allowed to deviate before re-ordering
      * at the newly calculated prices */
-    static final double percentAllowedPriceDeviation = 0.005D;
+    static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.005D);
 
     /*
-     * Note:  THIS CODE IS STILL INCOMPLETE - NOT READY FOR USE YET
+     * Note: THIS CODE IS STILL INCOMPLETE - NOT READY FOR USE YET
      */
     public static void main(String[] args) throws Exception {
 
         // Obtain an instance of the API
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/example/Beans.xml");
         MtGoxHTTPClient mtgoxAPI = (MtGoxHTTPClient) context.getBean("mtgoxUSD");
-
-//        Ticker ticker = mtgoxUSD.getTicker();
-//        logger.log(Level.INFO, "Last price: {0}", ticker.getLast().getDisplay());
 
         // Get the private account info
         AccountInfo info = mtgoxAPI.getAccountInfo();
@@ -81,7 +78,12 @@ public class TradingBot {
 
         Order[] openOrders = mtgoxAPI.getOpenOrders();
 
-        if (isOrdersValid(openOrders)) {
+        MtGoxFiatCurrency[] optimumPrices = new MtGoxFiatCurrency[openOrders.length];
+        for (int i = 0; i < openOrders.length; i++) {
+            optimumPrices[i] = getPriceAtOrderIndex((MtGoxFiatCurrency) ticker.getLast(), i);
+        }
+
+        if (isOrdersValid(optimumPrices, openOrders)) {
             logger.info("The current orders remain valid.");
             for (Order order : openOrders) {
                 logger.log(Level.INFO, "Open order: {0} status: {1} price: {2}{3} amount: {4}", new Object[]{order.getOid(), order.getStatus(), order.getCurrency().getCurrencyCode(), order.getPrice().getDisplay(), order.getAmount().getDisplay()});
@@ -89,19 +91,22 @@ public class TradingBot {
         } else {
             logger.info("There are invalid bid or ask orders, or none exist.");
             cancelOrders(mtgoxAPI, openOrders);
+
+            for (int i = 0; i < optimumPrices.length; i++) {
+                MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoOrder.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
+                logger.log(Level.INFO, "Placing order at price: {0}{1} amount: {2}", new Object[]{optimumPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumPrices[i].getNumUnits(), vol});
+                String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumPrices[i], vol);
+                logger.log(Level.INFO, "Order ref: {0}", ref);
+            }
         }
     }
 
-    private static boolean isOrdersValid(Order[] orders) {
+    private static boolean isOrdersValid(MtGoxFiatCurrency[] optimumPrices, Order[] orders) {
         boolean bRet = false;
         if (ArrayUtils.isNotEmpty(orders)
                 && orders.length == percentagesOrderPriceSpread.length
                 && orders.length == percentagesBelowLastPrice.length) {
-            for (int i = 0; i < orders.length; i++) {
-                Order order = orders[i];
-                Double price = getPriceAtOrderIndex(i);
-
-            }
+            return isWithinAllowedDeviation(percentAllowedPriceDeviation, orders, optimumPrices);
         }
         return bRet;
     }
@@ -124,8 +129,9 @@ public class TradingBot {
      * @param index The index of the order price/volume in the orders arrays.
      * @return The calulated price of the order at the given index
      */
-    private static Double getPriceAtOrderIndex(int index) {
-        return 0.0D;
+    private static MtGoxFiatCurrency getPriceAtOrderIndex(MtGoxFiatCurrency lastPrice, int index) {
+        BigDecimal price = lastPrice.subtract(lastPrice.multiply(BigDecimal.valueOf(percentagesBelowLastPrice[index])));
+        return new MtGoxFiatCurrency(price, lastPrice.getCurrencyInfo());
     }
 
     /**
@@ -133,7 +139,7 @@ public class TradingBot {
      * The list must be sorted by descending price or this comparison will not
      * work.
      */
-    private static boolean isWithinAllowedDeviation(BigDecimal ordersPriceAllowedDeviation, Order[] actualOrders, MtGoxFiatCurrency[] optimumPrices) {
+    private static boolean isWithinAllowedDeviation(BigDecimal percentAllowedPriceDeviation, Order[] actualOrders, MtGoxFiatCurrency[] optimumPrices) {
         boolean bRet = true;
         for (int i = 0; i < actualOrders.length; i++) {
             BigDecimal actualPrice = actualOrders[i].getPrice().getPriceValue().getNumUnits();
@@ -144,7 +150,7 @@ public class TradingBot {
             } else {
                 diff = actualPrice.subtract(optimumPrice);
             }
-            if (diff.compareTo(ordersPriceAllowedDeviation) > 0) {
+            if (diff.compareTo(optimumPrice.multiply(percentAllowedPriceDeviation)) > 0) {
                 bRet = false;
                 break;
             }
