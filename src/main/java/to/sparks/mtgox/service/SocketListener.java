@@ -61,6 +61,19 @@ public class SocketListener implements WebSocketClientListener, ApplicationEvent
     }
 
     @Override
+    public void processOpening(WebSocketClientEvent aEvent) {
+        String sEvent = aEvent != null ? aEvent.toString() : "null";
+        logger.log(Level.FINE, "processOpening( Event: {0} )", new Object[]{sEvent});
+
+    }
+
+    @Override
+    public void processReconnecting(WebSocketClientEvent aEvent) {
+        String sEvent = aEvent != null ? aEvent.toString() : "null";
+        logger.log(Level.WARNING, "processReconnecting( Event: {0} )", new Object[]{sEvent});
+    }
+
+    @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }

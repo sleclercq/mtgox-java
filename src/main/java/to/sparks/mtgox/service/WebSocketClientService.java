@@ -24,8 +24,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketPacket;
-import org.jwebsocket.client.java.BaseWebSocket;
-import org.jwebsocket.kit.RawPacket;
+import org.jwebsocket.client.java.BaseWebSocketClient;
+import org.jwebsocket.kit.WebSocketFrameType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
@@ -46,7 +46,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
 
     private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
-    final BaseWebSocket websocket = new BaseWebSocket();
+    private BaseWebSocketClient websocket;
     private ThreadPoolTaskExecutor taskExecutor;
     private Map<String, CurrencyInfo> currencyCache;
     private HTTPClientV1Service httpAPIV1;
@@ -59,6 +59,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         currencyCache = new HashMap<>();
         currencyCache.put("BTC", CurrencyInfo.BitcoinCurrencyInfo);
         this.socketListener = socketListener;
+        websocket = new BaseWebSocketClient();
     }
 
     public void init() {
@@ -150,7 +151,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         WebSocketPacket aPacket = packet.getaPacket();
 
         if (aEvent != null) {
-            if (aPacket != null && aPacket.getFrameType() == RawPacket.FRAMETYPE_UTF8) {  // RawPacket.FRAMETYPE_UTF8  or  WebSocketFrameType.TEXT
+            if (aPacket != null && aPacket.getFrameType() == WebSocketFrameType.TEXT) {  // RawPacket.FRAMETYPE_UTF8  or  WebSocketFrameType.TEXT
                 try {
                     // logger.fine(aPacket.getUTF8());
 
