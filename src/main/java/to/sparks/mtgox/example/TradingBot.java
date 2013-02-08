@@ -15,8 +15,13 @@
 package to.sparks.mtgox.example;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -44,15 +49,12 @@ public class TradingBot {
     static final double[] percentagesOrderPriceSpread = new double[]{0.12D, 0.18D, 0.50D, 0.15D, 0.05D};
 
     /* The percentage below last price that each order should be staggered */
-    static final double[] percentagesBelowLastPrice = new double[]{0.005D, 0.0075D, 0.0125D, 0.0150D, 0.02D};
+    static final double[] percentagesBelowLastPrice = new double[]{0.004D, 0.006D, 0.01D, 0.0140D, 0.018D};
 
     /* The percentage of price that an order is allowed to deviate before re-ordering
      * at the newly calculated prices */
-    static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.005D);
+    static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.002D);
 
-    /*
-     * Note: THIS CODE IS STILL INCOMPLETE - NOT READY FOR USE YET
-     */
     public static void main(String[] args) throws Exception {
 
         // Obtain an instance of the API
@@ -71,15 +73,15 @@ public class TradingBot {
         Ticker ticker = mtgoxAPI.getTicker();
         logger.log(Level.INFO, "Last price: {0}", ticker.getLast().toPlainString());
 
-        BigDecimal numBTCtoOrder = fiatWallet.getBalance().divide(ticker.getAvg());
+        MtGoxBitcoin numBTCtoOrder = new MtGoxBitcoin(fiatWallet.getBalance().divide(ticker.getAvg()));
         logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoOrder.toPlainString());
 
 //        Wallet btcWallet = info.getWallets().get("BTC");
 
         Order[] openOrders = mtgoxAPI.getOpenOrders();
 
-        MtGoxFiatCurrency[] optimumPrices = new MtGoxFiatCurrency[openOrders.length];
-        for (int i = 0; i < openOrders.length; i++) {
+        MtGoxFiatCurrency[] optimumPrices = new MtGoxFiatCurrency[percentagesBelowLastPrice.length];
+        for (int i = 0; i < percentagesBelowLastPrice.length; i++) {
             optimumPrices[i] = getPriceAtOrderIndex((MtGoxFiatCurrency) ticker.getLast(), i);
         }
 
@@ -94,7 +96,7 @@ public class TradingBot {
 
             for (int i = 0; i < optimumPrices.length; i++) {
                 MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoOrder.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
-                logger.log(Level.INFO, "Placing order at price: {0}{1} amount: {2}", new Object[]{optimumPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumPrices[i].getNumUnits(), vol});
+                logger.log(Level.INFO, "Placing order at price: {0}{1} amount: {2}", new Object[]{optimumPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumPrices[i].getNumUnits(), vol.toPlainString()});
                 String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumPrices[i], vol);
                 logger.log(Level.INFO, "Order ref: {0}", ref);
             }
@@ -141,8 +143,18 @@ public class TradingBot {
      */
     private static boolean isWithinAllowedDeviation(BigDecimal percentAllowedPriceDeviation, Order[] actualOrders, MtGoxFiatCurrency[] optimumPrices) {
         boolean bRet = true;
-        for (int i = 0; i < actualOrders.length; i++) {
-            BigDecimal actualPrice = actualOrders[i].getPrice().getPriceValue().getNumUnits();
+        // Sort the actual orders by price descending, so that they can be compared to the optimum prices array which is also in that order.
+        List<Order> sortedActualOrders = Arrays.asList(actualOrders);
+        Collections.sort(sortedActualOrders, new ReverseComparator(new Comparator<Order>() {
+
+            @Override
+            public int compare(Order o1, Order o2) {
+                return o1.getPrice().getPriceValue().compareTo(o2.getPrice().getPriceValue().getNumUnits());
+            }
+        }));
+
+        for (int i = 0; i < sortedActualOrders.size(); i++) {
+            BigDecimal actualPrice = sortedActualOrders.get(i).getPrice().getPriceValue().getNumUnits();
             BigDecimal optimumPrice = optimumPrices[i].getNumUnits();
             BigDecimal diff;
             if (actualPrice.compareTo(optimumPrice) < 0) {

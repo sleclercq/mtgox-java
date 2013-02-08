@@ -40,13 +40,6 @@ public class Wallet extends DtoBase implements CurrencyKludge {
     @Override
     public void setCurrencyInfo(CurrencyInfo currencyInfo) {
         this.currencyInfo = currencyInfo;
-        if (currencyInfo != null && !currencyInfo.isVirtual()) {
-            ((TickerPrice) balance).setCurrencyInfo(currencyInfo);
-            ((TickerPrice) dailyWithdrawLimit).setCurrencyInfo(currencyInfo);
-            ((TickerPrice) monthlyWithdrawLimit).setCurrencyInfo(currencyInfo);
-            ((TickerPrice) maxWithdraw).setCurrencyInfo(currencyInfo);
-            ((TickerPrice) openOrders).setCurrencyInfo(currencyInfo);
-        }
     }
 
     /*

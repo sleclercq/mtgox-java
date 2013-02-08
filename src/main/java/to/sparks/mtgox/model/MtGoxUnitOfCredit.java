@@ -19,7 +19,7 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     private final MathContext mc = new MathContext(0, RoundingMode.HALF_EVEN);
 
     public MtGoxUnitOfCredit(BigDecimal numUnits, CurrencyInfo currencyInfo) {
-        this.numUnits = numUnits;
+        this.numUnits = numUnits.setScale(currencyInfo.getDecimals(), RoundingMode.HALF_EVEN);
         this.currencyInfo = currencyInfo;
     }
 
@@ -29,7 +29,7 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     }
 
     public MtGoxUnitOfCredit(double units, CurrencyInfo currencyInfo) {
-        this.numUnits = new BigDecimal(units, mc).setScale(currencyInfo.getDecimals());
+        this.numUnits = new BigDecimal(units, mc).setScale(currencyInfo.getDecimals(), RoundingMode.HALF_EVEN);
         this.currencyInfo = currencyInfo;
     }
 
@@ -103,7 +103,7 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
     }
 
     public BigDecimal divide(BigDecimal target) {
-        return numUnits.divide(target);
+        return numUnits.divide(target, RoundingMode.DOWN);
     }
 
     public BigDecimal divide(MtGoxUnitOfCredit target) {

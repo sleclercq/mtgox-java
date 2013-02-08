@@ -2,3 +2,4 @@ target/
 nbactions.xml
 *.releaseBackup
 log.out
+mtgox.properties

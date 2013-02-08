@@ -1,6 +1,7 @@
 package to.sparks.mtgox.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * A real-world currency (such as USD) as used by MtGox
