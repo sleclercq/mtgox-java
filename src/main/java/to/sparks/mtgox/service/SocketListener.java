@@ -40,13 +40,15 @@ public class SocketListener implements WebSocketClientListener, ApplicationEvent
     @Override
     public void processOpened(WebSocketClientEvent aEvent) {
         // The websocket has been opened
+        String sEvent = aEvent != null ? aEvent.toString() : "null";
+        logger.log(Level.FINE, "processOpened( Event: {0} )", new Object[]{sEvent});
     }
 
     @Override
     public void processPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
         String sEvent = aEvent != null ? aEvent.toString() : "null";
         String sPacket = aPacket != null ? aPacket.getUTF8() : "null";
-        logger.log(Level.FINE, "WebSocketClientListener.processPacket( Event: {0}  Packet: {1} )", new Object[]{sEvent, sPacket});
+        logger.log(Level.FINE, "processPacket( Event: {0}  Packet: {1} )", new Object[]{sEvent, sPacket});
         MtGoxPacket packet = new MtGoxPacket(aEvent, aPacket);
         PacketEvent event = new PacketEvent(this, packet);
         applicationEventPublisher.publishEvent(event);
@@ -54,6 +56,8 @@ public class SocketListener implements WebSocketClientListener, ApplicationEvent
 
     @Override
     public void processClosed(WebSocketClientEvent aEvent) {
+        String sEvent = aEvent != null ? aEvent.toString() : "null";
+        logger.log(Level.WARNING, "processClosed( Event: {0} )", new Object[]{sEvent});
     }
 
     @Override
