@@ -54,7 +54,7 @@
 <pre><code>    &lt;dependency&gt;
         &lt;groupId&gt;to.sparks&lt;/groupId&gt;
         &lt;artifactId&gt;mtgox&lt;/artifactId&gt;
-        &lt;version&gt;0.1.6&lt;/version&gt;
+        &lt;version&gt;0.1.7&lt;/version&gt;
     &lt;/dependency&gt;
 </code></pre>
 
@@ -79,7 +79,7 @@
     &lt;dependency&gt;
         &lt;groupId&gt;to.sparks&lt;/groupId&gt;
         &lt;artifactId&gt;mtgox&lt;/artifactId&gt;
-        &lt;version&gt;0.1.7-SNAPSHOT&lt;/version&gt;
+        &lt;version&gt;0.1.8-SNAPSHOT&lt;/version&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
 </code></pre>
@@ -93,8 +93,18 @@
 <li><p>Place an order <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/PlaceOrders.java" title="source code example">PlaceOrders.java</a></p></li>
 <li><p>Withdraw and send bitcoins <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/HowToWithdrawBitcoins.java" title="source code example">HowToWithdrawBitcoins.java</a></p></li>
 <li><p>Receive events from the mtgox websocket API <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/WebsocketExamples.java" title="source code example">WebsocketExamples.java</a></p></li>
-<li><p>A simple trading bot example (not yet complete) <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/TradingBot.java" title="source code example">TradingBot.java</a></p></li>
-</ol><h2>MtGox API credentials file: mtgox.properties</h2>
+<li><p>A simple trading bot example <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/TradingBot.java" title="source code example">TradingBot.java</a></p></li>
+</ol><p>Running the examples:  To compile a jarfile that contains all the dependencies, use the following maven command line.</p>
+
+<pre><code>mvn install assembly:single
+</code></pre>
+
+<p>The default example can be run from the command-line with the following.  Make sure to have mtgox.properties in the current directory with your API key and secret.</p>
+
+<pre><code>java -jar mtgox-java/target/mtgox-0.1.7-SNAPSHOT-jar-with-dependencies.jar
+</code></pre>
+
+<h2>MtGox API credentials file: mtgox.properties</h2>
 
 <p>To keep your API credentials safe, they are stored in a separate file called mtgox.properties.  This filename is hard-coded into the application which will look for this file in the current directory.</p>
 
