@@ -27,7 +27,7 @@ Release versions are available from Maven Central, add the following dependency 
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.1.6</version>
+            <version>0.1.7</version>
         </dependency>
 
 You can get developer snapshot releases by adding the following to your maven pom.xml
@@ -51,7 +51,7 @@ You can get developer snapshot releases by adding the following to your maven po
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.1.7-SNAPSHOT</version>
+            <version>0.1.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -69,6 +69,14 @@ Source code examples of how to use the API have been provided.
 4.  Receive events from the mtgox websocket API [WebsocketExamples.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/WebsocketExamples.java "source code example")
 
 5.  A simple trading bot example [TradingBot.java](https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/TradingBot.java "source code example")
+
+Running the examples:  To compile a jarfile that contains all the dependencies, use the following maven command line.
+
+    mvn install assembly:single
+
+The default example can be run from the command-line with the following.  Make sure to have mtgox.properties in the current directory with your API key and secret.
+
+    java -jar mtgox-java/target/mtgox-0.1.7-SNAPSHOT-jar-with-dependencies.jar
 
 MtGox API credentials file: mtgox.properties
 ------------------------
