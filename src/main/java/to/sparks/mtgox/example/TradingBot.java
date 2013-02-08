@@ -35,7 +35,7 @@ import to.sparks.mtgox.event.TradeEvent;
 import to.sparks.mtgox.model.*;
 
 /**
- * A trading bot that will maintain bid orders slightly below the last price.
+ * A trading bot that will maintain a sequence of bid and ask orders.
  *
  * It should maintain a staggered set of orders that are cancelled and reordered
  * if they move too far from their calculated price or volume.
