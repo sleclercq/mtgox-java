@@ -105,7 +105,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                             logger.info("TaskExecuter is busy! Skipping a turn...");
                         }
                     } else {
-                        logger.log(Level.INFO, "Insufficient sized trade event: {0}${1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
+                        logger.log(Level.FINE, "Insufficient sized trade event: {0}${1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
                     }
                 }
 
@@ -254,7 +254,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                     for (int i = 0; i < optimumBidPrices.length; i++) {
                         MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoBuy.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
                         String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumBidPrices[i], vol);
-                        logger.log(Level.INFO, "Bid order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString(), ref});
+                        logger.log(Level.FINE, "Bid order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString(), ref});
                     }
 
                     Wallet btcWallet = info.getWallets().get("BTC");
@@ -263,7 +263,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                     for (int i = 0; i < optimumAskPrices.length; i++) {
                         MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoSell.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
                         String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Ask, optimumAskPrices[i], vol);
-                        logger.log(Level.INFO, "Ask order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString(), ref});
+                        logger.log(Level.FINE, "Ask order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString(), ref});
                     }
                     logger.log(Level.INFO, "Account balance: {0} BTC + {2}{3}{1} = Total current value: {2}{3}{4}",
                             new Object[]{btcWallet.getBalance().toPlainString(),
