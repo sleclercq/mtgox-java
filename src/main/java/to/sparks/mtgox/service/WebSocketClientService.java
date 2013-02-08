@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.jwebsocket.api.WebSocketClientEvent;
 import org.jwebsocket.api.WebSocketPacket;
 import org.jwebsocket.client.java.BaseWebSocketClient;
+import org.jwebsocket.client.java.ReliabilityOptions;
 import org.jwebsocket.kit.WebSocketFrameType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -59,7 +60,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         currencyCache = new HashMap<>();
         currencyCache.put("BTC", CurrencyInfo.BitcoinCurrencyInfo);
         this.socketListener = socketListener;
-        websocket = new BaseWebSocketClient();
+        websocket = new BaseWebSocketClient(new ReliabilityOptions(true, 100L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
 
     public void init() {
