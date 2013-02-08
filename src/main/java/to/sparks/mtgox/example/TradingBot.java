@@ -250,8 +250,10 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                         String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Ask, optimumAskPrices[i], vol);
                         logger.log(Level.INFO, "Ask order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString(), ref});
                     }
-                    logger.log(Level.INFO, "Total current account value of bitcoins and currency: {0}{1}{2}",
-                            new Object[]{ticker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
+                    logger.log(Level.INFO, "Account balance: {0} BTC + {2}{3}{1} = Total current value: {2}{3}{4}",
+                            new Object[]{btcWallet.getBalance().toPlainString(),
+                                fiatWallet.getBalance().toPlainString(),
+                                ticker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
                                 ticker.getLast().getCurrencyInfo().getSymbol(),
                                 fiatWallet.getBalance().add(btcWallet.getBalance().multiply(ticker.getLast().getNumUnits()))});
                 }
