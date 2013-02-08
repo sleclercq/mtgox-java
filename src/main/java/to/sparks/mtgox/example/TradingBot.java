@@ -97,7 +97,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                 Trade trade = (Trade) event.getPayload();
                 if (trade.getPrice().getCurrencyInfo().equals(baseCurrency)) {
 
-                    if (trade.getAmount().compareTo(new MtGoxBitcoin(0.2D)) > 0) {
+                    if (trade.getAmount().compareTo(new MtGoxBitcoin(0.9D)) > 0) {
                         logger.log(Level.INFO, "Market-making trade event: {0}${1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
                         if (taskExecutor.getActiveCount() < 1) {
                             taskExecutor.execute(new Logic());
