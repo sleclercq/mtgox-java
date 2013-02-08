@@ -110,15 +110,17 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                 }
 
             } else if (event instanceof TickerEvent) {
-                lastTicker = (Ticker) event.getPayload();
-                logger.log(Level.INFO, "Ticker Last: {0}{1}{2} Volume: {3} Buy: {0}{1}{4} Sell: {0}{1}{5}", new Object[]{
-                            lastTicker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
-                            lastTicker.getLast().getCurrencyInfo().getSymbol(),
-                            lastTicker.getLast().toPlainString(),
-                            lastTicker.getVol().toPlainString(),
-                            lastTicker.getBuy().getDisplay(),
-                            lastTicker.getSell().getDisplay()
-                        });
+                if (((Ticker) event.getPayload()).getCurrencyCode().equalsIgnoreCase(baseCurrency.getCurrency().getCurrencyCode())) {
+                    lastTicker = (Ticker) event.getPayload();
+                    logger.log(Level.INFO, "Ticker Last: {0}{1}{2} Volume: {3} Buy: {0}{4} Sell: {0}{5}", new Object[]{
+                                lastTicker.getVwap().getCurrencyInfo().getCurrency().getCurrencyCode(),
+                                lastTicker.getVwap().getCurrencyInfo().getSymbol(),
+                                lastTicker.getLast().toPlainString(),
+                                lastTicker.getVol().toPlainString(),
+                                lastTicker.getBuy().getDisplay(),
+                                lastTicker.getSell().getDisplay()
+                            });
+                }
             }
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);

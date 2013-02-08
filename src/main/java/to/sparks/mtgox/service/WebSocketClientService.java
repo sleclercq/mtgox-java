@@ -80,18 +80,24 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         taskExecutor.shutdown();
     }
 
+    private CurrencyInfo getCachedCurrencyInfo(String currencyCode) {
+        CurrencyInfo ci = null;
+
+        if (!currencyCache.containsKey(currencyCode)) {
+            try {
+                ci = httpAPIV1.getCurrencyInfo(currencyCode);
+                currencyCache.put(currencyCode, ci);
+            } catch (Exception ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+        }
+        ci = currencyCache.get(currencyCode);
+        return ci;
+    }
+
     public void tradeEvent(Trade trade) {
         if (applicationEventPublisher != null) {
-            CurrencyInfo ci = null;
-            if (!currencyCache.containsKey(trade.getPrice_currency())) {
-                try {
-                    ci = httpAPIV1.getCurrencyInfo(trade.getPrice_currency());
-                    currencyCache.put(trade.getPrice_currency(), ci);
-                } catch (Exception ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
-            ci = currencyCache.get(trade.getPrice_currency());
+            CurrencyInfo ci = getCachedCurrencyInfo(trade.getPrice_currency());
             if (ci != null) {
                 trade.setCurrencyInfo(ci);
             }
@@ -102,6 +108,10 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
 
     public void tickerEvent(Ticker ticker) {
         if (applicationEventPublisher != null) {
+            CurrencyInfo ci = getCachedCurrencyInfo(ticker.getCurrencyCode());
+            if (ci != null) {
+                ticker.setCurrencyInfo(ci);
+            }
             TickerEvent event = new TickerEvent(this, ticker);
             applicationEventPublisher.publishEvent(event);
         }

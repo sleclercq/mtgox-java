@@ -35,4 +35,8 @@ public class MtGoxPrice extends DtoBase {
     public String getDisplay_short() {
         return display_short;
     }
+
+    public String getCurrencyCode() {
+        return currency;
+    }
 }
