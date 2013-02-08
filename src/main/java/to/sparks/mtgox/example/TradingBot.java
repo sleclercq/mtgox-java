@@ -37,12 +37,13 @@ import to.sparks.mtgox.model.*;
 /**
  * A trading bot that will maintain bid orders slightly below the last price.
  *
- * It should maintain a staggered set of bid orders below the last price that
- * are cancelled and reordered if they move too far from their calculated price
- * or volume.
+ * It should maintain a staggered set of orders that are cancelled and reordered
+ * if they move too far from their calculated price or volume.
  * The bids are for varying amounts of bitcoins, according to a configured array
  * of percentages.
- * The total fiat currency balance of the account is used in placing the orders.
+ * The orders are staggered above the lowest ask price and below the highest bid
+ * price.
+ * The total balance of the account is used in placing the orders.
  *
  * @author SparksG
  */
