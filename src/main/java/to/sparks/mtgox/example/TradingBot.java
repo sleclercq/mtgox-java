@@ -91,17 +91,16 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
             try {
                 Trade trade = (Trade) event.getPayload();
                 if (trade.getPrice().getCurrencyInfo().equals(baseCurrency)) {
-                    logger.log(Level.INFO, "Trade event: {0} {1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
 
                     if (trade.getAmount().compareTo(new MtGoxBitcoin(0.2D)) > 0) {
+                        logger.log(Level.INFO, "Market-making trade event: {0} {1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
                         if (taskExecutor.getActiveCount() < 1) {
                             taskExecutor.execute(new Logic());
                         } else {
-                            logger.info("TaskExecuter is busy!");
+                            logger.info("TaskExecuter is busy! Skipping a turn...");
                         }
-
                     } else {
-                        logger.info("Volume too small for trigger.");
+                        logger.log(Level.INFO, "Insufficient sized trade event: {0} {1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
                     }
                 }
             } catch (Exception ex) {
@@ -239,9 +238,8 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                     logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoBuy.toPlainString());
                     for (int i = 0; i < optimumBidPrices.length; i++) {
                         MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoBuy.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
-                        logger.log(Level.INFO, "Placing bid order at price: {0}{1} amount: {2}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString()});
                         String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumBidPrices[i], vol);
-                        logger.log(Level.INFO, "Bid order ref: {0}", ref);
+                        logger.log(Level.INFO, "Bid order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString(), ref});
                     }
 
                     Wallet btcWallet = info.getWallets().get("BTC");
@@ -249,11 +247,13 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                     logger.log(Level.INFO, "Trying to sell a total of {0} bitcoins.", numBTCtoSell.toPlainString());
                     for (int i = 0; i < optimumAskPrices.length; i++) {
                         MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoSell.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
-                        logger.log(Level.INFO, "Placing ask order at price: {0}{1} amount: {2}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString()});
                         String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Ask, optimumAskPrices[i], vol);
-                        logger.log(Level.INFO, "Ask order ref: {0}", ref);
+                        logger.log(Level.INFO, "Ask order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString(), ref});
                     }
-                    logger.log(Level.INFO, "Total current account value of bitcoins and currency: {0}{1}", new Object[]{ticker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(), fiatWallet.getBalance().add(btcWallet.getBalance().multiply(ticker.getLast().getNumUnits()))});
+                    logger.log(Level.INFO, "Total current account value of bitcoins and currency: {0}{1}{2}",
+                            new Object[]{ticker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
+                                ticker.getLast().getCurrencyInfo().getSymbol(),
+                                fiatWallet.getBalance().add(btcWallet.getBalance().multiply(ticker.getLast().getNumUnits()))});
                 }
             } catch (Exception ex) {
                 Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
