@@ -30,6 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.event.StreamEvent;
+import to.sparks.mtgox.event.TickerEvent;
 import to.sparks.mtgox.event.TradeEvent;
 import to.sparks.mtgox.model.*;
 
@@ -54,15 +55,16 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
     static final double[] percentagesOrderPriceSpread = new double[]{0.12D, 0.18D, 0.50D, 0.15D, 0.05D};
 
     /* The percentage below last price that each order should be staggered */
-    static final double[] percentagesAboveOrBelowPrice = new double[]{0.003D, 0.005D, 0.009D, 0.0120D, 0.016D};
+    static final double[] percentagesAboveOrBelowPrice = new double[]{0.002D, 0.004D, 0.008D, 0.0120D, 0.016D};
 
     /* The percentage of price that an order is allowed to deviate before re-ordering
      * at the newly calculated prices */
-    static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.003D);
+    static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.002D);
     private ThreadPoolTaskExecutor taskExecutor;
     private MtGoxHTTPClient mtgoxAPI;
     private AccountInfo info;
     private CurrencyInfo baseCurrency;
+    private Ticker lastTicker;
 
     public TradingBot(ThreadPoolTaskExecutor taskExecutor, MtGoxHTTPClient mtgoxAPI) throws Exception {
         this.mtgoxAPI = mtgoxAPI;
@@ -75,6 +77,9 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
         baseCurrency = mtgoxAPI.getCurrencyInfo(mtgoxAPI.getBaseCurrency());
         String currencyCode = baseCurrency.getCurrency().getCurrencyCode();
         logger.log(Level.INFO, "Configured base currency: {0}", currencyCode);
+        lastTicker = mtgoxAPI.getTicker();
+        taskExecutor.execute(new Logic());
+
         logger.info("Waiting for trade events to trigger bot activity...");
     }
 
@@ -86,26 +91,37 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
 
     @Override
     public void onApplicationEvent(StreamEvent event) {
+        try {
 
-        if (event instanceof TradeEvent) {
-            try {
+            if (event instanceof TradeEvent) {
                 Trade trade = (Trade) event.getPayload();
                 if (trade.getPrice().getCurrencyInfo().equals(baseCurrency)) {
 
                     if (trade.getAmount().compareTo(new MtGoxBitcoin(0.2D)) > 0) {
-                        logger.log(Level.INFO, "Market-making trade event: {0} {1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
+                        logger.log(Level.INFO, "Market-making trade event: {0}${1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
                         if (taskExecutor.getActiveCount() < 1) {
                             taskExecutor.execute(new Logic());
                         } else {
                             logger.info("TaskExecuter is busy! Skipping a turn...");
                         }
                     } else {
-                        logger.log(Level.INFO, "Insufficient sized trade event: {0} {1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
+                        logger.log(Level.INFO, "Insufficient sized trade event: {0}${1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
                     }
                 }
-            } catch (Exception ex) {
-                logger.log(Level.SEVERE, null, ex);
+
+            } else if (event instanceof TickerEvent) {
+                lastTicker = (Ticker) event.getPayload();
+                logger.log(Level.INFO, "Ticker Last: {0}{1}{2} Volume: {3} Buy: {0}{1}{4} Sell: {0}{1}{5}", new Object[]{
+                            lastTicker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
+                            lastTicker.getLast().getCurrencyInfo().getSymbol(),
+                            lastTicker.getLast().toPlainString(),
+                            lastTicker.getVol().toPlainString(),
+                            lastTicker.getBuy().getDisplay(),
+                            lastTicker.getSell().getDisplay()
+                        });
             }
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -210,31 +226,28 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
         @Override
         public void run() {
             try {
+                MtGoxFiatCurrency buyPrice = lastTicker.getBuy().getPriceValue();
+                MtGoxFiatCurrency sellPrice = lastTicker.getSell().getPriceValue();
                 Order[] openOrders = mtgoxAPI.getOpenOrders();
-
-                Ticker ticker = mtgoxAPI.getTicker();
 
                 MtGoxFiatCurrency[] optimumBidPrices = new MtGoxFiatCurrency[percentagesAboveOrBelowPrice.length];
                 for (int i = 0; i < percentagesAboveOrBelowPrice.length; i++) {
-                    optimumBidPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Bid, ticker.getBuy().getPriceValue(), i);
+                    optimumBidPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Bid, buyPrice, i);
                 }
 
                 MtGoxFiatCurrency[] optimumAskPrices = new MtGoxFiatCurrency[percentagesAboveOrBelowPrice.length];
                 for (int i = 0; i < percentagesAboveOrBelowPrice.length; i++) {
-                    optimumAskPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Ask, ticker.getSell().getPriceValue(), i);
+                    optimumAskPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Ask, sellPrice, i);
                 }
 
                 if (isOrdersValid(optimumBidPrices, optimumAskPrices, openOrders)) {
                     logger.info("The current orders remain valid.");
-//                        for (Order order : openOrders) {
-//                            logger.log(Level.INFO, "Open order: {0} status: {1} price: {2}{3} amount: {4}", new Object[]{order.getOid(), order.getStatus(), order.getCurrency().getCurrencyCode(), order.getPrice().getDisplay(), order.getAmount().getDisplay()});
-//                        }
                 } else {
                     logger.info("There are invalid bid or ask orders, or none exist.");
                     cancelOrders(mtgoxAPI, openOrders);
 
                     Wallet fiatWallet = info.getWallets().get(baseCurrency.getCurrency().getCurrencyCode());
-                    MtGoxBitcoin numBTCtoBuy = new MtGoxBitcoin(fiatWallet.getBalance().divide(ticker.getBuy().getPriceValue()));
+                    MtGoxBitcoin numBTCtoBuy = new MtGoxBitcoin(fiatWallet.getBalance().divide(buyPrice));
                     logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoBuy.toPlainString());
                     for (int i = 0; i < optimumBidPrices.length; i++) {
                         MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoBuy.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
@@ -253,9 +266,9 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                     logger.log(Level.INFO, "Account balance: {0} BTC + {2}{3}{1} = Total current value: {2}{3}{4}",
                             new Object[]{btcWallet.getBalance().toPlainString(),
                                 fiatWallet.getBalance().toPlainString(),
-                                ticker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
-                                ticker.getLast().getCurrencyInfo().getSymbol(),
-                                fiatWallet.getBalance().add(btcWallet.getBalance().multiply(ticker.getLast().getNumUnits()))});
+                                lastTicker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
+                                lastTicker.getLast().getCurrencyInfo().getSymbol(),
+                                fiatWallet.getBalance().add(btcWallet.getBalance().multiply(lastTicker.getLast().getNumUnits()))});
                 }
             } catch (Exception ex) {
                 Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
