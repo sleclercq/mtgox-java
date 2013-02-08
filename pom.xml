@@ -107,7 +107,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>to.sparks.mtgox.examples.HowToGetInfo</mainClass>
+                            <mainClass>to.sparks.mtgox.example.TradingBot</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
