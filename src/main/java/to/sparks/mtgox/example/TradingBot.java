@@ -249,21 +249,29 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                     cancelOrders(mtgoxAPI, openOrders);
 
                     Wallet fiatWallet = info.getWallets().get(baseCurrency.getCurrency().getCurrencyCode());
-                    MtGoxBitcoin numBTCtoBuy = new MtGoxBitcoin(fiatWallet.getBalance().divide(buyPrice));
-                    logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoBuy.toPlainString());
-                    for (int i = 0; i < optimumBidPrices.length; i++) {
-                        MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoBuy.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
-                        String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumBidPrices[i], vol);
-                        logger.log(Level.FINE, "Bid order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString(), ref});
+                    try {
+                        MtGoxBitcoin numBTCtoBuy = new MtGoxBitcoin(fiatWallet.getBalance().divide(buyPrice));
+                        logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoBuy.toPlainString());
+                        for (int i = 0; i < optimumBidPrices.length; i++) {
+                            MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoBuy.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
+                            String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumBidPrices[i], vol);
+                            logger.log(Level.FINE, "Bid order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString(), ref});
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     Wallet btcWallet = info.getWallets().get("BTC");
-                    MtGoxBitcoin numBTCtoSell = (MtGoxBitcoin) btcWallet.getBalance();
-                    logger.log(Level.INFO, "Trying to sell a total of {0} bitcoins.", numBTCtoSell.toPlainString());
-                    for (int i = 0; i < optimumAskPrices.length; i++) {
-                        MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoSell.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
-                        String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Ask, optimumAskPrices[i], vol);
-                        logger.log(Level.FINE, "Ask order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString(), ref});
+                    try {
+                        MtGoxBitcoin numBTCtoSell = (MtGoxBitcoin) btcWallet.getBalance();
+                        logger.log(Level.INFO, "Trying to sell a total of {0} bitcoins.", numBTCtoSell.toPlainString());
+                        for (int i = 0; i < optimumAskPrices.length; i++) {
+                            MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoSell.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
+                            String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Ask, optimumAskPrices[i], vol);
+                            logger.log(Level.FINE, "Ask order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString(), ref});
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     logger.log(Level.INFO, "Account balance: {0} BTC + {2}{3}{1} = Total current value: {2}{3}{4}",
                             new Object[]{btcWallet.getBalance().toPlainString(),
