@@ -62,7 +62,6 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
     static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.0015D);
     private ThreadPoolTaskExecutor taskExecutor;
     private MtGoxHTTPClient mtgoxAPI;
-    private AccountInfo info;
     private CurrencyInfo baseCurrency;
     private Ticker lastTicker;
 
@@ -70,8 +69,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
         this.mtgoxAPI = mtgoxAPI;
         this.taskExecutor = taskExecutor;
 
-        // Get the private account info
-        info = mtgoxAPI.getAccountInfo();
+        AccountInfo info = mtgoxAPI.getAccountInfo();
         logger.log(Level.INFO, "Logged into account: {0}", info.getLogin());
 
         baseCurrency = mtgoxAPI.getCurrencyInfo(mtgoxAPI.getBaseCurrency());
@@ -247,6 +245,8 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                 } else {
                     logger.info("There are invalid bid or ask orders, or none exist.");
                     cancelOrders(mtgoxAPI, openOrders);
+
+                    AccountInfo info = mtgoxAPI.getAccountInfo();
 
                     Wallet fiatWallet = info.getWallets().get(baseCurrency.getCurrency().getCurrencyCode());
                     try {
