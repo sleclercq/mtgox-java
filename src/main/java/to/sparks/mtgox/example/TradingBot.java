@@ -15,6 +15,7 @@
 package to.sparks.mtgox.example;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,6 +27,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.event.StreamEvent;
 import to.sparks.mtgox.event.TradeEvent;
@@ -52,17 +54,19 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
     static final double[] percentagesOrderPriceSpread = new double[]{0.12D, 0.18D, 0.50D, 0.15D, 0.05D};
 
     /* The percentage below last price that each order should be staggered */
-    static final double[] percentagesBelowLastPrice = new double[]{0.004D, 0.006D, 0.01D, 0.0140D, 0.018D};
+    static final double[] percentagesAboveOrBelowPrice = new double[]{0.003D, 0.005D, 0.009D, 0.0120D, 0.016D};
 
     /* The percentage of price that an order is allowed to deviate before re-ordering
      * at the newly calculated prices */
     static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.003D);
+    private ThreadPoolTaskExecutor taskExecutor;
     private MtGoxHTTPClient mtgoxAPI;
     private AccountInfo info;
     private CurrencyInfo baseCurrency;
 
-    public TradingBot(MtGoxHTTPClient mtgoxAPI) throws Exception {
+    public TradingBot(ThreadPoolTaskExecutor taskExecutor, MtGoxHTTPClient mtgoxAPI) throws Exception {
         this.mtgoxAPI = mtgoxAPI;
+        this.taskExecutor = taskExecutor;
 
         // Get the private account info
         info = mtgoxAPI.getAccountInfo();
@@ -71,7 +75,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
         baseCurrency = mtgoxAPI.getCurrencyInfo(mtgoxAPI.getBaseCurrency());
         String currencyCode = baseCurrency.getCurrency().getCurrencyCode();
         logger.log(Level.INFO, "Configured base currency: {0}", currencyCode);
-
+        logger.info("Waiting for trade events to trigger bot activity...");
     }
 
     public static void main(String[] args) throws Exception {
@@ -87,41 +91,15 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
             try {
                 Trade trade = (Trade) event.getPayload();
                 if (trade.getPrice().getCurrencyInfo().equals(baseCurrency)) {
-                    logger.log(Level.INFO, "Trade: {0} {1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
+                    logger.log(Level.INFO, "Trade event: {0} {1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
 
                     if (trade.getAmount().compareTo(new MtGoxBitcoin(0.2D)) > 0) {
-
-                        //        Wallet btcWallet = info.getWallets().get("BTC");
-
-                        Order[] openOrders = mtgoxAPI.getOpenOrders();
-
-                        Ticker ticker = mtgoxAPI.getTicker();
-                        logger.log(Level.INFO, "Buy price: {0}", ticker.getBuy().getDisplay());
-
-                        MtGoxFiatCurrency[] optimumPrices = new MtGoxFiatCurrency[percentagesBelowLastPrice.length];
-                        for (int i = 0; i < percentagesBelowLastPrice.length; i++) {
-                            optimumPrices[i] = getPriceAtOrderIndex(ticker.getBuy().getPriceValue(), i);
-                        }
-
-                        if (isOrdersValid(optimumPrices, openOrders)) {
-                            logger.info("The current orders remain valid.");
-//                        for (Order order : openOrders) {
-//                            logger.log(Level.INFO, "Open order: {0} status: {1} price: {2}{3} amount: {4}", new Object[]{order.getOid(), order.getStatus(), order.getCurrency().getCurrencyCode(), order.getPrice().getDisplay(), order.getAmount().getDisplay()});
-//                        }
+                        if (taskExecutor.getActiveCount() < 1) {
+                            taskExecutor.execute(new Logic());
                         } else {
-                            logger.info("There are invalid bid or ask orders, or none exist.");
-                            cancelOrders(mtgoxAPI, openOrders);
-
-                            Wallet fiatWallet = info.getWallets().get(baseCurrency.getCurrency().getCurrencyCode());
-                            MtGoxBitcoin numBTCtoOrder = new MtGoxBitcoin(fiatWallet.getBalance().divide(ticker.getBuy().getPriceValue()));
-                            logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoOrder.toPlainString());
-                            for (int i = 0; i < optimumPrices.length; i++) {
-                                MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoOrder.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
-                                logger.log(Level.INFO, "Placing order at price: {0}{1} amount: {2}", new Object[]{optimumPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumPrices[i].getNumUnits(), vol.toPlainString()});
-                                String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumPrices[i], vol);
-                                logger.log(Level.INFO, "Order ref: {0}", ref);
-                            }
+                            logger.info("TaskExecuter is busy!");
                         }
+
                     } else {
                         logger.info("Volume too small for trigger.");
                     }
@@ -132,25 +110,14 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
         }
     }
 
-    private static boolean isOrdersValid(MtGoxFiatCurrency[] optimumPrices, Order[] orders) {
+    private static boolean isOrdersValid(MtGoxFiatCurrency[] optimumBidPrices, MtGoxFiatCurrency[] optimumAskPrices, Order[] orders) {
         boolean bRet = false;
         if (ArrayUtils.isNotEmpty(orders)
-                && orders.length == percentagesOrderPriceSpread.length
-                && orders.length == percentagesBelowLastPrice.length) {
-            return isWithinAllowedDeviation(percentAllowedPriceDeviation, orders, optimumPrices);
+                && orders.length == percentagesOrderPriceSpread.length * 2
+                && orders.length == percentagesAboveOrBelowPrice.length * 2) {
+            return isWithinAllowedDeviation(percentAllowedPriceDeviation, orders, optimumBidPrices, optimumAskPrices);
         }
         return bRet;
-    }
-
-    private static void cancelOrders(MtGoxHTTPClient mtGoxAPI, Order[] orders) throws Exception {
-        if (ArrayUtils.isNotEmpty(orders)) {
-            for (Order order : orders) {
-                logger.log(Level.INFO, "Cancelling order: {0}", order.getOid());
-                mtGoxAPI.cancelOrder(order);
-            }
-        } else {
-            logger.info("There are no orders to cancel.");
-        }
     }
 
     /**
@@ -160,9 +127,16 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
      * @param index The index of the order price/volume in the orders arrays.
      * @return The calulated price of the order at the given index
      */
-    private static MtGoxFiatCurrency getPriceAtOrderIndex(MtGoxFiatCurrency lastPrice, int index) {
-        BigDecimal price = lastPrice.subtract(lastPrice.multiply(BigDecimal.valueOf(percentagesBelowLastPrice[index])));
-        return new MtGoxFiatCurrency(price, lastPrice.getCurrencyInfo());
+    private static MtGoxFiatCurrency getPriceAtOrderIndex(MtGoxHTTPClient.OrderType orderType, MtGoxFiatCurrency lastPrice, int index) {
+        MtGoxFiatCurrency price;
+
+        if (orderType == MtGoxHTTPClient.OrderType.Bid) {
+            price = new MtGoxFiatCurrency(lastPrice.subtract(lastPrice.multiply(BigDecimal.valueOf(percentagesAboveOrBelowPrice[index]))), lastPrice.getCurrencyInfo());
+        } else {
+            price = new MtGoxFiatCurrency(lastPrice.add(lastPrice.multiply(BigDecimal.valueOf(percentagesAboveOrBelowPrice[index]))), lastPrice.getCurrencyInfo());
+        }
+
+        return price;
     }
 
     /**
@@ -170,11 +144,22 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
      * The list must be sorted by descending price or this comparison will not
      * work.
      */
-    private static boolean isWithinAllowedDeviation(BigDecimal percentAllowedPriceDeviation, Order[] actualOrders, MtGoxFiatCurrency[] optimumPrices) {
+    private static boolean isWithinAllowedDeviation(BigDecimal percentAllowedPriceDeviation, Order[] allOrders, MtGoxFiatCurrency[] optimumBidPrices, MtGoxFiatCurrency[] optimumAskPrices) {
         boolean bRet = true;
-        // Sort the actual orders by price descending, so that they can be compared to the optimum prices array which is also in that order.
-        List<Order> sortedActualOrders = Arrays.asList(actualOrders);
-        Collections.sort(sortedActualOrders, new ReverseComparator(new Comparator<Order>() {
+
+        List<Order> bidOrders = new ArrayList<>();
+        List<Order> askOrders = new ArrayList<>();
+
+        for (Order order : allOrders) {
+            if (order.getType() == MtGoxHTTPClient.OrderType.Bid) {
+                bidOrders.add(order);
+            } else {
+                askOrders.add(order);
+            }
+        }
+
+        // Sort the bid orders by price descending, so that they can be compared to the optimum prices array which is also in that order.
+        Collections.sort(bidOrders, new ReverseComparator(new Comparator<Order>() {
 
             @Override
             public int compare(Order o1, Order o2) {
@@ -182,20 +167,108 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
             }
         }));
 
-        for (int i = 0; i < sortedActualOrders.size(); i++) {
-            BigDecimal actualPrice = sortedActualOrders.get(i).getPrice().getPriceValue().getNumUnits();
-            BigDecimal optimumPrice = optimumPrices[i].getNumUnits();
-            BigDecimal diff;
-            if (actualPrice.compareTo(optimumPrice) < 0) {
-                diff = optimumPrice.subtract(actualPrice);
-            } else {
-                diff = actualPrice.subtract(optimumPrice);
+        // Sort the ask orders by price ascending, so that they can be compared to the optimum prices array which is also in that order.
+        Collections.sort(askOrders, new Comparator<Order>() {
+
+            @Override
+            public int compare(Order o1, Order o2) {
+                return o1.getPrice().getPriceValue().compareTo(o2.getPrice().getPriceValue().getNumUnits());
             }
-            if (diff.compareTo(optimumPrice.multiply(percentAllowedPriceDeviation)) > 0) {
+        });
+
+        for (int i = 0; i < bidOrders.size(); i++) {
+            BigDecimal actualPrice = bidOrders.get(i).getPrice().getPriceValue().getNumUnits();
+            BigDecimal optimumPrice = optimumBidPrices[i].getNumUnits();
+            if (isDiffTooLarge(actualPrice, optimumPrice)) {
+                bRet = false;
+                break;
+            }
+        }
+
+        for (int i = 0; i < askOrders.size(); i++) {
+            BigDecimal actualPrice = askOrders.get(i).getPrice().getPriceValue().getNumUnits();
+            BigDecimal optimumPrice = optimumAskPrices[i].getNumUnits();
+            if (isDiffTooLarge(actualPrice, optimumPrice)) {
                 bRet = false;
                 break;
             }
         }
         return bRet;
+    }
+
+    private static boolean isDiffTooLarge(BigDecimal actualPrice, BigDecimal optimumPrice) {
+        BigDecimal diff;
+        if (actualPrice.compareTo(optimumPrice) < 0) {
+            diff = optimumPrice.subtract(actualPrice);
+        } else {
+            diff = actualPrice.subtract(optimumPrice);
+        }
+        return diff.compareTo(optimumPrice.multiply(percentAllowedPriceDeviation)) > 0;
+    }
+
+    class Logic implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                Order[] openOrders = mtgoxAPI.getOpenOrders();
+
+                Ticker ticker = mtgoxAPI.getTicker();
+
+                MtGoxFiatCurrency[] optimumBidPrices = new MtGoxFiatCurrency[percentagesAboveOrBelowPrice.length];
+                for (int i = 0; i < percentagesAboveOrBelowPrice.length; i++) {
+                    optimumBidPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Bid, ticker.getBuy().getPriceValue(), i);
+                }
+
+                MtGoxFiatCurrency[] optimumAskPrices = new MtGoxFiatCurrency[percentagesAboveOrBelowPrice.length];
+                for (int i = 0; i < percentagesAboveOrBelowPrice.length; i++) {
+                    optimumAskPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Ask, ticker.getSell().getPriceValue(), i);
+                }
+
+                if (isOrdersValid(optimumBidPrices, optimumAskPrices, openOrders)) {
+                    logger.info("The current orders remain valid.");
+//                        for (Order order : openOrders) {
+//                            logger.log(Level.INFO, "Open order: {0} status: {1} price: {2}{3} amount: {4}", new Object[]{order.getOid(), order.getStatus(), order.getCurrency().getCurrencyCode(), order.getPrice().getDisplay(), order.getAmount().getDisplay()});
+//                        }
+                } else {
+                    logger.info("There are invalid bid or ask orders, or none exist.");
+                    cancelOrders(mtgoxAPI, openOrders);
+
+                    Wallet fiatWallet = info.getWallets().get(baseCurrency.getCurrency().getCurrencyCode());
+                    MtGoxBitcoin numBTCtoBuy = new MtGoxBitcoin(fiatWallet.getBalance().divide(ticker.getBuy().getPriceValue()));
+                    logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoBuy.toPlainString());
+                    for (int i = 0; i < optimumBidPrices.length; i++) {
+                        MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoBuy.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
+                        logger.log(Level.INFO, "Placing bid order at price: {0}{1} amount: {2}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString()});
+                        String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumBidPrices[i], vol);
+                        logger.log(Level.INFO, "Bid order ref: {0}", ref);
+                    }
+
+                    Wallet btcWallet = info.getWallets().get("BTC");
+                    MtGoxBitcoin numBTCtoSell = (MtGoxBitcoin) btcWallet.getBalance();
+                    logger.log(Level.INFO, "Trying to sell a total of {0} bitcoins.", numBTCtoSell.toPlainString());
+                    for (int i = 0; i < optimumAskPrices.length; i++) {
+                        MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoSell.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
+                        logger.log(Level.INFO, "Placing ask order at price: {0}{1} amount: {2}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString()});
+                        String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Ask, optimumAskPrices[i], vol);
+                        logger.log(Level.INFO, "Ask order ref: {0}", ref);
+                    }
+                    logger.log(Level.INFO, "Total current account value of bitcoins and currency: {0}{1}", new Object[]{ticker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(), fiatWallet.getBalance().add(btcWallet.getBalance().multiply(ticker.getLast().getNumUnits()))});
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        private void cancelOrders(MtGoxHTTPClient mtGoxAPI, Order[] orders) throws Exception {
+            if (ArrayUtils.isNotEmpty(orders)) {
+                for (Order order : orders) {
+                    logger.log(Level.INFO, "Cancelling order: {0}", order.getOid());
+                    mtGoxAPI.cancelOrder(order);
+                }
+            } else {
+                logger.info("There are no orders to cancel.");
+            }
+        }
     }
 }
