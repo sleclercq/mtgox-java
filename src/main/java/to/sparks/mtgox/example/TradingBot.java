@@ -16,7 +16,6 @@ package to.sparks.mtgox.example;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -53,7 +52,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
     static final Logger logger = Logger.getLogger(TradingBot.class.getName());
 
     /* The percentage of total balance bought or sold in each staggered order */
-    static final double[] percentagesOrderPriceSpread = new double[]{0.08D, 0.18D, 0.46D, 0.14D, 0.05D};
+    static final double[] percentagesOrderPriceSpread = new double[]{0.08D, 0.16D, 0.45D, 0.14D, 0.05D};
 
     /* The percentage above ot below last price that each order should be staggered */
     static final double[] percentagesAboveOrBelowPrice = new double[]{0.003D, 0.005D, 0.008D, 0.0120D, 0.016D};
