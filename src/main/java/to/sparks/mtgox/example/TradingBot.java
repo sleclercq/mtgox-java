@@ -87,6 +87,82 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
         TradingBot me = context.getBean("tradingBot", TradingBot.class);
     }
 
+    class Logic implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                MtGoxFiatCurrency buyPrice = lastTicker.getBuy().getPriceValue();
+                MtGoxFiatCurrency sellPrice = lastTicker.getSell().getPriceValue();
+                Order[] openOrders = mtgoxAPI.getOpenOrders();
+
+                MtGoxFiatCurrency[] optimumBidPrices = new MtGoxFiatCurrency[percentagesAboveOrBelowPrice.length];
+                for (int i = 0; i < percentagesAboveOrBelowPrice.length; i++) {
+                    optimumBidPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Bid, buyPrice, i);
+                }
+
+                MtGoxFiatCurrency[] optimumAskPrices = new MtGoxFiatCurrency[percentagesAboveOrBelowPrice.length];
+                for (int i = 0; i < percentagesAboveOrBelowPrice.length; i++) {
+                    optimumAskPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Ask, sellPrice, i);
+                }
+
+                if (isOrdersValid(optimumBidPrices, optimumAskPrices, openOrders)) {
+                    logger.info("The current orders remain valid.");
+                } else {
+                    logger.info("There are invalid bid or ask orders, or none exist.");
+                    cancelOrders(mtgoxAPI, openOrders);
+
+                    AccountInfo info = mtgoxAPI.getAccountInfo();
+
+                    Wallet fiatWallet = info.getWallets().get(baseCurrency.getCurrency().getCurrencyCode());
+                    try {
+                        MtGoxBitcoin numBTCtoBuy = new MtGoxBitcoin(fiatWallet.getBalance().divide(buyPrice));
+                        logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoBuy.toPlainString());
+                        for (int i = 0; i < optimumBidPrices.length; i++) {
+                            MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoBuy.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
+                            String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumBidPrices[i], vol);
+                            logger.log(Level.FINE, "Bid order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString(), ref});
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    Wallet btcWallet = info.getWallets().get("BTC");
+                    try {
+                        MtGoxBitcoin numBTCtoSell = (MtGoxBitcoin) btcWallet.getBalance();
+                        logger.log(Level.INFO, "Trying to sell a total of {0} bitcoins.", numBTCtoSell.toPlainString());
+                        for (int i = 0; i < optimumAskPrices.length; i++) {
+                            MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoSell.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
+                            String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Ask, optimumAskPrices[i], vol);
+                            logger.log(Level.FINE, "Ask order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString(), ref});
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    logger.log(Level.INFO, "Account balance: {0} BTC + {2}{3}{1} = Total current value: {2}{3}{4}",
+                            new Object[]{btcWallet.getBalance().toPlainString(),
+                                fiatWallet.getBalance().toPlainString(),
+                                lastTicker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
+                                lastTicker.getLast().getCurrencyInfo().getSymbol(),
+                                fiatWallet.getBalance().add(btcWallet.getBalance().multiply(lastTicker.getLast().getNumUnits()))});
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        private void cancelOrders(MtGoxHTTPClient mtGoxAPI, Order[] orders) throws Exception {
+            if (ArrayUtils.isNotEmpty(orders)) {
+                for (Order order : orders) {
+                    logger.log(Level.FINE, "Cancelling order: {0}", order.getOid());
+                    mtGoxAPI.cancelOrder(order);
+                }
+            } else {
+                logger.fine("There are no orders to cancel.");
+            }
+        }
+    }
+
     @Override
     public void onApplicationEvent(StreamEvent event) {
         try {
@@ -100,7 +176,7 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
                         if (taskExecutor.getActiveCount() < 1) {
                             taskExecutor.execute(new Logic());
                         } else {
-                            logger.info("TaskExecuter is busy! Skipping a turn...");
+                            logger.warning("TaskExecuter is busy! Skipping a turn...");
                         }
                     } else {
                         logger.log(Level.FINE, "Insufficient sized trade event: {0}${1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
@@ -219,81 +295,5 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
             diff = actualPrice.subtract(optimumPrice);
         }
         return diff.compareTo(optimumPrice.multiply(percentAllowedPriceDeviation)) > 0;
-    }
-
-    class Logic implements Runnable {
-
-        @Override
-        public void run() {
-            try {
-                MtGoxFiatCurrency buyPrice = lastTicker.getBuy().getPriceValue();
-                MtGoxFiatCurrency sellPrice = lastTicker.getSell().getPriceValue();
-                Order[] openOrders = mtgoxAPI.getOpenOrders();
-
-                MtGoxFiatCurrency[] optimumBidPrices = new MtGoxFiatCurrency[percentagesAboveOrBelowPrice.length];
-                for (int i = 0; i < percentagesAboveOrBelowPrice.length; i++) {
-                    optimumBidPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Bid, buyPrice, i);
-                }
-
-                MtGoxFiatCurrency[] optimumAskPrices = new MtGoxFiatCurrency[percentagesAboveOrBelowPrice.length];
-                for (int i = 0; i < percentagesAboveOrBelowPrice.length; i++) {
-                    optimumAskPrices[i] = getPriceAtOrderIndex(MtGoxHTTPClient.OrderType.Ask, sellPrice, i);
-                }
-
-                if (isOrdersValid(optimumBidPrices, optimumAskPrices, openOrders)) {
-                    logger.info("The current orders remain valid.");
-                } else {
-                    logger.info("There are invalid bid or ask orders, or none exist.");
-                    cancelOrders(mtgoxAPI, openOrders);
-
-                    AccountInfo info = mtgoxAPI.getAccountInfo();
-
-                    Wallet fiatWallet = info.getWallets().get(baseCurrency.getCurrency().getCurrencyCode());
-                    try {
-                        MtGoxBitcoin numBTCtoBuy = new MtGoxBitcoin(fiatWallet.getBalance().divide(buyPrice));
-                        logger.log(Level.INFO, "Trying to buy a total of {0} bitcoins.", numBTCtoBuy.toPlainString());
-                        for (int i = 0; i < optimumBidPrices.length; i++) {
-                            MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoBuy.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
-                            String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Bid, optimumBidPrices[i], vol);
-                            logger.log(Level.FINE, "Bid order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumBidPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumBidPrices[i].getNumUnits(), vol.toPlainString(), ref});
-                        }
-                    } catch (Exception ex) {
-                        Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                    Wallet btcWallet = info.getWallets().get("BTC");
-                    try {
-                        MtGoxBitcoin numBTCtoSell = (MtGoxBitcoin) btcWallet.getBalance();
-                        logger.log(Level.INFO, "Trying to sell a total of {0} bitcoins.", numBTCtoSell.toPlainString());
-                        for (int i = 0; i < optimumAskPrices.length; i++) {
-                            MtGoxBitcoin vol = new MtGoxBitcoin(numBTCtoSell.multiply(BigDecimal.valueOf(percentagesOrderPriceSpread[i])));
-                            String ref = mtgoxAPI.placeOrder(MtGoxHTTPClient.OrderType.Ask, optimumAskPrices[i], vol);
-                            logger.log(Level.FINE, "Ask order placed at price: {0}{1} amount: {2} ref: {3}", new Object[]{optimumAskPrices[i].getCurrencyInfo().getCurrency().getCurrencyCode(), optimumAskPrices[i].getNumUnits(), vol.toPlainString(), ref});
-                        }
-                    } catch (Exception ex) {
-                        Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    logger.log(Level.INFO, "Account balance: {0} BTC + {2}{3}{1} = Total current value: {2}{3}{4}",
-                            new Object[]{btcWallet.getBalance().toPlainString(),
-                                fiatWallet.getBalance().toPlainString(),
-                                lastTicker.getLast().getCurrencyInfo().getCurrency().getCurrencyCode(),
-                                lastTicker.getLast().getCurrencyInfo().getSymbol(),
-                                fiatWallet.getBalance().add(btcWallet.getBalance().multiply(lastTicker.getLast().getNumUnits()))});
-                }
-            } catch (Exception ex) {
-                Logger.getLogger(TradingBot.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        private void cancelOrders(MtGoxHTTPClient mtGoxAPI, Order[] orders) throws Exception {
-            if (ArrayUtils.isNotEmpty(orders)) {
-                for (Order order : orders) {
-                    logger.log(Level.FINE, "Cancelling order: {0}", order.getOid());
-                    mtGoxAPI.cancelOrder(order);
-                }
-            } else {
-                logger.fine("There are no orders to cancel.");
-            }
-        }
     }
 }
