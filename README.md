@@ -19,6 +19,8 @@ You can see what methods are implemented in the java API interface in the follow
 
 The MtGox Websocket API uses Spring Events to notify of incoming depth, trade and tickers.
 
+09/Feb/2013: I've had to import the jWebsocket sources into our github repo because their maven artifacts have not been updated for a very long time.
+
 Using in your own project
 -------------------------
 
@@ -30,7 +32,7 @@ Release versions are available from Maven Central, add the following dependency 
             <version>0.1.7</version>
         </dependency>
 
-You can get developer snapshot releases by adding the following to your maven pom.xml
+If you plan to use future versions of the API, developer snapshot releases can be obtained by adding the following to your maven pom.xml
 
     <repositories>
         ...
@@ -74,7 +76,7 @@ Running the examples:  To compile a jarfile that contains all the dependencies, 
 
     mvn install assembly:single
 
-The default example can be run from the command-line with the following.  Make sure to have mtgox.properties in the current directory with your API key and secret.
+The default example can be run from the command-line as follows.  Make sure also that the current directory  contains the file mtgox.properties (described below) containing your API key and secret.
 
     java -jar mtgox-java/target/mtgox-0.1.7-SNAPSHOT-jar-with-dependencies.jar
 
