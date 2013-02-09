@@ -41,11 +41,13 @@
 
 <h2>Current status</h2>
 
-<p>Some of the private HTTP API functions and the websocket subscription functions are not yet fully implemented.  Send me a request if you need a particular function that is not available.  You can see what methods are implemented in the java API interface in the following files.</p>
+<p>Some of the private HTTP API functions and the websocket subscription functions are not yet fully implemented.  Post in the issue tracker if you need a particular function that is not available.  </p>
 
-<p>1,  The MtGox HTTP API <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/MtGoxHTTPClient.java" title="source code example">MtGoxHTTPClient.java</a></p>
+<p>You can see what methods are implemented in the java API interface in the following file.  <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/MtGoxHTTPClient.java" title="source code example">MtGoxHTTPClient.java</a></p>
 
-<p>2,  The MtGox Websocket API <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/MtGoxWebsocketClient.java" title="source code example">MtGoxWebsocketClient.java</a></p>
+<p>The MtGox Websocket API uses Spring Events to notify of incoming depth, trade and tickers.</p>
+
+<p>09/Feb/2013: I've had to import the jWebsocket sources into our github repo because their maven artifacts have not been updated for a very long time.</p>
 
 <h2>Using in your own project</h2>
 
@@ -58,7 +60,7 @@
     &lt;/dependency&gt;
 </code></pre>
 
-<p>You can get developer snapshot releases by adding the following to your maven pom.xml</p>
+<p>If you plan to use future versions of the API, developer snapshot releases can be obtained by adding the following to your maven pom.xml</p>
 
 <pre><code>&lt;repositories&gt;
     ...
@@ -99,7 +101,7 @@
 <pre><code>mvn install assembly:single
 </code></pre>
 
-<p>The default example can be run from the command-line with the following.  Make sure to have mtgox.properties in the current directory with your API key and secret.</p>
+<p>The default example can be run from the command-line as follows.  Make sure also that the current directory  contains the file mtgox.properties (described below) containing your API key and secret.</p>
 
 <pre><code>java -jar mtgox-java/target/mtgox-0.1.7-SNAPSHOT-jar-with-dependencies.jar
 </code></pre>
