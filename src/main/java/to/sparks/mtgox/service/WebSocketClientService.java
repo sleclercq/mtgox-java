@@ -60,7 +60,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         currencyCache = new HashMap<>();
         currencyCache.put("BTC", CurrencyInfo.BitcoinCurrencyInfo);
         this.socketListener = socketListener;
-        websocket = new BaseWebSocketClient(new ReliabilityOptions(true, 1000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE));
+        websocket = new BaseWebSocketClient(new ReliabilityOptions(true, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
 
     public void init() {
