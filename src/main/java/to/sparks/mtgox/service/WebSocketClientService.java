@@ -75,6 +75,8 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
             }
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
+        } finally {
+            websocket = null;
         }
     }
 
@@ -90,7 +92,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     public void recycleWebsocketConnection() {
         logger.info("Recycle websocket.");
 
-        shutdown();
+        destroy();
         websocket = new BaseWebSocketClient(reliability);
         init();
     }
