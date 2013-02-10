@@ -52,6 +52,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     private Map<String, CurrencyInfo> currencyCache;
     private HTTPClientV1Service httpAPIV1;
     private SocketListener socketListener;
+    private ReliabilityOptions reliability = new ReliabilityOptions(true, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
     public WebsocketClientService(Logger logger, ThreadPoolTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener) {
         this.logger = logger;
@@ -60,7 +61,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         currencyCache = new HashMap<>();
         currencyCache.put("BTC", CurrencyInfo.BitcoinCurrencyInfo);
         this.socketListener = socketListener;
-        websocket = new BaseWebSocketClient(new ReliabilityOptions(true, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE));
+        websocket = new BaseWebSocketClient(reliability);
     }
 
     public void init() {
@@ -80,6 +81,18 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     @Override
     public void shutdown() {
         taskExecutor.shutdown();
+    }
+
+    /*
+     * Close and reopen the websocket. Use a Spring scheduler to call this every
+     * 15 minutes or so.
+     */
+    public void recycleWebsocketConnection() {
+        logger.info("Recycle websocket.");
+
+        shutdown();
+        websocket = new BaseWebSocketClient(reliability);
+        init();
     }
 
     private CurrencyInfo getCachedCurrencyInfo(String currencyCode) {
