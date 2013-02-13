@@ -114,6 +114,10 @@ public abstract class MtGoxUnitOfCredit implements Comparable<BigDecimal> {
         }
     }
 
+    public double doubleValue() {
+        return numUnits.doubleValue();
+    }
+
     public BigInteger unscaledValue() {
         return numUnits.unscaledValue();
     }
