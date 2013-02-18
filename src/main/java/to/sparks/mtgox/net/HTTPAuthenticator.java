@@ -167,9 +167,7 @@ public class HTTPAuthenticator {
             try {
                 Thread.sleep(killTimout);
                 if (con != null) {
-                    logger.warning("Timer thread forcing parent to quit connection");
                     con.disconnect();
-                    logger.warning("Timer thread closed connection held by parent, exiting");
                 }
             } catch (InterruptedException e) {
             }
