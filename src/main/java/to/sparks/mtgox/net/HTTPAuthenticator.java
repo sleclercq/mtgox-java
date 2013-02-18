@@ -169,7 +169,7 @@ public class HTTPAuthenticator {
                 if (con != null) {
                     con.disconnect();
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
             }
 
         }
