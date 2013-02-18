@@ -11,10 +11,11 @@
         <property name="ignoreUnresolvablePlaceholders" value="false"/>
     </bean>
 
-    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-        <property name="corePoolSize" value="5" />
+    <bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
+    <!--    <property name="corePoolSize" value="5" />
         <property name="maxPoolSize" value="10" />
-        <property name="queueCapacity" value="25" />
+        <property name="queueCapacity" value="25" /> -->
+        <property name="concurrencyLimit"><util:constant static-field="org.springframework.core.task.SimpleAsyncTaskExecutor.NO_CONCURRENCY" /></property>
     </bean>
 
     <bean id="logger" class="java.util.logging.Logger"

@@ -46,7 +46,7 @@ public class HTTPAuthenticator {
     protected static Logger logger;
     private int readTimout = 600000;
     private int connectTimeout = 10000;
-    private int killTimout = 600000;
+    private int killTimeout = 600000;
 
     public HTTPAuthenticator(final Logger logger, String apiKey, String secret) {
         this.apiKey = apiKey;
@@ -165,11 +165,11 @@ public class HTTPAuthenticator {
 
         public void run() {
             try {
-                Thread.sleep(killTimout);
+                Thread.sleep(killTimeout);
                 if (con != null) {
                     con.disconnect();
                 }
-            } catch (Exception e) {
+            } catch (InterruptedException | NullPointerException e) {
             }
 
         }
