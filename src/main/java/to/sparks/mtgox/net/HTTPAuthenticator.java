@@ -46,6 +46,7 @@ public class HTTPAuthenticator {
     protected static Logger logger;
     private int readTimout = 600000;
     private int connectTimeout = 10000;
+    private int killTimout = 600000;
 
     public HTTPAuthenticator(final Logger logger, String apiKey, String secret) {
         this.apiKey = apiKey;
@@ -101,7 +102,7 @@ public class HTTPAuthenticator {
         connection.setConnectTimeout(connectTimeout);
         connection.setReadTimeout(readTimout);
         connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; mtgox-java client)");
-//        new Thread(new InterruptThread(Thread.currentThread(), connection)).start(); // Kill the connection on timeout
+        new Thread(new InterruptThread(Thread.currentThread(), connection)).start(); // Kill the connection on timeout
 
         if (StringUtils.isNotBlank(this.secret) && !this.secret.equalsIgnoreCase("${api.secret}")) {
             Mac mac = Mac.getInstance("HmacSHA512");
@@ -148,30 +149,31 @@ public class HTTPAuthenticator {
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
-//    /*
-//     * http://thushw.blogspot.hu/2010/10/java-urlconnection-provides-no-fail.html
-//     */
-//    class InterruptThread implements Runnable {
-//
-//        Thread parent;
-//        HttpURLConnection con;
-//
-//        public InterruptThread(Thread parent, HttpURLConnection con) {
-//            this.parent = parent;
-//            this.con = con;
-//        }
-//
-//        public void run() {
-//            try {
-//                Thread.sleep(readTimout);
-//                if (con != null) {
-//                    logger.warning("Timer thread forcing parent to quit connection");
-//                    con.disconnect();
-//                    logger.warning("Timer thread closed connection held by parent, exiting");
-//                }
-//            } catch (InterruptedException e) {
-//            }
-//
-//        }
-//    }
+    /*
+     * http://thushw.blogspot.hu/2010/10/java-urlconnection-provides-no-fail.html
+     */
+
+    class InterruptThread implements Runnable {
+
+        Thread parent;
+        HttpURLConnection con;
+
+        public InterruptThread(Thread parent, HttpURLConnection con) {
+            this.parent = parent;
+            this.con = con;
+        }
+
+        public void run() {
+            try {
+                Thread.sleep(killTimout);
+                if (con != null) {
+                    logger.warning("Timer thread forcing parent to quit connection");
+                    con.disconnect();
+                    logger.warning("Timer thread closed connection held by parent, exiting");
+                }
+            } catch (InterruptedException e) {
+            }
+
+        }
+    }
 }
