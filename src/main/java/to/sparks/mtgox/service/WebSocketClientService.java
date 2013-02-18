@@ -30,7 +30,7 @@ import org.jwebsocket.kit.WebSocketFrameType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import to.sparks.mtgox.MtGoxWebsocketClient;
 import to.sparks.mtgox.event.DepthEvent;
 import to.sparks.mtgox.event.PacketEvent;
@@ -48,13 +48,13 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
     private BaseWebSocketClient websocket;
-    private ThreadPoolTaskExecutor taskExecutor;
+    private SimpleAsyncTaskExecutor taskExecutor;
     private Map<String, CurrencyInfo> currencyCache;
     private HTTPClientV1Service httpAPIV1;
     private SocketListener socketListener;
     private ReliabilityOptions reliability = new ReliabilityOptions(true, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-    public WebsocketClientService(Logger logger, ThreadPoolTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener) {
+    public WebsocketClientService(Logger logger, SimpleAsyncTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener) {
         this.logger = logger;
         this.taskExecutor = taskExecutor;
         this.httpAPIV1 = httpAPIV1;
@@ -82,7 +82,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
 
     @Override
     public void shutdown() {
-        taskExecutor.shutdown();
+//        taskExecutor.shutdown();
     }
 
     /*
