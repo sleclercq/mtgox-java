@@ -14,6 +14,7 @@
  */
 package to.sparks.mtgox.event;
 
+import java.util.Date;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -22,16 +23,21 @@ import org.springframework.context.ApplicationEvent;
  */
 public abstract class StreamEvent<T> extends ApplicationEvent {
 
- //   private static final long serialVersionUID = 3487524279263502L;
+    //   private static final long serialVersionUID = 3487524279263502L;
     private T payload;
+    private Date eventReceived;
 
     public StreamEvent(Object source, T payload) {
         super(source);
         this.payload = payload;
-
+        this.eventReceived = new Date();
     }
 
     public Object getPayload() {
         return payload;
+    }
+
+    public Date getEventReceived() {
+        return eventReceived;
     }
 }
