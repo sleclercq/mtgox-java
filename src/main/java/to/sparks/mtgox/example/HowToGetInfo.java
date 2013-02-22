@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.model.AccountInfo;
+import to.sparks.mtgox.model.Lag;
 import to.sparks.mtgox.model.Order;
 import to.sparks.mtgox.model.Ticker;
 
@@ -39,6 +40,10 @@ public class HowToGetInfo {
         ApplicationContext context = new ClassPathXmlApplicationContext("to/sparks/mtgox/example/Beans.xml");
         MtGoxHTTPClient mtgoxUSD = (MtGoxHTTPClient) context.getBean("mtgoxUSD");
 
+        Lag lag = mtgoxUSD.getLag();
+        logger.log(Level.INFO, "Current lag: {0}", lag.getLag());
+
+
         Ticker ticker = mtgoxUSD.getTicker();
         logger.log(Level.INFO, "Last price: {0}", ticker.getLast().toPlainString());
 
@@ -55,5 +60,6 @@ public class HowToGetInfo {
         } else {
             logger.info("There are no currently open bid or ask orders.");
         }
+
     }
 }
