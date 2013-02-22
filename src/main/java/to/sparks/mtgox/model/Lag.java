@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author SparksG
  */
 @JsonAutoDetect
-public abstract class Lag extends DtoBase {
+public class Lag extends DtoBase {
 
     private long lag;
     private long lagSecs;
