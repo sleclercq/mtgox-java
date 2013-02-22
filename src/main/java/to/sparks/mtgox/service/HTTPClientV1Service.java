@@ -15,6 +15,7 @@
 package to.sparks.mtgox.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -52,6 +53,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
         privateInfoJSON = new JSONSource<>();
         currencyInfoJSON = new JSONSource<>();
         sendBitcoinsJSON = new JSONSource<>();
+        lagJSON = new JSONSource<>();
     }
 
     public FullDepth getFullDepth(Currency currency) throws Exception {
@@ -115,7 +117,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     }
 
     public Lag getLag() throws IOException, Exception {
-        Result<Lag> response = lagJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(UrlFactory.RestCommand.Lag), new HashMap<String, String>()), Lag.class);
+        Result<Lag> response = lagJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(UrlFactory.RestCommand.Lag)), Lag.class);
         if (response.getError() != null) {
             throw new RuntimeException(response.getToken() + ": " + response.getError());
         }
