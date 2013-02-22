@@ -35,7 +35,8 @@ class UrlFactory {
         Ticker,
         CurrencyInfo,
         PrivateOrderCancel,
-        SendBitcoins
+        SendBitcoins,
+        Lag
     }
     private static String MTGOX_HTTP_API_URL = "https://mtgox.com/api/";
     private static String MTGOX_HTTP_API_VERSION_0 = "0/";
@@ -60,6 +61,7 @@ class UrlFactory {
         apiV1RestMap.put(RestCommand.Ticker, "ticker");
         apiV1RestMap.put(RestCommand.CurrencyInfo, "currency");
         apiV1RestMap.put(RestCommand.SendBitcoins, "bitcoin/send_simple");
+        apiV1RestMap.put(RestCommand.Lag, "order/lag");
 
         apiV0RestMap = new HashMap<>();
         apiV0RestMap.put(RestCommand.PrivateOrderCancel, "cancelOrder.php");

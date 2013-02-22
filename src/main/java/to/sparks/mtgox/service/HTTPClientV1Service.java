@@ -40,6 +40,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     private JSONSource<Result<Ticker>> tickerJSON;
     private JSONSource<Result<CurrencyInfo>> currencyInfoJSON;
     private JSONSource<Result<SendBitcoinsTransaction>> sendBitcoinsJSON;
+    private JSONSource<Result<Lag>> lagJSON;
 
     public HTTPClientV1Service(final Logger logger, String apiKey, String secret) {
         super(logger, apiKey, secret);
@@ -107,6 +108,14 @@ class HTTPClientV1Service extends HTTPAuthenticator {
 
     public SendBitcoinsTransaction sendBitcoins(HashMap<String, String> params) throws IOException, Exception {
         Result<SendBitcoinsTransaction> response = sendBitcoinsJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(UrlFactory.RestCommand.SendBitcoins), params), SendBitcoinsTransaction.class);
+        if (response.getError() != null) {
+            throw new RuntimeException(response.getToken() + ": " + response.getError());
+        }
+        return response.getReturn();
+    }
+
+    public Lag getLag() throws IOException, Exception {
+        Result<Lag> response = lagJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(UrlFactory.RestCommand.Lag), new HashMap<String, String>()), Lag.class);
         if (response.getError() != null) {
             throw new RuntimeException(response.getToken() + ": " + response.getError());
         }

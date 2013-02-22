@@ -148,4 +148,14 @@ public interface MtGoxHTTPClient {
      * @return
      */
     SendBitcoinsTransaction sendBitcoins(String destinationAddress, MtGoxBitcoin bitcoins, MtGoxBitcoin fee, boolean isNoInstant, boolean isGreen) throws Exception;
+
+    /**
+     * The "lag" value is the age in microseconds of the oldest order pending
+     * execution If it's too large it means the engine is busy, and the depth is
+     * probably not reliable.
+     *
+     * @return The order lag in milliseconds
+     * @throws Exception
+     */
+    Lag getLag() throws Exception;
 }

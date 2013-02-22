@@ -164,4 +164,11 @@ class APIService implements MtGoxHTTPClient {
         params.put("green", isGreen ? "1" : "0");
         return httpAPIV1.sendBitcoins(params);
     }
+
+    @Override
+    public Lag getLag() throws Exception {
+         
+         return httpAPIV1.getLag();
+    }
+    
 }
