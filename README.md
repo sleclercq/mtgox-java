@@ -74,7 +74,7 @@ Source code examples of how to use the API have been provided.
 
 Running the examples:  To compile a jarfile that contains all the dependencies, use the following maven command line.
 
-    mvn install assembly:single
+    mvn clean package
 
 The default example can be run from the command-line as follows.  Make sure also that the current directory  contains the file mtgox.properties (described below) containing your API key and secret.
 
@@ -108,7 +108,7 @@ http://mirror.mel.bkb.net.au/pub/apache/maven/maven-3/3.0.4/binaries/apache-mave
 
 6.  In the command-line shell that appears, type the following maven command to build the project...
 
-        mvn install
+        mvn clean package
 
 Contact
 -------
