@@ -15,10 +15,7 @@
 package to.sparks.mtgox.example;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.collections.comparators.ReverseComparator;
@@ -26,7 +23,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import to.sparks.mtgox.MtGoxHTTPClient;
 import to.sparks.mtgox.event.StreamEvent;
 import to.sparks.mtgox.event.TickerEvent;
@@ -60,12 +57,13 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
     /* The percentage of price that an order is allowed to deviate before re-ordering
      * at the newly calculated prices */
     static final BigDecimal percentAllowedPriceDeviation = BigDecimal.valueOf(0.0015D);
-    private ThreadPoolTaskExecutor taskExecutor;
+    private SimpleAsyncTaskExecutor taskExecutor;
     private MtGoxHTTPClient mtgoxAPI;
     private CurrencyInfo baseCurrency;
     private Ticker lastTicker;
+    private Date timeOfLastOrder = Calendar.getInstance().getTime();
 
-    public TradingBot(ThreadPoolTaskExecutor taskExecutor, MtGoxHTTPClient mtgoxAPI) throws Exception {
+    public TradingBot(SimpleAsyncTaskExecutor taskExecutor, MtGoxHTTPClient mtgoxAPI) throws Exception {
         this.mtgoxAPI = mtgoxAPI;
         this.taskExecutor = taskExecutor;
 
@@ -173,11 +171,17 @@ public class TradingBot implements ApplicationListener<StreamEvent> {
 
                     if (trade.getAmount().compareTo(new MtGoxBitcoin(0.9D)) > 0) {
                         logger.log(Level.INFO, "Market-making trade event: {0}${1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
-                        if (taskExecutor.getActiveCount() < 1) {
+
+                        Calendar thirtySecondsAgo = Calendar.getInstance();
+                        thirtySecondsAgo.add(Calendar.SECOND, -30);
+
+                        if (timeOfLastOrder.before(thirtySecondsAgo.getTime())) {
                             taskExecutor.execute(new Logic());
+                            timeOfLastOrder = Calendar.getInstance().getTime();
                         } else {
-                            logger.warning("TaskExecuter is busy! Skipping a turn...");
+                            logger.info("Ignoring order because too soon.");
                         }
+
                     } else {
                         logger.log(Level.FINE, "Insufficient sized trade event: {0}${1} volume: {2}", new Object[]{trade.getPrice_currency(), trade.getPrice().toPlainString(), trade.getAmount().toPlainString()});
                     }
