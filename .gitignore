@@ -3,3 +3,4 @@ nbactions.xml
 *.releaseBackup
 log.out
 mtgox.properties
+dependency-reduced-pom.xml
