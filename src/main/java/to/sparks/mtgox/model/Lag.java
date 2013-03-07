@@ -12,10 +12,12 @@ public class Lag extends DtoBase {
 
     private long lag;
     private long lagSecs;
+    private String lagText;
 
-    public Lag(@JsonProperty("lag") long lag, @JsonProperty("lag_secs") long lagSecs) {
+    public Lag(@JsonProperty("lag") long lag, @JsonProperty("lag_secs") long lagSecs, @JsonProperty("lag_text") String lagText) {
         this.lag = lag;
         this.lagSecs = lagSecs;
+        this.lagText = lagText;
     }
 
     public long getLag() {
@@ -24,5 +26,9 @@ public class Lag extends DtoBase {
 
     public long getLagSecs() {
         return lagSecs;
+    }
+
+    public String getLagText() {
+        return lagText;
     }
 }
