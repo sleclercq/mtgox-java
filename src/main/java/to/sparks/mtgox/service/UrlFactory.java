@@ -14,8 +14,10 @@
  */
 package to.sparks.mtgox.service;
 
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -39,11 +41,13 @@ class UrlFactory {
         Lag
     }
     private static String MTGOX_HTTP_API_URL = "https://mtgox.com/api/";
+    private static String MTGOX_HTTP_API_CACHE_URL = "https://data.mtgox.com/api/";
     private static String MTGOX_HTTP_API_VERSION_0 = "0/";
     private static String MTGOX_HTTP_API_VERSION_1 = "1/";
     private static final HashMap<Currency, String> currencyMap;
     private static final HashMap<RestCommand, String> apiV0RestMap;
     private static final HashMap<RestCommand, String> apiV1RestMap;
+    private static final List<RestCommand> readOnlyCommands;
     private static final String[] currencyList = {"USD", "AUD", "CAD", "CHF", "CNY", "DKK", "EUR", "GBP", "HKD", "JPY", "NZD", "PLN", "RUB", "SEK", "SGD", "THB"};
 
     static {
@@ -51,6 +55,10 @@ class UrlFactory {
         for (String currency : currencyList) {
             currencyMap.put(Currency.getInstance(currency), "BTC" + currency + "/");
         }
+
+        // These commands are ok to get from the cache api
+        readOnlyCommands = new ArrayList<>();
+        readOnlyCommands.add(RestCommand.Ticker);
 
         apiV1RestMap = new HashMap<>();
         apiV1RestMap.put(RestCommand.PrivateOrderAdd, "private/order/add");
@@ -86,7 +94,11 @@ class UrlFactory {
                 || currencyCode.equalsIgnoreCase("BTC")
                 || currencyMap.containsKey(Currency.getInstance(currencyCode))) {
             if (apiV1RestMap.containsKey(restCommand)) {
-                url.append(MTGOX_HTTP_API_URL);
+                if (readOnlyCommands.contains(restCommand)) {
+                    url.append(MTGOX_HTTP_API_CACHE_URL);
+                } else {
+                    url.append(MTGOX_HTTP_API_URL);
+                }
                 url.append(MTGOX_HTTP_API_VERSION_1);
                 Currency currency = null;
                 try {
@@ -103,7 +115,11 @@ class UrlFactory {
                 }
                 url.append(apiV1RestMap.get(restCommand));
             } else if (apiV0RestMap.containsKey(restCommand)) {
-                url.append(MTGOX_HTTP_API_URL);
+                if (readOnlyCommands.contains(restCommand)) {
+                    url.append(MTGOX_HTTP_API_CACHE_URL);
+                } else {
+                    url.append(MTGOX_HTTP_API_URL);
+                }
                 url.append(MTGOX_HTTP_API_VERSION_0);
                 url.append(apiV0RestMap.get(restCommand));
             } else {
