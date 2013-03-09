@@ -22,9 +22,9 @@ public class Ticker extends DtoBase implements CurrencyKludge {
     private TickerPrice buy;
     private TickerPrice sell;
     private String currencyCode;
-    private long now;
+    private String now;
 
-    public Ticker(@JsonProperty("high") TickerPrice high,
+	public Ticker(@JsonProperty("high") TickerPrice high,
             @JsonProperty("low") TickerPrice low,
             @JsonProperty("avg") TickerPrice avg,
             @JsonProperty("vwap") TickerPrice vwap,
@@ -34,8 +34,7 @@ public class Ticker extends DtoBase implements CurrencyKludge {
             @JsonProperty("last_orig") TickerPrice last_orig,
             @JsonProperty("last_all") TickerPrice last_all,
             @JsonProperty("buy") TickerPrice buy,
-            @JsonProperty("sell") TickerPrice sell,
-            @JsonProperty("now") long now) {
+            @JsonProperty("sell") TickerPrice sell) {
         this.high = high;
         this.low = low;
         this.avg = avg;
@@ -47,8 +46,7 @@ public class Ticker extends DtoBase implements CurrencyKludge {
         this.last_all = last_all;
         this.buy = buy;
         this.sell = sell;
-        this.now = now;
-
+        
         if (this.vol != null) {
             this.vol.setCurrencyInfo(CurrencyInfo.BitcoinCurrencyInfo);
         }
@@ -162,6 +160,14 @@ public class Ticker extends DtoBase implements CurrencyKludge {
         this.sell = sell;
     }
 
+	public String getNow() {
+		return now;
+	}
+
+	public void setNow(String now) {
+		this.now = now;
+	}
+    
     @Override
     public void setCurrencyInfo(CurrencyInfo currencyInfo) {
         high.setCurrencyInfo(currencyInfo);
@@ -174,9 +180,5 @@ public class Ticker extends DtoBase implements CurrencyKludge {
         last_all.setCurrencyInfo(currencyInfo);
         buy.setCurrencyInfo(currencyInfo);
         sell.setCurrencyInfo(currencyInfo);
-    }
-
-    public long getNow() {
-        return now;
     }
 }
