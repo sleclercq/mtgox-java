@@ -29,7 +29,7 @@ Release versions are available from Maven Central, add the following dependency 
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.1.7</version>
+            <version>0.1.8</version>
         </dependency>
 
 If you plan to use future versions of the API, developer snapshot releases can be obtained by adding the following to your maven pom.xml
@@ -53,7 +53,7 @@ If you plan to use future versions of the API, developer snapshot releases can b
         <dependency>
             <groupId>to.sparks</groupId>
             <artifactId>mtgox</artifactId>
-            <version>0.1.8-SNAPSHOT</version>
+            <version>0.1.9-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -78,7 +78,7 @@ Running the examples:  To compile a jarfile that contains all the dependencies, 
 
 The default example can be run from the command-line as follows.  Make sure also that the current directory  contains the file mtgox.properties (described below) containing your API key and secret.
 
-    java -jar mtgox-java/target/mtgox-0.1.8-SNAPSHOT.jar
+    java -jar mtgox-java/target/mtgox-0.1.9-SNAPSHOT.jar
 
 MtGox API credentials file: mtgox.properties
 ------------------------
