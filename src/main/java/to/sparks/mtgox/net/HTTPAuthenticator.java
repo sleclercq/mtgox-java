@@ -91,7 +91,7 @@ public class HTTPAuthenticator {
     protected InputStream getMtGoxHTTPInputStream(String path, HashMap<String, String> args) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         HttpURLConnection connection;
 
-        args.put("nonce", String.valueOf(System.currentTimeMillis()));
+        args.put("nonce", String.valueOf(System.nanoTime()));
         String post_data = buildQueryString(args);
 
         System.setProperty("jsse.enableSNIExtension", "false");
