@@ -56,7 +56,7 @@
 <pre><code>    &lt;dependency&gt;
         &lt;groupId&gt;to.sparks&lt;/groupId&gt;
         &lt;artifactId&gt;mtgox&lt;/artifactId&gt;
-        &lt;version&gt;0.1.7&lt;/version&gt;
+        &lt;version&gt;0.1.8&lt;/version&gt;
     &lt;/dependency&gt;
 </code></pre>
 
@@ -81,7 +81,7 @@
     &lt;dependency&gt;
         &lt;groupId&gt;to.sparks&lt;/groupId&gt;
         &lt;artifactId&gt;mtgox&lt;/artifactId&gt;
-        &lt;version&gt;0.1.8-SNAPSHOT&lt;/version&gt;
+        &lt;version&gt;0.1.9-SNAPSHOT&lt;/version&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
 </code></pre>
@@ -98,12 +98,12 @@
 <li><p>A simple trading bot example <a href="https://raw.github.com/GrantSparks/mtgox-java/master/src/main/java/to/sparks/mtgox/example/TradingBot.java" title="source code example">TradingBot.java</a></p></li>
 </ol><p>Running the examples:  To compile a jarfile that contains all the dependencies, use the following maven command line.</p>
 
-<pre><code>mvn install assembly:single
+<pre><code>mvn clean package
 </code></pre>
 
 <p>The default example can be run from the command-line as follows.  Make sure also that the current directory  contains the file mtgox.properties (described below) containing your API key and secret.</p>
 
-<pre><code>java -jar mtgox-java/target/mtgox-0.1.7-SNAPSHOT-jar-with-dependencies.jar
+<pre><code>java -jar mtgox-java/target/mtgox-0.1.9-SNAPSHOT.jar
 </code></pre>
 
 <h2>MtGox API credentials file: mtgox.properties</h2>
@@ -130,7 +130,7 @@ apisecret=PUT_YOUR_API_SECRET_HERE
 <li>
 <p>In the command-line shell that appears, type the following maven command to build the project...</p>
 
-<pre><code>mvn install
+<pre><code>mvn clean package
 </code></pre>
 </li>
 </ol><h2>Contact</h2>
