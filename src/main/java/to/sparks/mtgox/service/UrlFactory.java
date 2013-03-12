@@ -59,6 +59,9 @@ class UrlFactory {
         // These commands are ok to get from the cache api
         readOnlyCommands = new ArrayList<>();
         readOnlyCommands.add(RestCommand.Ticker);
+        readOnlyCommands.add(RestCommand.FullDepth);
+        readOnlyCommands.add(RestCommand.Lag);
+        readOnlyCommands.add(RestCommand.CurrencyInfo);
 
         apiV1RestMap = new HashMap<>();
         apiV1RestMap.put(RestCommand.PrivateOrderAdd, "private/order/add");
