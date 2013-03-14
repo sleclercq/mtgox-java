@@ -179,4 +179,8 @@ public class Ticker extends DtoBase implements CurrencyKludge {
     public long getNow() {
         return now;
     }
+
+    public void setNow(long now) {
+        this.now = now;
+    }
 }
