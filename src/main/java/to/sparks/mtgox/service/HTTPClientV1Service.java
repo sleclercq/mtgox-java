@@ -58,12 +58,12 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     }
 
     public FullDepth getFullDepth(Currency currency) throws Exception {
-        FullDepth fullDepth = fullDepthJSON.getResultFromStream(new URL(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.FullDepth)).openStream(), FullDepth.class).getReturn();
+        FullDepth fullDepth = fullDepthJSON.getResultFromStream(new URL(UrlFactory.getUrlForCommand(currency, UrlFactory.Command.FullDepth)).openStream(), FullDepth.class).getReturn();
         return fullDepth;
     }
 
     public String placeOrder(Currency currency, HashMap<String, String> params) throws Exception {
-        Result<String> result = stringJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.PrivateOrderAdd), params), String.class);
+        Result<String> result = stringJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand(currency, UrlFactory.Command.PrivateOrderAdd), params), String.class);
         if (result.getError() != null) {
             throw new RuntimeException(result.getToken() + ": " + result.getError());
         }
@@ -71,7 +71,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     }
 
     public OrderResult getPrivateOrderResult(HashMap<String, String> params) throws Exception {
-        Result<OrderResult> result = orderResultJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateOrderResult), params), OrderResult.class);
+        Result<OrderResult> result = orderResultJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand("", UrlFactory.Command.PrivateOrderResult), params), OrderResult.class);
         if (result.getError() != null) {
             throw new RuntimeException(result.getToken() + ": " + result.getError());
         }
@@ -80,18 +80,18 @@ class HTTPClientV1Service extends HTTPAuthenticator {
 
     public Order[] getOpenOrders() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
-        Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateOrders)), Order[].class);
+        Result<Order[]> openOrders = openOrdersJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand("", UrlFactory.Command.PrivateOrders)), Order[].class);
         return openOrders.getReturn();
     }
 
     public AccountInfo getPrivateInfo() throws IOException, NoSuchAlgorithmException, InvalidKeyException, Exception {
 
-        Result<AccountInfo> privateInfo = privateInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateInfo)), AccountInfo.class);
+        Result<AccountInfo> privateInfo = privateInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand("", UrlFactory.Command.PrivateInfo)), AccountInfo.class);
         return privateInfo.getReturn();
     }
 
     public Ticker getTicker(Currency currency) throws IOException, Exception {
-        Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.Ticker)), Ticker.class);
+        Result<Ticker> tickerUSD = tickerJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand(currency, UrlFactory.Command.Ticker)), Ticker.class);
         return tickerUSD.getReturn();
     }
 
@@ -102,7 +102,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     public CurrencyInfo getCurrencyInfo(String currencyCode) throws IOException, Exception {
         HashMap<String, String> params = new HashMap<>();
         params.put("currency", currencyCode);
-        Result<CurrencyInfo> currencyInfo = currencyInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(currencyCode, UrlFactory.RestCommand.CurrencyInfo), params), CurrencyInfo.class);
+        Result<CurrencyInfo> currencyInfo = currencyInfoJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand(currencyCode, UrlFactory.Command.CurrencyInfo), params), CurrencyInfo.class);
         if (currencyInfo.getError() != null) {
             throw new RuntimeException(currencyInfo.getToken() + ": " + currencyInfo.getError());
         }
@@ -110,7 +110,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     }
 
     public SendBitcoinsTransaction sendBitcoins(HashMap<String, String> params) throws IOException, Exception {
-        Result<SendBitcoinsTransaction> response = sendBitcoinsJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(UrlFactory.RestCommand.SendBitcoins), params), SendBitcoinsTransaction.class);
+        Result<SendBitcoinsTransaction> response = sendBitcoinsJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand(UrlFactory.Command.SendBitcoins), params), SendBitcoinsTransaction.class);
         if (response.getError() != null) {
             throw new RuntimeException(response.getToken() + ": " + response.getError());
         }
@@ -118,7 +118,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     }
 
     public Lag getLag() throws IOException, Exception {
-        Result<Lag> response = lagJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(UrlFactory.RestCommand.Lag)), Lag.class);
+        Result<Lag> response = lagJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand(UrlFactory.Command.Lag)), Lag.class);
         if (response.getError() != null) {
             throw new RuntimeException(response.getToken() + ": " + response.getError());
         }
@@ -126,7 +126,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     }
     
     public Trade[] getTradesSince(Currency currency, HashMap<String, String> params) throws IOException, Exception {
-    	Result<Trade[]> trades = tradeJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.Trades), params), Trade[].class);
+    	Result<Trade[]> trades = tradeJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand(currency, UrlFactory.Command.Trades), params), Trade[].class);
     	if (trades.getError() != null){
     		throw new RuntimeException(trades.getToken() + ": "+ trades.getError());
     	}

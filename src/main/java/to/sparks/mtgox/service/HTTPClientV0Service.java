@@ -43,7 +43,7 @@ class HTTPClientV0Service extends HTTPAuthenticator {
     }
 
     public OrderCancelResult cancelOrder(HashMap<String, String> params) throws Exception {
-        InputStream is = getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand("", UrlFactory.RestCommand.PrivateOrderCancel), params);
+        InputStream is = getMtGoxHTTPInputStream(UrlFactory.getUrlForCommand("", UrlFactory.Command.PrivateOrderCancel), params);
         JsonParser jp = factory.createJsonParser(is);
         JavaType topMost = mapper.getTypeFactory().constructType(OrderCancelResult.class);
         return mapper.readValue(jp, topMost);

@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
  */
 class UrlFactory {
 
-    public enum RestCommand {
+    public enum Command {
 
         PrivateOrderAdd,
         PrivateOrderResult,
@@ -46,9 +46,9 @@ class UrlFactory {
     private static String MTGOX_HTTP_API_VERSION_0 = "0/";
     private static String MTGOX_HTTP_API_VERSION_1 = "1/";
     private static final HashMap<Currency, String> currencyMap;
-    private static final HashMap<RestCommand, String> apiV0RestMap;
-    private static final HashMap<RestCommand, String> apiV1RestMap;
-    private static final List<RestCommand> readOnlyCommands;
+    private static final HashMap<Command, String> apiV0RestMap;
+    private static final HashMap<Command, String> apiV1RestMap;
+    private static final List<Command> readOnlyCommands;
     private static final String[] currencyList = {"USD", "AUD", "CAD", "CHF", "CNY", "DKK", "EUR", "GBP", "HKD", "JPY", "NZD", "PLN", "RUB", "SEK", "SGD", "THB"};
 
     static {
@@ -59,41 +59,41 @@ class UrlFactory {
 
         // These commands are ok to get from the cache api
         readOnlyCommands = new ArrayList<>();
-        readOnlyCommands.add(RestCommand.Ticker);
-        readOnlyCommands.add(RestCommand.FullDepth);
-        readOnlyCommands.add(RestCommand.Lag);
-        readOnlyCommands.add(RestCommand.CurrencyInfo);
-        readOnlyCommands.add(RestCommand.Trades);
+        readOnlyCommands.add(Command.Ticker);
+        readOnlyCommands.add(Command.FullDepth);
+        readOnlyCommands.add(Command.Lag);
+        readOnlyCommands.add(Command.CurrencyInfo);
+        readOnlyCommands.add(Command.Trades);
 
         apiV1RestMap = new HashMap<>();
-        apiV1RestMap.put(RestCommand.PrivateOrderAdd, "private/order/add");
-        apiV1RestMap.put(RestCommand.PrivateOrderResult, "private/order/result");
-        apiV1RestMap.put(RestCommand.PrivateOrders, "private/orders");
-        apiV1RestMap.put(RestCommand.PrivateInfo, "private/info");
-        apiV1RestMap.put(RestCommand.FullDepth, "fulldepth");
-        apiV1RestMap.put(RestCommand.Ticker, "ticker");
-        apiV1RestMap.put(RestCommand.CurrencyInfo, "currency");
-        apiV1RestMap.put(RestCommand.SendBitcoins, "bitcoin/send_simple");
-        apiV1RestMap.put(RestCommand.Lag, "order/lag");
-        apiV1RestMap.put(RestCommand.Trades, "/trades");
+        apiV1RestMap.put(Command.PrivateOrderAdd, "private/order/add");
+        apiV1RestMap.put(Command.PrivateOrderResult, "private/order/result");
+        apiV1RestMap.put(Command.PrivateOrders, "private/orders");
+        apiV1RestMap.put(Command.PrivateInfo, "private/info");
+        apiV1RestMap.put(Command.FullDepth, "fulldepth");
+        apiV1RestMap.put(Command.Ticker, "ticker");
+        apiV1RestMap.put(Command.CurrencyInfo, "currency");
+        apiV1RestMap.put(Command.SendBitcoins, "bitcoin/send_simple");
+        apiV1RestMap.put(Command.Lag, "order/lag");
+        apiV1RestMap.put(Command.Trades, "/trades");
 
         apiV0RestMap = new HashMap<>();
-        apiV0RestMap.put(RestCommand.PrivateOrderCancel, "cancelOrder.php");
+        apiV0RestMap.put(Command.PrivateOrderCancel, "cancelOrder.php");
 
     }
 
     /**
      * Only use this for 'generic' commands that don't depend on currency.
      */
-    public static String getUrlForRestCommand(RestCommand restCommand) throws Exception {
-        return getUrlForRestCommand("", restCommand);
+    public static String getUrlForCommand(Command restCommand) throws Exception {
+        return getUrlForCommand("", restCommand);
     }
 
-    public static String getUrlForRestCommand(Currency currency, RestCommand restCommand) throws Exception {
-        return getUrlForRestCommand(currency.getCurrencyCode(), restCommand);
+    public static String getUrlForCommand(Currency currency, Command restCommand) throws Exception {
+        return getUrlForCommand(currency.getCurrencyCode(), restCommand);
     }
 
-    public static String getUrlForRestCommand(String currencyCode, RestCommand restCommand) throws Exception {
+    public static String getUrlForCommand(String currencyCode, Command restCommand) throws Exception {
         StringBuilder url = new StringBuilder();
 
         if (StringUtils.isEmpty(currencyCode)
