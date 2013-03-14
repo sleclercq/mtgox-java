@@ -63,6 +63,7 @@ class UrlFactory {
         readOnlyCommands.add(RestCommand.FullDepth);
         readOnlyCommands.add(RestCommand.Lag);
         readOnlyCommands.add(RestCommand.CurrencyInfo);
+        readOnlyCommands.add(RestCommand.Trades);
 
         apiV1RestMap = new HashMap<>();
         apiV1RestMap.put(RestCommand.PrivateOrderAdd, "private/order/add");
