@@ -41,6 +41,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
     private JSONSource<Result<CurrencyInfo>> currencyInfoJSON;
     private JSONSource<Result<SendBitcoinsTransaction>> sendBitcoinsJSON;
     private JSONSource<Result<Lag>> lagJSON;
+    private JSONSource<Result<Trade[]>> tradeJSON;
 
     public HTTPClientV1Service(final Logger logger, String apiKey, String secret) {
         super(logger, apiKey, secret);
@@ -53,6 +54,7 @@ class HTTPClientV1Service extends HTTPAuthenticator {
         currencyInfoJSON = new JSONSource<>();
         sendBitcoinsJSON = new JSONSource<>();
         lagJSON = new JSONSource<>();
+        tradeJSON = new JSONSource<>();
     }
 
     public FullDepth getFullDepth(Currency currency) throws Exception {
@@ -121,5 +123,13 @@ class HTTPClientV1Service extends HTTPAuthenticator {
             throw new RuntimeException(response.getToken() + ": " + response.getError());
         }
         return response.getReturn();
+    }
+    
+    public Trade[] getTradesSince(Currency currency, HashMap<String, String> params) throws IOException, Exception {
+    	Result<Trade[]> trades = tradeJSON.getResultFromStream(getMtGoxHTTPInputStream(UrlFactory.getUrlForRestCommand(currency, UrlFactory.RestCommand.Trades), params), Trade[].class);
+    	if (trades.getError() != null){
+    		throw new RuntimeException(trades.getToken() + ": "+ trades.getError());
+    	}
+    	return trades.getReturn();
     }
 }

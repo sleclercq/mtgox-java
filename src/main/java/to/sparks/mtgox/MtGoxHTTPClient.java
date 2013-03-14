@@ -14,6 +14,7 @@
  */
 package to.sparks.mtgox;
 
+import java.io.IOException;
 import java.util.Currency;
 import to.sparks.mtgox.model.*;
 
@@ -158,4 +159,12 @@ public interface MtGoxHTTPClient {
      * @throws Exception
      */
     Lag getLag() throws Exception;
+
+	/**
+	 * @param sinceTid
+	 * @return
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	Trade[] getTradesSince(String sinceTid) throws IOException, Exception;
 }

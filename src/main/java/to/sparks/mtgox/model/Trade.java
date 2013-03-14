@@ -21,6 +21,8 @@ public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
     private String trade_type;
     private CurrencyInfo currencyInfo = null;
     private String price_currency;
+    private double amount;
+	private double price;
 
     public Trade(@JsonProperty("tid") String tid,
             @JsonProperty("primary") String primary,
@@ -43,7 +45,9 @@ public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
         this.date = date;
         this.amount_int = amount_int;
         this.price_int = price_int;
-        this.price_currency=price_currency;
+        this.price_currency=price_currency;        
+        this.amount = amount;
+        this.price = price;
     }
 
     public String getTradeId() {
@@ -102,4 +106,18 @@ public class Trade extends DtoBase implements IEventTime, CurrencyKludge {
     public String getPrice_currency() {
         return price_currency;
     }
+    
+    /**
+	 * @param amount the amount to set
+	 */
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
+	/**
+	 * @param price the price to set
+	 */
+	public void setPrice(double price) {
+		this.price = price;
+	}
 }

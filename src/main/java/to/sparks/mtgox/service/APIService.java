@@ -171,4 +171,10 @@ class APIService implements MtGoxHTTPClient {
          return httpAPIV1.getLag();
     }
     
+	@Override
+	public Trade[] getTradesSince(String sinceTid) throws IOException, Exception {
+		HashMap<String, String> params = new HashMap<>();
+		params.put("since",sinceTid);
+		return httpAPIV1.getTradesSince(currencyInfo.getCurrency(), params);
+	}
 }
