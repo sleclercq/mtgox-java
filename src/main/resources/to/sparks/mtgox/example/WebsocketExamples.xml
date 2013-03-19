@@ -50,6 +50,7 @@
         <constructor-arg index="3" >
             <ref bean="socketListener"/>
         </constructor-arg>
+        <constructor-arg index="4" value="false"/>
     </bean>
 
     <bean id='websocketExamples' class='to.sparks.mtgox.example.WebsocketExamples' />

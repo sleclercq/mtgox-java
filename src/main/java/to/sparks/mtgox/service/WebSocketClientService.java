@@ -53,7 +53,11 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     private HTTPClientV1Service httpAPIV1;
     private SocketListener socketListener;
     private ReliabilityOptions reliability;
-    
+
+    public WebsocketClientService(Logger logger, SimpleAsyncTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener) {
+        this(logger, taskExecutor, httpAPIV1, socketListener, true);
+    }
+
     public WebsocketClientService(Logger logger, SimpleAsyncTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener, boolean autoRestartSocket) {
         this.logger = logger;
         this.taskExecutor = taskExecutor;

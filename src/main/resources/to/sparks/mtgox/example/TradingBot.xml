@@ -81,6 +81,7 @@
         <constructor-arg index="3" >
             <ref bean="socketListener"/>
         </constructor-arg>
+        <constructor-arg index="4" value="false"/>        
     </bean>
 
     <bean id='tradingBot' class='to.sparks.mtgox.example.TradingBot' >
