@@ -52,15 +52,16 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     private Map<String, CurrencyInfo> currencyCache;
     private HTTPClientV1Service httpAPIV1;
     private SocketListener socketListener;
-    private ReliabilityOptions reliability = new ReliabilityOptions(true, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE);
-
-    public WebsocketClientService(Logger logger, SimpleAsyncTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener) {
+    private ReliabilityOptions reliability;
+    
+    public WebsocketClientService(Logger logger, SimpleAsyncTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener, boolean autoRestartSocket) {
         this.logger = logger;
         this.taskExecutor = taskExecutor;
         this.httpAPIV1 = httpAPIV1;
         currencyCache = new HashMap<>();
         currencyCache.put("BTC", CurrencyInfo.BitcoinCurrencyInfo);
         this.socketListener = socketListener;
+        reliability = new ReliabilityOptions(autoRestartSocket, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE);
         websocket = new BaseWebSocketClient(reliability);
     }
 
