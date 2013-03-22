@@ -115,6 +115,8 @@ Contact
 
 Bug reports and feature requests should be opened in the [SourceForge issue tracker](https://github.com/GrantSparks/mtgox-java/issues "SourceForge issue tracker")
 
+Custom software development, technical support or other services are available for this product on a time & materials basis.  Work can be contracted through the oDesk system from [Grant Sparks profile page](https://www.odesk.com/users/~01eac85719bc3574c7 "Grant Sparks profile page on oDesk") 
+
     The MtGox-Java API is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
