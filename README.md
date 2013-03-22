@@ -10,6 +10,8 @@ This software is copyright 2012-2013 Grant Sparks, and is distributed under the 
 You can support this work via bitcoin donation to my tip jar.  1DdDs3rPR9W37cbF5zQbUB8D9frcbAAoYu
 ![Bitcoin tipjar QR code](https://raw.github.com/GrantSparks/mtgox-java/master/tipjar.png "bitcoin tipjar address")
 
+Custom software development, technical support or other services are available for this product on a time & materials basis.  Work can be contracted through the oDesk system from [Grant Sparks profile page on oDesk](https://www.odesk.com/users/~01eac85719bc3574c7 "Grant Sparks profile page on oDesk") 
+
 Current status
 --------------
 
@@ -113,9 +115,10 @@ http://mirror.mel.bkb.net.au/pub/apache/maven/maven-3/3.0.4/binaries/apache-mave
 Contact
 -------
 
+Custom software development, technical support or other services are available for this product on a time & materials basis.  Work can be contracted through the oDesk system from [Grant Sparks profile page](https://www.odesk.com/users/~01eac85719bc3574c7 "Grant Sparks profile page on oDesk") 
+
 Bug reports and feature requests should be opened in the [SourceForge issue tracker](https://github.com/GrantSparks/mtgox-java/issues "SourceForge issue tracker")
 
-Custom software development, technical support or other services are available for this product on a time & materials basis.  Work can be contracted through the oDesk system from [Grant Sparks profile page](https://www.odesk.com/users/~01eac85719bc3574c7 "Grant Sparks profile page on oDesk") 
 
     The MtGox-Java API is free software: you can redistribute it and/or modify
     it under the terms of the Lesser GNU General Public License as published by
