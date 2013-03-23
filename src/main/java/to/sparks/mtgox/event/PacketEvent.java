@@ -14,15 +14,15 @@
  */
 package to.sparks.mtgox.event;
 
-import to.sparks.mtgox.net.MtGoxPacket;
+import org.json.JSONObject;
 
 /**
  *
  * @author SparksG
  */
-public class PacketEvent extends StreamEvent<MtGoxPacket> {
+public class PacketEvent extends StreamEvent<JSONObject> {
 
-    public PacketEvent(Object source, MtGoxPacket payload) {
+    public PacketEvent(Object source, JSONObject payload) {
         super(source, payload);
     }
 }

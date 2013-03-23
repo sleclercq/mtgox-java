@@ -15,18 +15,16 @@
 package to.sparks.mtgox.service;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jwebsocket.api.WebSocketClientEvent;
-import org.jwebsocket.api.WebSocketPacket;
-import org.jwebsocket.client.java.BaseWebSocketClient;
-import org.jwebsocket.client.java.ReliabilityOptions;
-import org.jwebsocket.kit.WebSocketFrameType;
+
+import io.socket.SocketIO;
+import java.net.MalformedURLException;
+import org.json.JSONObject;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
@@ -37,7 +35,6 @@ import to.sparks.mtgox.event.PacketEvent;
 import to.sparks.mtgox.event.TickerEvent;
 import to.sparks.mtgox.event.TradeEvent;
 import to.sparks.mtgox.model.*;
-import to.sparks.mtgox.net.MtGoxPacket;
 
 /**
  *
@@ -47,12 +44,13 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
 
     private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
-    private BaseWebSocketClient websocket;
+//    private BaseWebSocketClient websocket;
+    SocketIO socket;
     private SimpleAsyncTaskExecutor taskExecutor;
     private Map<String, CurrencyInfo> currencyCache;
     private HTTPClientV1Service httpAPIV1;
     private SocketListener socketListener;
-    private ReliabilityOptions reliability;
+   // private ReliabilityOptions reliability;
 
     public WebsocketClientService(Logger logger, SimpleAsyncTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener) {
         this(logger, taskExecutor, httpAPIV1, socketListener, true);
@@ -65,8 +63,8 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         currencyCache = new HashMap<>();
         currencyCache.put("BTC", CurrencyInfo.BitcoinCurrencyInfo);
         this.socketListener = socketListener;
-        reliability = new ReliabilityOptions(autoRestartSocket, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE);
-        websocket = new BaseWebSocketClient(reliability);
+  //      reliability = new ReliabilityOptions(autoRestartSocket, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE);
+//        websocket = new BaseWebSocketClient(reliability);
     }
 
     public void init() {
@@ -75,13 +73,13 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
 
     public void destroy() {
         try {
-            if (websocket != null) {
-                websocket.close();
+            if (socket != null) {
+                socket.disconnect();
             }
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         } finally {
-            websocket = null;
+            socket = null;
         }
     }
 
@@ -95,11 +93,19 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
      * 15 minutes or so.
      */
     public void recycleWebsocketConnection() {
-        logger.info("Recycle websocket.");
+        try {
+            logger.info("Recycle websocket.");
 
-        destroy();
-        websocket = new BaseWebSocketClient(reliability);
-        init();
+            destroy();
+            //        websocket = new BaseWebSocketClient(reliability);
+            //       socket = new SocketIO("http://socketio-beta.mtgox.com/mtgox");
+            socket = new SocketIO("http://socketio.mtgox.com/mtgox");
+            socket.connect(socketListener);
+
+            init();
+        } catch (MalformedURLException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 
     private CurrencyInfo getCachedCurrencyInfo(String currencyCode) {
@@ -149,9 +155,12 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     @Override
     public void run() {
         try {
+//socket = new SocketIO("http://socketio-beta.mtgox.com/mtgox");
+            socket = new SocketIO("http://socketio.mtgox.com/mtgox");
+            socket.connect(socketListener);
 
-            websocket.addListener(socketListener);
-            websocket.open("ws://websocket.mtgox.com/mtgox");
+//            websocket.addListener(socketListener);
+//            websocket.open("ws://socketio-beta.mtgox.com");
             logger.info("WebSocket API Client started.");
 
         } catch (Exception ex) {
@@ -166,60 +175,50 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
 
     @Override
     public void onApplicationEvent(PacketEvent event) {
-        MtGoxPacket packet = (MtGoxPacket) event.getPayload();
+        JSONObject op = (JSONObject) event.getPayload();
 
-        WebSocketClientEvent aEvent = packet.getaEvent();
-        WebSocketPacket aPacket = packet.getaPacket();
+        try {
+            // logger.fine(aPacket.getUTF8());
 
-        if (aEvent != null) {
-            if (aPacket != null && aPacket.getFrameType() == WebSocketFrameType.TEXT) {  // RawPacket.FRAMETYPE_UTF8  or  WebSocketFrameType.TEXT
-                try {
-                    // logger.fine(aPacket.getUTF8());
+            JsonFactory factory = new JsonFactory();
+            ObjectMapper mapper = new ObjectMapper();
 
-                    JsonFactory factory = new JsonFactory();
-                    ObjectMapper mapper = new ObjectMapper();
+//                    JsonParser jp = factory.createJsonParser(aPacket.getUTF8());
+//                    DynaBean op = mapper.readValue(jp, DynaBean.class);
 
-                    JsonParser jp = factory.createJsonParser(aPacket.getUTF8());
-                    DynaBean op = mapper.readValue(jp, DynaBean.class);
-
-                    if (op.get("op") != null && op.get("op").equals("private")) {
-                        String messageType = op.get("private").toString();
-                        if (messageType.equalsIgnoreCase("ticker")) {
-                            OpPrivateTicker opPrivateTicker = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTicker.class);
-                            Ticker ticker = opPrivateTicker.getTicker();
-                            tickerEvent(ticker);
-                            logger.log(Level.FINE, "Ticker: last: {0}", new Object[]{ticker.getLast().toPlainString()});
-                        } else if (messageType.equalsIgnoreCase("depth")) {
-                            OpPrivateDepth opPrivateDepth = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateDepth.class);
-                            Depth depth = opPrivateDepth.getDepth();
-                            depthEvent(depth);
-                            logger.log(Level.FINE, "Depth total volume: {0}", new Object[]{depth.getTotalVolume().toPlainString()});
-                        } else if (messageType.equalsIgnoreCase("trade")) {
-                            OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(aPacket.getUTF8()), OpPrivateTrade.class);
-                            Trade trade = opPrivateTrade.getTrade();
-                            tradeEvent(trade);
-                            logger.log(Level.FINE, "Trade currency: {0}", new Object[]{trade.getPrice_currency()});
-                        } else {
-                            logger.log(Level.WARNING, "Unknown private operation: {0}", new Object[]{aPacket.getUTF8()});
-                        }
-
-                        // logger.log(Level.INFO, "messageType: {0}, payload: {1}", new Object[]{messageType, dataPayload});
-                    } else {
-                        logger.log(Level.WARNING, "Unknown operation: {0}, payload: {1}", new Object[]{op.get("op")});
-                        // TODO:  Process the following types
-                        // subscribe
-                        // unsubscribe
-                        // remark
-                        // result
-                    }
-                } catch (IOException ex) {
-                    logger.log(Level.SEVERE, null, ex);
+            if (op.get("op") != null && op.get("op").equals("private")) {
+                String messageType = op.get("private").toString();
+                if (messageType.equalsIgnoreCase("ticker")) {
+                    OpPrivateTicker opPrivateTicker = mapper.readValue(factory.createJsonParser(op.toString()), OpPrivateTicker.class);
+                    Ticker ticker = opPrivateTicker.getTicker();
+                    tickerEvent(ticker);
+                    logger.log(Level.FINE, "Ticker: last: {0}", new Object[]{ticker.getLast().toPlainString()});
+                } else if (messageType.equalsIgnoreCase("depth")) {
+                    OpPrivateDepth opPrivateDepth = mapper.readValue(factory.createJsonParser(op.toString()), OpPrivateDepth.class);
+                    Depth depth = opPrivateDepth.getDepth();
+                    depthEvent(depth);
+                    logger.log(Level.FINE, "Depth total volume: {0}", new Object[]{depth.getTotalVolume().toPlainString()});
+                } else if (messageType.equalsIgnoreCase("trade")) {
+                    OpPrivateTrade opPrivateTrade = mapper.readValue(factory.createJsonParser(op.toString()), OpPrivateTrade.class);
+                    Trade trade = opPrivateTrade.getTrade();
+                    tradeEvent(trade);
+                    logger.log(Level.FINE, "Trade currency: {0}", new Object[]{trade.getPrice_currency()});
+                } else {
+                    logger.log(Level.WARNING, "Unknown private operation: {0}", new Object[]{op.toString()});
                 }
+
+                // logger.log(Level.INFO, "messageType: {0}, payload: {1}", new Object[]{messageType, dataPayload});
             } else {
-                throw new UnsupportedOperationException("Not supported yet.");
+                logger.log(Level.WARNING, "Unknown operation: {0}, payload: {1}", new Object[]{op.get("op")});
+                // TODO:  Process the following types
+                // subscribe
+                // unsubscribe
+                // remark
+                // result
             }
-        } else {
-            throw new UnsupportedOperationException("Not supported yet.");
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
         }
+
     }
 }

@@ -14,21 +14,21 @@
  */
 package to.sparks.mtgox.service;
 
+import io.socket.IOAcknowledge;
+import io.socket.IOCallback;
+import io.socket.SocketIOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jwebsocket.api.WebSocketClientEvent;
-import org.jwebsocket.api.WebSocketClientListener;
-import org.jwebsocket.api.WebSocketPacket;
+import org.json.JSONObject;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import to.sparks.mtgox.event.PacketEvent;
-import to.sparks.mtgox.net.MtGoxPacket;
 
 /**
  *
  * @author SparksG
  */
-public class SocketListener implements WebSocketClientListener, ApplicationEventPublisherAware {
+public class SocketListener implements IOCallback, ApplicationEventPublisherAware {
 
     private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
@@ -37,44 +37,48 @@ public class SocketListener implements WebSocketClientListener, ApplicationEvent
         this.logger = logger;
     }
 
+//    @Override
+//    public void processPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
+//        String sEvent = aEvent != null ? aEvent.toString() : "null";
+//        String sPacket = aPacket != null ? aPacket.getUTF8() : "null";
+//        logger.log(Level.FINE, "processPacket( Event: {0}  Packet: {1} )", new Object[]{sEvent, sPacket});
+//        MtGoxPacket packet = new MtGoxPacket(aEvent, aPacket);
+//        PacketEvent event = new PacketEvent(this, packet);
+//        applicationEventPublisher.publishEvent(event);
+//    }
     @Override
-    public void processOpened(WebSocketClientEvent aEvent) {
-        // The websocket has been opened
-        String sEvent = aEvent != null ? aEvent.toString() : "null";
-        logger.log(Level.FINE, "processOpened( Event: {0} )", new Object[]{sEvent});
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
-    public void processPacket(WebSocketClientEvent aEvent, WebSocketPacket aPacket) {
-        String sEvent = aEvent != null ? aEvent.toString() : "null";
-        String sPacket = aPacket != null ? aPacket.getUTF8() : "null";
-        logger.log(Level.FINE, "processPacket( Event: {0}  Packet: {1} )", new Object[]{sEvent, sPacket});
-        MtGoxPacket packet = new MtGoxPacket(aEvent, aPacket);
-        PacketEvent event = new PacketEvent(this, packet);
+    public void onDisconnect() {
+        logger.log(Level.WARNING, "Disconnect");
+    }
+
+    @Override
+    public void onConnect() {
+        logger.log(Level.WARNING, "Connect");
+    }
+
+    @Override
+    public void onMessage(String string, IOAcknowledge ioa) {
+        logger.log(Level.WARNING, "Message: {0}", string);
+    }
+
+    @Override
+    public void onMessage(JSONObject jsono, IOAcknowledge ioa) {
+        PacketEvent event = new PacketEvent(this, jsono);
         applicationEventPublisher.publishEvent(event);
     }
 
     @Override
-    public void processClosed(WebSocketClientEvent aEvent) {
-        String sEvent = aEvent != null ? aEvent.toString() : "null";
-        logger.log(Level.WARNING, "processClosed( Event: {0} )", new Object[]{sEvent});
+    public void on(String string, IOAcknowledge ioa, Object... os) {
+        logger.log(Level.WARNING, "on: {0}", string);
     }
 
     @Override
-    public void processOpening(WebSocketClientEvent aEvent) {
-        String sEvent = aEvent != null ? aEvent.toString() : "null";
-        logger.log(Level.FINE, "processOpening( Event: {0} )", new Object[]{sEvent});
-
-    }
-
-    @Override
-    public void processReconnecting(WebSocketClientEvent aEvent) {
-        String sEvent = aEvent != null ? aEvent.toString() : "null";
-        logger.log(Level.WARNING, "processReconnecting( Event: {0} )", new Object[]{sEvent});
-    }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+    public void onError(SocketIOException sioe) {
+        logger.log(Level.SEVERE, "SocketIOException: {0}", sioe.getMessage());
     }
 }

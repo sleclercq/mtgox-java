@@ -148,8 +148,8 @@
                                         <Implementation-Build>${buildNumber}</Implementation-Build>
                                     </manifestEntries>
                                 </transformer>
-                            </transformers>
-                        </configuration>
+                            </transformers>                            
+                        </configuration>                        
                     </execution>
                 </executions>
             </plugin>
@@ -249,7 +249,20 @@
             <version>1.5</version>
         </dependency>
         <!-- jWebsocket dependencies end -->
-
-
+        <dependency>
+            <groupId>org.java_websocket</groupId>
+            <artifactId>websocket</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json-org</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.socket</groupId>
+            <artifactId>java-client</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
