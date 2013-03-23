@@ -16,15 +16,13 @@ package to.sparks.mtgox.service;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.socket.SocketIO;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import io.socket.SocketIO;
-import java.net.MalformedURLException;
 import org.json.JSONObject;
-
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
@@ -42,6 +40,7 @@ import to.sparks.mtgox.model.*;
  */
 class WebsocketClientService implements Runnable, MtGoxWebsocketClient, ApplicationEventPublisherAware, ApplicationListener<PacketEvent> {
 
+    private final static String SOCKET_IO_SERVER =  "http://socketio-beta.mtgox.com/mtgox"; // "http://socketio.mtgox.com/mtgox"; // "http://socketio-beta.mtgox.com/mtgox"
     private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
 //    private BaseWebSocketClient websocket;
@@ -50,7 +49,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     private Map<String, CurrencyInfo> currencyCache;
     private HTTPClientV1Service httpAPIV1;
     private SocketListener socketListener;
-   // private ReliabilityOptions reliability;
+    // private ReliabilityOptions reliability;
 
     public WebsocketClientService(Logger logger, SimpleAsyncTaskExecutor taskExecutor, HTTPClientV1Service httpAPIV1, SocketListener socketListener) {
         this(logger, taskExecutor, httpAPIV1, socketListener, true);
@@ -63,7 +62,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
         currencyCache = new HashMap<>();
         currencyCache.put("BTC", CurrencyInfo.BitcoinCurrencyInfo);
         this.socketListener = socketListener;
-  //      reliability = new ReliabilityOptions(autoRestartSocket, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        //      reliability = new ReliabilityOptions(autoRestartSocket, 10000L, 30000L, Integer.MAX_VALUE, Integer.MAX_VALUE);
 //        websocket = new BaseWebSocketClient(reliability);
     }
 
@@ -93,19 +92,18 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
      * 15 minutes or so.
      */
     public void recycleWebsocketConnection() {
-        try {
+//        try {
             logger.info("Recycle websocket.");
 
             destroy();
-            //        websocket = new BaseWebSocketClient(reliability);
-            //       socket = new SocketIO("http://socketio-beta.mtgox.com/mtgox");
-            socket = new SocketIO("http://socketio.mtgox.com/mtgox");
-            socket.connect(socketListener);
+//
+//            socket = new SocketIO(SOCKET_IO_SERVER);
+//            socket.connect(socketListener);
 
             init();
-        } catch (MalformedURLException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
+//        } catch (MalformedURLException ex) {
+//            logger.log(Level.SEVERE, null, ex);
+//        }
     }
 
     private CurrencyInfo getCachedCurrencyInfo(String currencyCode) {
@@ -156,7 +154,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
     public void run() {
         try {
 //socket = new SocketIO("http://socketio-beta.mtgox.com/mtgox");
-            socket = new SocketIO("http://socketio.mtgox.com/mtgox");
+            socket = new SocketIO(SOCKET_IO_SERVER);
             socket.connect(socketListener);
 
 //            websocket.addListener(socketListener);
