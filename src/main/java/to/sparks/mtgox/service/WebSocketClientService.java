@@ -206,7 +206,7 @@ class WebsocketClientService implements Runnable, MtGoxWebsocketClient, Applicat
 
                 // logger.log(Level.INFO, "messageType: {0}, payload: {1}", new Object[]{messageType, dataPayload});
             } else {
-                logger.log(Level.WARNING, "Unknown operation: {0}, payload: {1}", new Object[]{op.get("op")});
+                logger.log(Level.WARNING, "Unknown operation: {0}, payload: {1}", new Object[]{op.get("op"), op.toString()});
                 // TODO:  Process the following types
                 // subscribe
                 // unsubscribe
