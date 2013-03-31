@@ -39,7 +39,7 @@ import to.sparks.mtgox.model.*;
  */
 class WebsocketClientService implements Runnable, MtGoxWebsocketClient, ApplicationEventPublisherAware, ApplicationListener<PacketEvent> {
 
-    private final static String SOCKET_IO_SERVER =  "http://socketio-beta.mtgox.com/mtgox"; // "http://socketio.mtgox.com/mtgox";
+    private final static String SOCKET_IO_SERVER =  "http://socketio.mtgox.com/mtgox";// "http://socketio-beta.mtgox.com/mtgox"; // "http://socketio.mtgox.com/mtgox";
     private ApplicationEventPublisher applicationEventPublisher = null;
     private Logger logger;
 //    private BaseWebSocketClient websocket;
