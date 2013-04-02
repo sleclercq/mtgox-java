@@ -25,11 +25,18 @@ public class CurrencyInfo extends DtoBase {
     private String ticker_channel;
     private String depth_channel;
     private static final String BITCOIN_INFO_JSON = "{\"result\":\"success\",\"return\":{\"currency\":\"BTC\",\"name\":\"Bitcoin\",\"symbol\":\"BTC\",\"decimals\":\"8\",\"display_decimals\":\"2\",\"symbol_position\":\"after\",\"virtual\":\"Y\",\"ticker_channel\":\"13edff67-cfa0-4d99-aa76-52bd15d6a058\",\"depth_channel\":\"7d3d7ae3-7da7-48cf-9c82-51d7ab3fe60f\"}}";
+    private static final String LITECOIN_INFO_JSON = "{\"result\":\"success\",\"return\":{\"currency\":\"LTC\",\"name\":\"Litecoin\",\"symbol\":\"LTC\",\"decimals\":\"8\",\"display_decimals\":\"2\",\"symbol_position\":\"after\",\"virtual\":\"Y\",\"ticker_channel\":\"48b6886f-49c0-4614-b647-ba5369b449a9\",\"depth_channel\":\"7e297db5-e0e4-418d-831d-44d2a591f243\"}}";
+    private static final String NAMECOIN_INFO_JSON = "{\"result\":\"success\",\"return\":{\"currency\":\"NMC\",\"name\":\"Namecoin\",\"symbol\":\"NMC\",\"decimals\":\"8\",\"display_decimals\":\"2\",\"symbol_position\":\"after\",\"virtual\":\"Y\",\"ticker_channel\":\"36189b8c-cffa-40d2-b205-fb71420387ae\",\"depth_channel\":\"419a72dc-cda4-484b-b393-1446ac38490f\"}}";
+    
     public static CurrencyInfo BitcoinCurrencyInfo;
+    public static CurrencyInfo LitecoinCurrencyInfo;
+    public static CurrencyInfo NamecoinCurrencyInfo;
 
     static {
         try {
             BitcoinCurrencyInfo = new JSONSource<Result<CurrencyInfo>>().getResultFromString(BITCOIN_INFO_JSON, CurrencyInfo.class).getReturn();
+            LitecoinCurrencyInfo = new JSONSource<Result<CurrencyInfo>>().getResultFromString(LITECOIN_INFO_JSON, CurrencyInfo.class).getReturn();
+            NamecoinCurrencyInfo = new JSONSource<Result<CurrencyInfo>>().getResultFromString(NAMECOIN_INFO_JSON, CurrencyInfo.class).getReturn();
         } catch (IOException ex) {
             Logger.getLogger(CurrencyInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
