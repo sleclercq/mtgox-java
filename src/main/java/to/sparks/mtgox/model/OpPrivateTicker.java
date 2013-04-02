@@ -14,10 +14,11 @@ public class OpPrivateTicker extends OpPrivate<Ticker> {
 
     public OpPrivateTicker(@JsonProperty("op") String op,
             @JsonProperty("channel") String channel,
+            @JsonProperty("channel_name") String channel_name,
             @JsonProperty("private") String messageType,
             @JsonProperty("ticker") Ticker ticker,
             @JsonProperty("origin") String origin) {
-        super(op, channel, messageType, origin);
+        super(op, channel, channel_name, messageType, origin);
         this.ticker = ticker;
     }
 

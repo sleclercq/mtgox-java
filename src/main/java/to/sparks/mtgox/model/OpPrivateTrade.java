@@ -14,10 +14,11 @@ public class OpPrivateTrade extends OpPrivate<Trade> {
 
     public OpPrivateTrade(@JsonProperty("op") String op,
             @JsonProperty("channel") String channel,
+            @JsonProperty("channel_name") String channel_name,
             @JsonProperty("private") String messageType,
             @JsonProperty("trade") Trade trade,
             @JsonProperty("origin") String origin) {
-        super(op, channel, messageType, origin);
+        super(op, channel, channel_name, messageType, origin);
         this.trade = trade;
     }
 
