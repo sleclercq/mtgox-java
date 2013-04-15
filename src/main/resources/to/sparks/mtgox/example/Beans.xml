@@ -52,6 +52,12 @@
         <constructor-arg index="1" value="${apikey}" />
         <constructor-arg index="2" value="${apisecret}" />
     </bean>
+    <bean id="mtgoxapikey" class="java.lang.String">
+        <constructor-arg value="${apikey}"/>
+    </bean>
+    <bean id="mtgoxapisecret" class="java.lang.String">
+        <constructor-arg value="${apisecret}"/>
+    </bean>
 
     <bean id="mtgoxUSD" class="to.sparks.mtgox.service.APIService">
         <constructor-arg index="0">
